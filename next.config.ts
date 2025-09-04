@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import withPWA from 'next-pwa';
+import withPWA from '@ducanh2912/next-pwa';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -12,7 +12,9 @@ const pwaConfig = withPWA({
   dest: 'public',
   register: true,
   disable: isDev,
-  skipWaiting: true
+  workboxOptions: {
+    disableDevLogs: true
+  }
 })
 
 export default pwaConfig(nextConfig);
