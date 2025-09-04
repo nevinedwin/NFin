@@ -5,16 +5,14 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  reactStrictMode: true
+  reactStrictMode: true,
 };
 
-const pwaConfig = withPWA({
+export default withPWA({
   dest: 'public',
   register: true,
   disable: isDev,
   workboxOptions: {
     disableDevLogs: true
   }
-})
-
-export default pwaConfig(nextConfig);
+})(nextConfig);
