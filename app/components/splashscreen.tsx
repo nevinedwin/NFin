@@ -25,7 +25,7 @@ const Splashscreen: React.FC<SplashscreenProps> = ({ onFinish }) => {
     <div className="relative flex h-screen items-center justify-center overflow-hidden bg-white">
       <div
         className={clsx(
-          'absolute rounded-full bg-[var(--color-background)] transition-all duration-[1000ms] ease-in-out flex',
+          'absolute rounded-full bg-color-background transition-all duration-[1000ms] ease-in-out flex',
           expandBg
             ? 'w-[300vw] h-[300vw] opacity-100'
             : 'w-0 h-0 opacity-0'
