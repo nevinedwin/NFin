@@ -4,8 +4,10 @@ import withPWA from '@ducanh2912/next-pwa';
 const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: true,
+
+  // ✔ turbopack config must be an object even if empty
+  turbopack: {},
 };
 
 export default withPWA({
@@ -13,6 +15,6 @@ export default withPWA({
   register: true,
   disable: isDev,
   workboxOptions: {
-    disableDevLogs: true
-  }
+    disableDevLogs: true,
+  },
 })(nextConfig);
