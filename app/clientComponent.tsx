@@ -26,7 +26,7 @@ const ClientComponent: React.FC<ClientComponentType> = ({ children }) => {
       {showSplash ? (
         <Splashscreen onFinish={handleFinish} />
       ) : (
-        <div className="fade-in h-screen flex flex-col items-center justify-center bg-color-background">
+        <div className="fade-in h-screen flex flex-col items-center justify-center">
           {children}
         </div>
       )}
