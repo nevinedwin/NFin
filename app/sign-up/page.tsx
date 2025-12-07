@@ -2,7 +2,7 @@ import React from 'react'
 
 const SignUp = () => {
     return (
-        <div className='w-full h-[100dvh]'>
+        <div className='w-full h-screen'>
             <div className='flex flex-col items-center justify-center h-[40%] text-white'>
                 <h1 className='text-[rgb(255 255 255/var(--tw-text-opacity,1))] font-bold text-6xl md:text-8xl tracking-widest'>
                     NFIN
