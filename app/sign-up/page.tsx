@@ -11,7 +11,7 @@ const SignUp = () => {
             </div>
             <div className='bg-black rounded-t-[10%] h-[60%]'>
                 <div className='flex h-full items-center justify-center'>
-                    Nevin Finance App
+                    Nevin Edwin <span className='ml-2 font-thin' >Finance App</span>
                 </div>
             </div>
         </div>
