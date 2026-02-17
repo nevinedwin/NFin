@@ -11,7 +11,7 @@ const SignUp = () => {
             </div>
             <div className='bg-black rounded-t-[10%] h-[60%]'>
                 <div className='flex h-full items-center justify-center'>
-                    In-Progress..
+                    Nevin Finance App
                 </div>
             </div>
         </div>
