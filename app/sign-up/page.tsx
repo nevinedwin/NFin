@@ -1,7 +1,7 @@
 import React from 'react'
 import SignupLogo from '../components/signupLogo'
 import { SIGNUP_DATA } from '../constants'
-import { Formik } from 'formik'
+// import { Formik } from 'formik'
 
 const SignUp = () => {
     return (
