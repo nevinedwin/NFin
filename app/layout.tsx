@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import ClientComponent from "./clientComponent";
+import { ClerkProvider } from "@clerk/nextjs";
+import "./globals.css";
 // import Navbar from "./navbar";
 
 const geistSans = Geist({
@@ -27,12 +28,14 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>
-        {/* <ClientComponent> */}
+    <ClerkProvider>
+      <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+        <body>
+          {/* <ClientComponent> */}
           {children}
-        {/* </ClientComponent> */}
-      </body>
-    </html>
+          {/* </ClientComponent> */}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
