@@ -6,7 +6,7 @@ import Footer from "../../components/layout/footer";
 
 const FOOTER_HEIGHT = 80;
 const FOOTER_PEEK = 30;
-const SCROLL_THRESHOLD = 20;
+const SCROLL_THRESHOLD = 10;
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const mainRef = useRef<HTMLElement | null>(null);
@@ -60,7 +60,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             {/* Main */}
             <main
                 ref={mainRef}
-                className="flex-1 overflow-y-auto py-1 overscroll-contain"
+                className="flex-1 overflow-y-auto py-1 overscroll-none"
                 style={{ paddingBottom: FOOTER_HEIGHT }}
             >
                 {children}
