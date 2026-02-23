@@ -4,9 +4,9 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/layout/header";
 import Footer from "../../components/layout/footer";
 
-const FOOTER_HEIGHT = 50;
-const FOOTER_PEEK = 10;
-const SCROLL_THRESHOLD = 6;
+const FOOTER_HEIGHT = 70;
+const FOOTER_PEEK = 20;
+const SCROLL_THRESHOLD = 10;
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const mainRef = useRef<HTMLElement | null>(null);
