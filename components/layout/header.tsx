@@ -17,11 +17,11 @@ const Header = () => {
             <Settings size={20} />
           </button>
         </Tooltip>
-        <SignOutButton redirectUrl="/">
-          <Tooltip label="Logout">
+        <Tooltip label="Logout">
+          <SignOutButton redirectUrl="/">
             <LogOutIcon className="cursor-pointer" size={20} />
-          </Tooltip>
-        </SignOutButton>
+          </SignOutButton>
+        </Tooltip>
       </div>
     </header>
   )
