@@ -15,6 +15,16 @@ const Dashboard = () => {
                 <CardSkeleton className="w-full"/>
                 <CardSkeleton className="w-full"/>
                 <CardSkeleton className="w-full"/>
+                 <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
+                 <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
+                <CardSkeleton className="w-full"/>
             </div>
         </div>
     )
