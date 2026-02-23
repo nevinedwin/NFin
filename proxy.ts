@@ -1,6 +1,6 @@
 import { clerkClient, clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import { ALLOWED_EMAILS, ENABLE_EMAIL_RESTRICTION } from './lib/allowedEmailList';
+import { ALLOWED_EMAILS, ENABLE_EMAIL_RESTRICTION } from './lib/constants/allowedEmailList';
 
 
 

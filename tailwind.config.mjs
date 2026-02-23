@@ -9,31 +9,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Light mode colors
-        color: {
-          primary: "#008080", // income
-          secondary: "#9fb834",
-          accent: "#ff7f50", // expense
-          background: "#f5f5dc",
-          surface: "#fefefe",
-          "primary-text": "#121212",
-          "secondary-text": "#2c2c2c",
-          "accent-text": "#008080",
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        secondary: "rgb(var(--color-secondary) / <alpha-value>)",
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
 
-          // Dark mode colors
-          "primary-dark": "#c7f464", // income
-          "secondary-dark": "#008080",
-          "accent-dark": "#ff7f50", // expense
-          "background-dark": "#121212",
-          "surface-dark": "#2c2c2c",
-          "primary-text-dark": "#f5f5dc",
-          "secondary-text-dark": "#b8b8a0",
-          "accent-text-dark": "#c7f464",
+        background: "rgb(var(--color-bg) / <alpha-value>)",
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        border: "rgb(var(--color-border) / <alpha-value>)",
 
-          // Status colors
-          "error-text": "#dc3545",
-          "success-text": "#28a745",
-          "neutral-text": "#6c757d",
+        text: {
+          primary: "rgb(var(--color-text-primary) / <alpha-value>)",
+          secondary: "rgb(var(--color-text-secondary) / <alpha-value>)",
         },
       },
       keyframes: {

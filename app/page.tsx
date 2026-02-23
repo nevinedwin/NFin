@@ -1,9 +1,10 @@
-import SignUpPage from "./sign-up/page";
+import Splashscreen from "@/components/layout/splashscreen";
+import { auth } from "@clerk/nextjs/server";
 
-export default function Home() {
-  return (
-    <div className="bg-[radial-gradient(circle_at_bottom,#404040_0%,#060301_100%)] min-h-screen w-full">
-        <SignUpPage/>
-    </div>
-  );
+export default async function Home() {
+  const { userId } = await auth();
+
+  const target = userId ? "/dashboard" : "/sign-up";
+
+  return <Splashscreen target={target} />;
 }

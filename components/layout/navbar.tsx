@@ -1,7 +1,7 @@
 'use client';
 import React from 'react'
-import useThemeSwitcher from './hooks/useThemeSwicher';
-import { MoonIcon, SunIcon } from './components/icons';
+import useThemeSwitcher from '../../hooks/useThemeSwicher';
+import { MoonIcon, SunIcon } from '../ui/icons';
 
 const Navbar = () => {
 
