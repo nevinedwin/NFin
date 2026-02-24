@@ -74,7 +74,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         ? `translateY(${FOOTER_HEIGHT - FOOTER_PEEK}px)`
                         : "translateY(0px)",
                 }}
-                className="absolute bottom-0 left-0 right-0 bg-surface shadow-inner
+                className="absolute bottom-0 left-0 right-0 bg-bar shadow-inner
                    transition-transform duration-500
                    ease-[cubic-bezier(0.22,1,0.36,1)]
                    will-change-transform"

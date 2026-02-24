@@ -11,7 +11,7 @@ export const Card = ({ children, className, hover = true }: CardProps) => {
     return (
         <div
             className={clsx(
-                "rounded-2xl bg-surface border border-border",
+                "rounded-2xl border border-border",
                 "shadow-sm",
                 "transition-all duration-300",
                 hover && "hover:shadow-md hover:-translate-y-[2px]",

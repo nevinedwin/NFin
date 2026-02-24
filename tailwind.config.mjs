@@ -16,6 +16,7 @@ export default {
         background: "rgb(var(--color-bg) / <alpha-value>)",
         surface: "rgb(var(--color-surface) / <alpha-value>)",
         border: "rgb(var(--color-border) / <alpha-value>)",
+        bar: "rgb(var(--color-bar) / <alpha-value>)",
 
         text: {
           primary: "rgb(var(--color-text-primary) / <alpha-value>)",
