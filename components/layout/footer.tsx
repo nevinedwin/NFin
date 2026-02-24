@@ -9,7 +9,7 @@ const NAV_ITEMS = [
     { href: "/budget", label: "Buget", icon: <HandCoins/>},
     { href: "/wallet", label: "Wallet", icon: <Wallet/> },
     { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard/> },
-    { href: "/categories", label: "Category", icon: <Layers2/> },
+    { href: "/category", label: "Category", icon: <Layers2/> },
     { href: "/report", label: "Report", icon: <ClipboardMinus/> },
 ];  
 
