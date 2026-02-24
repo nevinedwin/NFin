@@ -53,14 +53,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="h-dvh flex flex-col overflow-hidden relative">
 
             {/* Header */}
-            <header className="h-[50px] shrink-0 shadow z-10">
+            <header className="h-[50px] shrink-0 z-10">
                 <Header />
             </header>
 
             {/* Main */}
             <main
                 ref={mainRef}
-                className="flex-1 overflow-y-auto py-1 overscroll-none"
+                className="flex-1 overflow-y-auto overscroll-none"
                 style={{ paddingBottom: FOOTER_HEIGHT }}
             >
                 {children}

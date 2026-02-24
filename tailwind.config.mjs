@@ -20,6 +20,7 @@ export default {
         text: {
           primary: "rgb(var(--color-text-primary) / <alpha-value>)",
           secondary: "rgb(var(--color-text-secondary) / <alpha-value>)",
+          dull: "var(--color-text-dull)"
         },
       },
       keyframes: {

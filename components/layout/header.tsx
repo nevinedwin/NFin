@@ -4,7 +4,7 @@ import Tooltip from "../ui/tooltip"
 
 const Header = () => {
   return (
-    <header className="h-full px-4 flex items-center justify-between shadow bg-surface">
+    <header className="h-full px-4 flex items-center justify-between bg-surface">
       <div className="flex items-center gap-3">
         <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold cursor-pointer hover:scale-105 transition">
           NE

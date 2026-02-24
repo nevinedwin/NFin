@@ -1,14 +1,20 @@
 
 "use client";
 
+import { RUPEE_SYMBOL } from "@/app/constants";
+import HeaderCard from "@/components/dashboard/headerCard";
+import { Card } from "@/components/ui/card/card";
+import CardContent from "@/components/ui/card/cardContent";
 import { CardSkeleton } from "@/components/ui/card/cardSkeleton";
-import { SignOutButton } from "@clerk/nextjs";
+import { ArrowDown, ArrowUp, Wallet2 } from "lucide-react";
 
 
 const Dashboard = () => {
     return (
         <div className="flex justify-center items-center flex-col">
-            <h1 className="text-white font-semibold">Nevin Finance App</h1>
+            <div className="w-full">
+                <HeaderCard />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full p-4">
                 <CardSkeleton className="w-full"/>
                 <CardSkeleton className="w-full"/>
