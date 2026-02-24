@@ -42,7 +42,7 @@ export default function TransactionCard() {
                             type="number"
                             placeholder="0.00"
                             inputMode="decimal"
-                            className="w-full outline-none text-2xl font-bold bg-background"
+                            className="w-full outline-none text-2xl font-bold bg-black"
                         />
                     </div>
                     {/* Date & Time */}
@@ -91,17 +91,17 @@ export default function TransactionCard() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Add note..."
-                    className="w-full mt-1 mb-2 border border-border rounded-xl p-3 outline-none bg-background text-base"
+                    className="w-full mt-1 mb-4 border border-border rounded-xl p-3 outline-none bg-black text-base"
                     rows={2}
                 />
             </div>
 
             {/* Submit */}
             <button
-                className="w-full h-12 rounded-xl bg-black text-white font-medium
+                className="w-full h-12 rounded-xl bg-slate-300 text-black font-medium
                    transition-all duration-300 hover:scale-[1.02] active:scale-95"
             >
-                Save Transaction
+                Save
             </button>
         </div>
     );

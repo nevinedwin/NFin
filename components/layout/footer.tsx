@@ -55,7 +55,7 @@ const Footer = memo(() => {
                         : "opacity-0 scale-90 translate-y-6 pointer-events-none"
                     }`}
             >
-                <div className="w-[100vw] h-[450px] rounded-t-3xl bg-background  shadow-2xl p-5 text-slate-500">
+                <div className="w-[100vw] h-[480px] rounded-t-3xl bg-black  shadow-2xl p-5 text-slate-500">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-md font-semibold">New Transaction</h3>
                         <button onClick={toggle}>
