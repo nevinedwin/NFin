@@ -89,7 +89,7 @@ export default function AccountForm() {
                 placeholder="1234 4567 7890 0123"
             />
 
-            <div className="w-full grid grid-cols-2 gap-3">
+            <div className="w-full grid grid-cols-2 gap-3 pb-5">
                 <CustomDatePicker
                     label="Expiry Date"
                     name="expiryDate"
@@ -110,7 +110,7 @@ export default function AccountForm() {
                 label="Create Account"
                 type="submit"
                 disabled={submitting}
-                className="font-bold !bg-black !text-white border border-gray-800"
+                className="font-bold !bg-black/50 !text-slate-400"
             />
         </form>
     );
