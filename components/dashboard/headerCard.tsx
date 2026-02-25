@@ -1,17 +1,27 @@
 "use client";
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
-import { ArrowDown, ArrowUp, Wallet2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, EyeIcon, EyeOffIcon, Wallet2 } from 'lucide-react'
 import { RUPEE_SYMBOL } from '@/app/constants'
 import useCountUp from '@/hooks/useCountUp';
+import { redirect } from 'next/navigation';
 
-const HeaderCard = () => {
+type HeaderCardProp = {
+    balance: number;
+    expense: number;
+    income: number;
+    showBalance: boolean;
+}
 
-    const balance = useCountUp(200);
-    const income = useCountUp(1000);
-    const expense = useCountUp(550);
+const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0, showBalance: showBal = false }: HeaderCardProp) => {
+
+    const [showBalance, setShowBalance] = useState<boolean>(showBal);
+
+    const balance = useCountUp(bal);
+    const income = useCountUp(inc);
+    const expense = useCountUp(exp);
 
     return (
         <Card className="rounded-none rounded-b-3xl w-full border-none h-[160px] bg-bar p-0 
@@ -21,10 +31,15 @@ const HeaderCard = () => {
                 <div className="h-full flex justify-between items-center">
                     <div>
                         <h2 className="text-sm font-light text-slate-500">Total Balance</h2>
-                        <h1 className="text-3xl  font-extrabold"><span>{RUPEE_SYMBOL}</span>{balance.toFixed(2)}</h1>
+                        <div className='flex justify-center items-center gap-4'>
+                            <h1 className="text-3xl  font-extrabold"><span>{RUPEE_SYMBOL}</span>{showBalance ? balance.toFixed(2) : '-----'}</h1>
+                            {
+                                showBalance ? <EyeIcon onClick={() => setShowBalance(false)} /> : <EyeOffIcon onClick={() => setShowBalance(true)} />
+                            }
+                        </div>
                     </div>
                     <div className='h-full flex justify-between items-center group'>
-                        <Wallet2 width={40} height={40} className="text-text-dull transition-transform duration-300 group-hover:rotate-6" />
+                        <Wallet2 width={40} height={40} className="text-text-dull transition-transform duration-300 group-hover:rotate-6" onClick={() => redirect('/wallet')} />
                     </div>
                 </div>
                 <div className='h-px bg-text-dull'></div>

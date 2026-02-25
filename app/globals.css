@@ -300,10 +300,47 @@ body {
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
   animation: fade-in 0.35s ease-out;
+}
+
+/* globals.css or App.css */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+.react-datepicker {
+  @apply rounded-xl border border-gray-300 bg-gray-50 text-gray-900 shadow-lg;
+}
+
+.react-datepicker__header {
+  @apply bg-gray-50 border-b border-gray-300 rounded-t-xl;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker__time-name {
+  @apply text-gray-900;
+}
+
+.react-datepicker__day:hover,
+.react-datepicker__time-name:hover {
+  @apply bg-gray-200 rounded-lg;
 }

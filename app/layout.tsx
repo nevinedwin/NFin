@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import 'react-datepicker/dist/react-datepicker.css';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "NFin",
   description: "Nevin Finance Application",
-  manifest: '/manifest.webmenifest'
+  manifest: '/manifest.webmanifest'
 };
 
 export default function RootLayout({

@@ -14,25 +14,104 @@ datasource db {
 }
 
 
+enum TransactionType {
+  EXPENSE
+  INCOME
+  TRANSFER
+}
+
+enum CategoryType {
+  MAIN
+  SUB
+}
+
 model User {
   id        String   @id @default(uuid())
   clerkUserId String   @unique
   email     String   @unique
   name      String?
   imageUrl String?
+
+  records  Record[]
+  accounts    Account[]
+  categories    Category[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Records  Record[]
 }
 
 model Record {
   id        String   @id @default(uuid())
-  text      String
-  amount    Float
-  category  String @default("Other")
-  date      DateTime @default(now())
-  userId    String
-  user      User    @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
-  createdAt DateTime @default(now())
+
+  amount  Float
+  type  TransactionType
+  description String?
+
+  date  DateTime @default(now())
+  repeat  Boolean @default(false)
+
+  //Relations
+  userId  String
+  user  User  @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+
+  accountId   String
+  account   Account   @relation(fields: [accountId], references: [id])
+
+  categoryId    String
+  category    Category    @relation(fields: [categoryId], references: [id])
+
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([categoryId])
+}
+
+model Account {
+  id    String  @id @default(uuid())
+
+  name    String
+  accountNumber   String?
+  balance   Float @default(0)
+
+  ifscCode    String?
+  branch    String?
+
+
+  atmNumber   String?
+  cvv   String?
+  expiryDate    DateTime?
+
+  //Relations
+  userId  String
+  user  User  @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+
+  records   Record[]
+
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+
+model Category {
+  id    String  @id @default(uuid())
+
+  name  String
+  type  CategoryType
+
+  //Self Relation(Parent Category)
+  parentId    String?
+  parent  Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children  Category[]  @relation("CategoryHierarchy")
+
+  //Relations
+  userId  String
+  user    User  @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+
+  records   Record[]
+
+  createdAt   DateTime   @default(now())
+
   @@index([userId])
 }

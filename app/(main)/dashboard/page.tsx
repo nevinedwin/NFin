@@ -13,7 +13,7 @@ const Dashboard = () => {
     return (
         <div className="flex justify-center items-center flex-col">
             <div className="w-full">
-                <HeaderCard />
+                <HeaderCard balance={200} expense={100} income={800} showBalance={true}/>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full p-4">
                 <CardSkeleton className="w-full"/>
