@@ -18,6 +18,7 @@ const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0 }: Balance
     const [showBalance, setShowBalance] = useState<boolean>(showBal);
     const balance = useCountUp(totalBalance, 100)
 
+    console.log(balance);
 
     return (
         <Card className=" w-full border-none h-[160px] bg-surface p-0 
@@ -31,7 +32,7 @@ const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0 }: Balance
                     <div className='w-full flex justify-between items-center'>
                         <h2 className='text-3xl  font-extrabold'><span>{RUPEE_SYMBOL}</span> {showBalance ? balance.toFixed(2) : '-----'}</h2>
                         {
-                            showBalance ? <EyeIcon onClick={() => setShowBalance(false)} /> : <EyeOffIcon onClick={() => setShowBalance(true)} />
+                            showBalance ? <EyeIcon onClick={() => setShowBalance(false)} className='cursor-pointer' /> : <EyeOffIcon onClick={() => setShowBalance(true)} className='cursor-pointer'/>
                         }
                     </div>
                 </div>

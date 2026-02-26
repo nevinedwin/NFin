@@ -20,6 +20,13 @@ enum TransactionType {
   TRANSFER
 }
 
+enum AccountType {
+  BANK
+  WALLET
+  CREDIT
+  POST_OFFICE
+}
+
 enum CategoryType {
   MAIN
   SUB
@@ -73,9 +80,11 @@ model Account {
   name    String
   accountNumber   String?
   balance   Float @default(0)
+  type    AccountType
 
   ifscCode    String?
   branch    String?
+  countMeInTotal    Boolean @default(true)
 
 
   atmNumber   String?

@@ -18,11 +18,13 @@ export async function createAccountAction(formData: FormData) {
     const atmNumber = formData.get("atmNumber") as string | null;
     const cvv = formData.get("cvv") as string | null;
     const expiryDateRaw = formData.get("expiryDate") as string | null;
+    const type = 'CREDIT';
 
     if (!name) throw new Error("Account name is required");
 
     await prisma.account.create({
         data: {
+            type,
             name,
             accountNumber,
             balance,

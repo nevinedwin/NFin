@@ -1,37 +1,95 @@
-'use client';
 
 import React from 'react'
 import AccountCard from '@/components/wallet/accountCard'
 import BalanceCard from '@/components/wallet/balanceCard'
 import { PlusCircle } from 'lucide-react'
-import { redirect } from 'next/navigation'
-import Chip from '@/components/ui/chip';
 import WalletChip from '@/components/wallet/walletChip';
+import { auth } from '@clerk/nextjs/server'
+import { prisma } from '@/lib/prisma'
+import Link from 'next/link'
 
-const Wallet = () => {
+type WalletProp = {
+  params: Promise<{
+    accountId?: string;
+  }>
+}
+
+const Wallet = async ({ params }: WalletProp) => {
+
+  const { userId } = await auth();
+
+  if (!userId) {
+    return <div>Unauthorized</div>
+  }
+
+  const { accountId } = await params;
+  const selectedAccount = accountId || 'all';
+
+  console.log({ selectedAccount });
+
+  const accounts = await prisma.account.findMany({
+    where: {
+      userId,
+      ...(
+        selectedAccount && selectedAccount !== 'all'
+          ? { id: selectedAccount }
+          : {}
+      )
+    },
+    orderBy: { name: "desc" }
+  });
+
+  const allAccounts = await prisma.account.findMany({
+    where: { userId },
+    orderBy: { name: "desc" }
+  });
+
+  console.log(accounts);
+
+  const totalBalance = accounts.reduce((sum, acc) => {
+    return sum + acc.balance;
+  }, 0)
+
   return (
     <div className='flex flex-col justify-center items-center p-4 gap-6'>
       <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide'>
-        <WalletChip text='All' isAll selected={false}/>
-        <WalletChip text='9239' logo='FE' selected={false}/>
-        <WalletChip text='0032' logo='HD' selected={false}/>
-        <WalletChip text='0032' logo='HD' selected={false}/>
-        <WalletChip text='0032' logo='HD' selected={false}/>
-        <WalletChip text='0032' logo='HD' selected={false}/>
-        <WalletChip text='0032' logo='HD' selected={false}/>
+        <WalletChip
+          text="All"
+          isAll
+          selected={selectedAccount === "all"}
+          href="/wallet"
+        />
+        {
+          allAccounts.map(acc => (
+            <WalletChip
+              key={acc.id}
+              href={`/wallet/${acc.id}`}
+              text={acc.accountNumber?.slice(-4) || acc.name.slice(0, 4)}
+              logo={acc.name.slice(0, 2).toUpperCase()}
+              selected={selectedAccount === acc.id}
+            />
+          ))
+        }
       </div>
       <div className='w-full'>
-        <BalanceCard showBalance={true} totalBalance={200} />
+        <BalanceCard showBalance={true} totalBalance={totalBalance} />
       </div>
       <div className='w-full flex flex-col gap-4'>
-        <AccountCard accountNumber='bawscu723238' balance={200} lastUpdated="21 Jan '26" name='Federal Bank' />
-        <AccountCard accountNumber='bawscu728403' balance={2100} lastUpdated="1 Feb '26" name='HDFC Bank' />
-        <AccountCard accountNumber='bawscu7325' balance={100} lastUpdated="26 Feb '26" name='Central Bank of India' />
+        {accounts.map(acc => (
+          <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
+            <AccountCard
+              name={acc.name}
+              accountNumber={acc.accountNumber ?? "—"}
+              balance={acc.balance}
+              lastUpdated={new Date(acc.createdAt).toLocaleDateString("en-IN")}
+            />
+          </Link>
+        ))}
       </div>
-      <div className='flex justify-center items-center gap-2 cursor-pointer' onClick={() => redirect('/account')}>
+      <Link className='flex justify-center items-center gap-2 cursor-pointer' href={'/account'}>
         <div ><PlusCircle size={20} className='text-green-400' /></div>
         <h3 className='text-sm font-bold text-green-400'>Add another Account</h3>
-      </div>
+      </Link>
     </div>
   )
 }
