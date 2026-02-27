@@ -13,8 +13,6 @@ type WalletChipProp = {
 
 const WalletChip = ({ text, href = '', isAll, logo, selected = false, disabled = false }: WalletChipProp) => {
 
-    console.log(selected);
-
     return (
         isAll ?
             <Chip href={href} className={`w-[50px] ${selected ? 'text-black bg-white' : 'text-white bg-black'}`} selected={selected} disabled={disabled}>

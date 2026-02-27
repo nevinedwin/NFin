@@ -13,7 +13,6 @@ const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
   if (!userId) return <div>Unauthorized</div>
 
   const { accountId } = await params;
-  console.log(accountId);
 
   const account = await prisma.account.findFirst({
     where: {

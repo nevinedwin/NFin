@@ -1,86 +1,44 @@
-"use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import Header from "../../components/layout/header";
-import Footer from "../../components/layout/footer";
+import React from "react";
+import MainShell from "@/components/layout/mainShell";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
 
-const FOOTER_HEIGHT = 80;
-const FOOTER_PEEK = 30;
-const SCROLL_THRESHOLD = 10;
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
-    const mainRef = useRef<HTMLElement | null>(null);
-    const lastScrollY = useRef(0);
-    const ticking = useRef(false);
-    const hideFooterRef = useRef(false);
+const MainLayout = async ({ children }: { children: React.ReactNode }) => {
 
-    const [hideFooter, setHideFooter] = useState(false);
+    const { userId } = await auth();
 
-    useEffect(() => {
-        const el = mainRef.current;
-        if (!el) return;
+    let accounts: TransactionAccountType[] = [];
+    let category: TransactionCategoryType[] = [];
 
-        const update = () => {
-            const current = el.scrollTop;
-            const diff = current - lastScrollY.current;
+    if (userId) {
+        accounts = await prisma.account.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                name: true,
+                accountNumber: true,
+                balance: true,
+                countMeInTotal: true
+            },
+        });
 
-            if (Math.abs(diff) > SCROLL_THRESHOLD) {
-                const shouldHide = diff > 0;
-
-                if (hideFooterRef.current !== shouldHide) {
-                    hideFooterRef.current = shouldHide;
-                    setHideFooter(shouldHide);
-                }
-
-                lastScrollY.current = current;
-            }
-
-            ticking.current = false;
-        };
-
-        const onScroll = () => {
-            if (!ticking.current) {
-                requestAnimationFrame(update);
-                ticking.current = true;
-            }
-        };
-
-        el.addEventListener("scroll", onScroll, { passive: true });
-        return () => el.removeEventListener("scroll", onScroll);
-    }, []);
+        category = await prisma.category.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                name: true
+            },
+        });
+    }
 
     return (
-        <div className="h-dvh flex flex-col overflow-hidden relative">
-
-            {/* Header */}
-            <header className="h-[50px] shrink-0 z-10">
-                <Header />
-            </header>
-
-            {/* Main */}
-            <main
-                ref={mainRef}
-                className="flex-1 overflow-y-auto overscroll-none"
-                style={{ paddingBottom: FOOTER_HEIGHT }}
-            >
-                {children}
-            </main>
-
-            {/* Footer */}
-            <footer
-                style={{
-                    height: FOOTER_HEIGHT,
-                    transform: hideFooter
-                        ? `translateY(${FOOTER_HEIGHT - FOOTER_PEEK}px)`
-                        : "translateY(0px)",
-                }}
-                className="absolute bottom-0 left-0 right-0 bg-bar shadow-inner
-                   transition-transform duration-500
-                   ease-[cubic-bezier(0.22,1,0.36,1)]
-                   will-change-transform"
-            >
-                <Footer />
-            </footer>
-        </div>
+        <MainShell accounts={accounts} category={category}>
+            {children}
+        </MainShell>
     );
 }
+
+export default MainLayout;

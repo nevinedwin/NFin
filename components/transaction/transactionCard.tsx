@@ -1,21 +1,41 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
 import { RUPEE_SYMBOL } from "@/app/constants";
 import TypeButton from "../ui/typeButton";
 import SelectField from "./selectField";
 import { createTransaction } from "@/app/actions/transactions";
 import FormSubmitBtn from "../ui/formSubmitBtn";
+import { TransactionType } from "@/generated/prisma/client";
+import { useTransactionForm } from "@/app/(main)/features/transaction/useTransactionForm";
+import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
+import { useEffect } from "react";
 
-type TxType = "EXPENSE" | "INCOME" | "TRANSFER";
 
-export default function TransactionCard() {
 
-    const [type, setType] = useState<TxType>("EXPENSE");
-    const [repeat, setRepeat] = useState<boolean>(false);
+type TransactionCardProp = {
+    accounts: TransactionAccountType[],
+    category: TransactionCategoryType[],
+    closeFn: () => void
+}
+
+
+export default function TransactionCard({ accounts, category, closeFn }: TransactionCardProp) {
+
+    const { state, setField, reset } = useTransactionForm();
+    const { accountId, amount, categoryId, description, repeat, type } = state;
+
+    useEffect(() => {
+        return () => {
+            reset();
+        };
+    }, [])
 
     return (
-        <form action={createTransaction} className="w-full max-w-md mx-auto rounded-3xl shadow-xl px-2 space-y-[-10] animate-fade-in">
+        <form
+            action={createTransaction}
+            onSubmit={() => closeFn()}
+            className="w-full max-w-md mx-auto rounded-3xl shadow-xl px-2 space-y-[-10] animate-fade-in"
+        >
 
             <input type="hidden" name="type" value={type} />
             <input type="hidden" name="repeat" value={String(repeat)} />
@@ -29,6 +49,8 @@ export default function TransactionCard() {
                         <input
                             name="amount"
                             type="number"
+                            value={amount}
+                            onChange={e => setField('amount', e.target.value)}
                             placeholder="0.00"
                             inputMode="decimal"
                             required
@@ -41,15 +63,15 @@ export default function TransactionCard() {
                     </div>
                 </div>
                 <div className="grid gap-2 px-6 rounded-xl justify-center items-center">
-                    <TypeButton active={type === "EXPENSE"} onClick={() => setType("EXPENSE")} label="Expense" color="red" />
-                    <TypeButton active={type === "INCOME"} onClick={() => setType("INCOME")} label="Income" color="green" />
-                    <TypeButton active={type === "TRANSFER"} onClick={() => setType("TRANSFER")} label="Transfer" color="blue" />
+                    <TypeButton active={type === TransactionType.EXPENSE} onClick={() => setField("type", TransactionType.EXPENSE)} label="Expense" color="red" />
+                    <TypeButton active={type === TransactionType.INCOME} onClick={() => setField("type", TransactionType.INCOME)} label="Income" color="green" />
+                    <TypeButton active={type === TransactionType.TRANSFER} onClick={() => setField("type", TransactionType.TRANSFER)} label="Transfer" color="blue" />
                 </div>
                 {/* Repeat Toggle */}
                 <div className="flex justify-start items-center gap-3 mt-1">
                     <span className="text-sm text-slate-600">Repeat</span>
                     <button
-                        onClick={() => setRepeat(!repeat)}
+                        onClick={() => setField("repeat", !repeat)}
                         className={`w-12 h-6 flex items-center rounded-full p-1 transition-all duration-300 ${repeat ? "bg-slate-500" : "bg-bar"}`}
                     >
                         <span
@@ -61,16 +83,38 @@ export default function TransactionCard() {
 
             {/* Category */}
             <div className="grid grid-cols-2 gap-3">
-                <SelectField label="Category" name="categoryId">
-                    <option>Food</option>
-                    <option>Shopping</option>
-                    <option>Salary</option>
+                <SelectField
+                    label="Category"
+                    name="categoryId"
+                    value={categoryId}
+                    onChange={(e) => setField("categoryId", e.target.value)}
+                    required
+                >
+                    <option value="" disabled>
+                        Select category
+                    </option>
+                    {
+                        category.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))
+                    }
                 </SelectField>
                 {/* Account */}
-                <SelectField label="Account" name="accountId">
-                    <option>Cash</option>
-                    <option>Bank</option>
-                    <option>Wallet</option>
+                <SelectField
+                    label="Account"
+                    name="accountId"
+                    value={accountId}
+                    onChange={(e) => setField("accountId", e.target.value)}
+                    required
+                >
+                    <option value="" disabled>
+                        Select account
+                    </option>
+                    {
+                        accounts.map((acc) => (
+                            <option key={acc.id} value={acc.id}>{acc.name}</option>
+                        ))
+                    }
                 </SelectField>
             </div>
 
@@ -79,6 +123,8 @@ export default function TransactionCard() {
                 <label className="text-sm text-slate-500">Description</label>
                 <textarea
                     name="description"
+                    value={description}
+                    onChange={(e) => setField("description", e.target.value)}
                     placeholder="Add note..."
                     className="w-full mt-1 mb-4 border border-border rounded-xl p-3 outline-none bg-black text-base"
                     rows={2}
@@ -86,7 +132,12 @@ export default function TransactionCard() {
             </div>
 
             {/* Submit */}
-            <FormSubmitBtn label="Save Transaction" type="submit" className="font-semibold"/>
+            <FormSubmitBtn
+                label="Save Transaction"
+                type="submit"
+                disabled={!accountId}
+                className="font-semibold"
+            />
         </form>
     );
 }

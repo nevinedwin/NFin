@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useCallback } from "react";
+import { memo } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,8 +11,9 @@ import {
     Wallet,
     X,
 } from "lucide-react";
-import TransactionCard from "../transaction/transactionCard";
 import CloseButton from "../ui/closeButton";
+import TransactionCard from "../transaction/transactionCard";
+import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
 
 const NAV_ITEMS = [
     { href: "/budget", label: "Budget", icon: <HandCoins size={20} /> },
@@ -28,14 +29,20 @@ const vibrate = () => {
     }
 };
 
-const Footer = memo(() => {
-    const pathname = usePathname();
-    const [open, setOpen] = useState(false);
+type FooterProp = {
+    accounts: TransactionAccountType[],
+    category: TransactionCategoryType[],
+    open: boolean,
+    toggle: () => void
+}
 
-    const toggle = useCallback(() => {
-        vibrate();
-        setOpen(prev => !prev);
-    }, []);
+const Footer = memo(({ accounts, category, toggle, open }: FooterProp) => {
+    const pathname = usePathname();
+
+    const handleLinkCLick = () => {
+        vibrate()
+        open && toggle();
+    };
 
     return (
         <>
@@ -48,25 +55,24 @@ const Footer = memo(() => {
             />
 
             {/* Expanding Panel */}
-            <div
-                className={`fixed bottom-20 z-50
-                    transition-all duration-300 ease-out
-                    ${open
-                        ? "opacity-100 scale-100 translate-y-0"
-                        : "opacity-0 scale-90 translate-y-6 pointer-events-none"
-                    }`}
-            >
-                <div className="w-[100vw] h-[480px] rounded-t-3xl bg-black  shadow-2xl p-5 text-slate-500">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-md font-semibold">New Transaction</h3>
-                        <CloseButton size={20} onClick={toggle}/>
-                    </div>
+            {
+                open && (
+                    <div className="fixed bottom-20 z-50 transition-all duration-300 ease-out">
+                        <div className="w-[100vw] h-[480px] rounded-t-3xl bg-black shadow-2xl p-5 text-slate-500">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-md font-semibold">New Transaction</h3>
+                                <CloseButton size={20} onClick={toggle} />
+                            </div>
 
-                    <div >
-                        <TransactionCard />
+                            <TransactionCard
+                                accounts={accounts}
+                                category={category}
+                                closeFn={toggle}
+                            />
+                        </div>
                     </div>
-                </div>
-            </div>
+                )
+            }
 
             {/* Footer */}
             <footer className="footer">
@@ -80,8 +86,8 @@ const Footer = memo(() => {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                onClick={vibrate}
-                                className={`footer-item  transform transition-transform duration-300 ease-out  ${active ? "active" : ""} ${index === 2 && !open ?  "translate-y-4 scale-105" : "translate-y-0"
+                                onClick={handleLinkCLick}
+                                className={`footer-item  transform transition-transform duration-300 ease-out  ${active ? "active" : ""} ${index === 2 && !open ? "translate-y-4 scale-105" : "translate-y-0"
                                     }`}
                             >
                                 <span className="icon">{item.icon}</span>

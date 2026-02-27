@@ -1,34 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Input from "../ui/input";
 import FormSubmitBtn from "../ui/formSubmitBtn";
 import CustomDatePicker from "../ui/datePicker";
 import CloseButton from "../ui/closeButton";
 import { useRouter } from "next/navigation";
 import { createAccountAction } from "@/app/actions/accounts";
+import { useMainShellContext } from "@/app/(main)/context/mainShellContext";
 
 export default function AccountForm() {
-    const [submitting, setSubmitting] = useState(false);
     const [monthYear, setMonthYear] = useState<Date | null>(null);
+    const [isPending, startTransition] = useTransition();
+
+    const { startLoading } = useMainShellContext();
 
     const router = useRouter()
 
     return (
         <form
             action={async (formData: FormData) => {
-                setSubmitting(true);
-                try {
-                    await createAccountAction(formData);
-                    alert("Account created successfully!");
-                    const form = document.getElementById("account-form") as HTMLFormElement | null;
-                    form?.reset();
-                    setMonthYear(null);
-                } catch (err) {
-                    alert((err as Error).message);
-                } finally {
-                    setSubmitting(false);
-                }
+                startLoading();
+
+                startTransition(() => {
+                    createAccountAction(formData);
+                });
             }}
             id="account-form"
             className="max-w-md mx-auto bg-background rounded-3xl p-6  space-y-4 animate-fade-in grid"
@@ -109,8 +105,8 @@ export default function AccountForm() {
             <FormSubmitBtn
                 label="Create Account"
                 type="submit"
-                disabled={submitting}
-                className="font-bold !bg-black/50 !text-slate-400"
+                disabled={isPending}
+                className="font-bold !bg-white/50 !text-slate-900"
             />
         </form>
     );

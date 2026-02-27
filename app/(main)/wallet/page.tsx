@@ -25,8 +25,6 @@ const Wallet = async ({ params }: WalletProp) => {
   const { accountId } = await params;
   const selectedAccount = accountId || 'all';
 
-  console.log({ selectedAccount });
-
   const accounts = await prisma.account.findMany({
     where: {
       userId,
@@ -43,8 +41,6 @@ const Wallet = async ({ params }: WalletProp) => {
     where: { userId },
     orderBy: { name: "desc" }
   });
-
-  console.log(accounts);
 
   const totalBalance = accounts.reduce((sum, acc) => {
     return sum + acc.balance;

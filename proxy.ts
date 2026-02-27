@@ -13,7 +13,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     const { pathname } = req.nextUrl;
 
-    // ✅ NEVER block auth pages
+    // NEVER block auth pages
     if (
         pathname.startsWith("/sign-up") ||
         pathname.startsWith("/sign-in")
@@ -32,15 +32,13 @@ export default clerkMiddleware(async (auth, req) => {
 
         const email = user.primaryEmailAddress?.emailAddress;
 
-        console.log("🔥 USER EMAIL:", email);
 
         if (email && !ALLOWED_EMAILS.includes(email)) {
             const email = sessionClaims?.email as string | undefined;
 
             if (email && !ALLOWED_EMAILS.includes(email)) {
-                console.log("🚫 Unauthorized email → signing out:", email);
 
-                // ✅ Sign out by clearing Clerk session
+                // Sign out by clearing Clerk session
                 const res = NextResponse.redirect(new URL("/sign-up", req.url));
 
                 res.cookies.delete("__session"); // Clerk session cookie

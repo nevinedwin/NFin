@@ -39,7 +39,6 @@ export async function POST(req: Request) {
 
     // Handle Clerk events
     if (eventType === "user.created" || eventType === "user.updated") {
-        console.log(evt.data);
         const { id, email_addresses, first_name, image_url } = evt?.data;
 
         const email = email_addresses?.[0]?.email_address;

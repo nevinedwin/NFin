@@ -18,8 +18,6 @@ const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0 }: Balance
     const [showBalance, setShowBalance] = useState<boolean>(showBal);
     const balance = useCountUp(totalBalance, 100)
 
-    console.log(balance);
-
     return (
         <Card className=" w-full border-none h-[160px] bg-surface p-0 
                  transition-all duration-300 ease-out 
