@@ -35,7 +35,7 @@ enum CategoryType {
 model User {
   id        String   @id @default(uuid())
   clerkUserId String   @unique
-  email     String
+  email     String  @unique
   name      String?
   imageUrl String?
 

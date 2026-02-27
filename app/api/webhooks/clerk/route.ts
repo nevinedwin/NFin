@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
     if (!WEBHOOK_SECRET) {
-        throw new Error("Missing CLERK_WEBHOOK_SECRET");
+        return new Response("Missing webhook secret", { status: 500 });
     }
 
     const headerPayload = await headers();
@@ -35,34 +35,53 @@ export async function POST(req: Request) {
         return new Response("Invalid signature", { status: 400 });
     }
 
-    const eventType = evt?.type;
+    const eventType = evt.type;
+    const data = evt.data;
 
-    // Handle Clerk events
-    if (eventType === "user.created" || eventType === "user.updated") {
-        const { id, email_addresses, first_name, image_url } = evt?.data;
+    try {
+        // ================================
+        // USER CREATED / UPDATED
+        // ================================
+        if (eventType === "user.created" || eventType === "user.updated") {
+            const email = data.email_addresses?.[0]?.email_address;
 
-        const email = email_addresses?.[0]?.email_address;
+            if (!email) {
+                return new Response("Email missing", { status: 400 });
+            }
 
-        if (!email) {
-            return new Response("Email missing", { status: 400 });
+            await prisma.user.upsert({
+                where: { email }, // EMAIL IS UNIQUE ID
+                update: {
+                    clerkUserId: data.id, // always update to latest
+                    name: data.first_name ?? "",
+                    imageUrl: data.image_url ?? "",
+                },
+                create: {
+                    email,
+                    clerkUserId: data.id,
+                    name: data.first_name ?? "",
+                    imageUrl: data.image_url ?? "",
+                },
+            });
         }
 
-        await prisma.user.upsert({
-            where: { clerkUserId: id },
-            update: {
-                email,
-                name: first_name,
-                imageUrl: image_url,
-                updatedAt: new Date(),
-            },
-            create: {
-                clerkUserId: id,
-                email,
-                name: first_name,
-                imageUrl: image_url,
-            },
-        });
-    }
+        // ================================
+        // USER DELETED
+        // ================================
+        if (eventType === "user.deleted") {
+            const email = data.email_addresses?.[0]?.email_address;
 
-    return new Response("Webhook processed", { status: 200 });
+            if (email) {
+                await prisma.user.delete({
+                    where: { email },
+                });
+            }
+        }
+
+        return new Response("Webhook processed", { status: 200 });
+
+    } catch (error) {
+        console.error("Webhook DB error:", error);
+        return new Response("Database error", { status: 500 });
+    }
 }
