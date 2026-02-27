@@ -1,15 +1,15 @@
 'use server';
 
+import { getCurrentUser } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 
 export async function createAccountAction(formData: FormData) {
-    const { userId } = await auth();
+    const user = await getCurrentUser();
 
-    if (!userId) throw new Error("Unauthorized");
+    if (!user) throw new Error("Unauthorized");
 
     const name = formData.get("name") as string;
     const accountNumber = formData.get("accountNumber") as string | null;
@@ -32,7 +32,7 @@ export async function createAccountAction(formData: FormData) {
             ifscCode,
             branch,
             atmNumber,
-            userId,
+            userId: user.id,
             cvv,
             expiryDate: expiryDateRaw ? new Date(expiryDateRaw) : null
         },

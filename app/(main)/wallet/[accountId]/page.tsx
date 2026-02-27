@@ -1,7 +1,7 @@
-import WalletChip from '@/components/wallet/walletChip';
-import { prisma } from '@/lib/prisma';
-import { auth } from '@clerk/nextjs/server'
 import React from 'react'
+import WalletChip from '@/components/wallet/walletChip';
+import { getCurrentUser } from '@/lib/db';
+import { prisma } from '@/lib/prisma';
 
 type WalletSinglePageProps = {
   params: Promise<{ accountId: string }>
@@ -9,21 +9,21 @@ type WalletSinglePageProps = {
 
 const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
 
-  const { userId } = await auth();
-  if (!userId) return <div>Unauthorized</div>
+  const user = await getCurrentUser();
+  if (!user) return <div>Unauthorized</div>
 
   const { accountId } = await params;
 
   const account = await prisma.account.findFirst({
     where: {
       id: accountId,
-      userId
+      userId: user.id
     }
   })
 
 
   const allAccounts = await prisma.account.findMany({
-    where: { userId },
+    where: { userId: user.id },
     orderBy: { name: "desc" }
   });
 

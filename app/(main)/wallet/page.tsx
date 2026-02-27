@@ -7,6 +7,7 @@ import WalletChip from '@/components/wallet/walletChip';
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import { getCurrentUser } from '@/lib/db';
 
 type WalletProp = {
   params: Promise<{
@@ -16,9 +17,9 @@ type WalletProp = {
 
 const Wallet = async ({ params }: WalletProp) => {
 
-  const { userId } = await auth();
+  const user = await getCurrentUser();
 
-  if (!userId) {
+  if (!user) {
     return <div>Unauthorized</div>
   }
 
@@ -27,7 +28,7 @@ const Wallet = async ({ params }: WalletProp) => {
 
   const accounts = await prisma.account.findMany({
     where: {
-      userId,
+      userId: user.id,
       ...(
         selectedAccount && selectedAccount !== 'all'
           ? { id: selectedAccount }
@@ -38,7 +39,7 @@ const Wallet = async ({ params }: WalletProp) => {
   });
 
   const allAccounts = await prisma.account.findMany({
-    where: { userId },
+    where: { userId: user.id },
     orderBy: { name: "desc" }
   });
 

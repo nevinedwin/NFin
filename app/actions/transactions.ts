@@ -1,14 +1,14 @@
 'use server';
 
 import { TransactionType } from "@/generated/prisma/client";
+import { getCurrentUser } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 export async function createTransaction(formData: FormData) {
-    const { userId } = await auth();
+    const user = await getCurrentUser();
 
-    if (!userId) {
+    if (!user) {
         throw new Error("Unauthorized");
     }
 
@@ -36,7 +36,7 @@ export async function createTransaction(formData: FormData) {
             date: date ? new Date(date.toString()) : undefined,
             repeat,
             type,
-            user: { connect: { clerkUserId: userId } }
+            user: { connect: { id: user.id } }
         }
     });
 

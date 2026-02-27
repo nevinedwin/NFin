@@ -59,7 +59,7 @@ model Record {
 
   //Relations
   userId  String
-  user  User  @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   accountId   String
   account   Account   @relation(fields: [accountId], references: [id])
@@ -93,7 +93,7 @@ model Account {
 
   //Relations
   userId  String
-  user  User  @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   records   Record[]
 
@@ -116,7 +116,7 @@ model Category {
 
   //Relations
   userId  String
-  user    User  @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   records   Record[]
 
