@@ -1,5 +1,6 @@
 'use server';
 
+import { AccountType } from "@/generated/prisma/client";
 import { getCurrentUser } from "@/lib/db";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -18,8 +19,8 @@ export async function createAccountAction(formData: FormData) {
     const branch = formData.get("branch") as string | null;
     const atmNumber = formData.get("atmNumber") as string | null;
     const cvv = formData.get("cvv") as string | null;
-    const expiryDateRaw = formData.get("expiryDate") as string | null;
-    const type = 'CREDIT';
+    const expiryDateRaw = formData.get("expiryDate") as string | '';
+    const type = AccountType.BANK;
 
     if (!name) throw new Error("Account name is required");
 
@@ -34,7 +35,7 @@ export async function createAccountAction(formData: FormData) {
             atmNumber,
             userId: user.id,
             cvv,
-            expiryDate: expiryDateRaw ? new Date(expiryDateRaw) : null
+            expiryDate: expiryDateRaw
         },
     });
 

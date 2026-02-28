@@ -86,12 +86,11 @@ export default function AccountForm() {
             />
 
             <div className="w-full grid grid-cols-2 gap-3 pb-5">
-                <CustomDatePicker
-                    label="Expiry Date"
+                <Input
+                    type="text"
                     name="expiryDate"
-                    selected={monthYear}
-                    onChange={setMonthYear}
-                    mode="monthYear"
+                    label="Expiry Date"
+                    placeholder="01/28"
                 />
                 <Input
                     type="text"

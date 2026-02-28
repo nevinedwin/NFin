@@ -27,7 +27,7 @@ export async function createTransaction(formData: FormData) {
         throw new Error("Invalid Amount");
     }
 
-    await prisma.record.create({
+    await prisma.transaction.create({
         data: {
             amount,
             description,
