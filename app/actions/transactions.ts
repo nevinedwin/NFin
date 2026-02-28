@@ -9,7 +9,7 @@ export async function createTransaction(formData: FormData) {
     const user = await getCurrentUser();
 
     if (!user) {
-        throw new Error("Unauthorized");
+        throw new Error("Unauthorized!");
     }
 
     const amount = Number(formData.get("amount"));
