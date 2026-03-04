@@ -8,7 +8,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "migrate": "npx prisma migrate dev --name mig2"
+    "migrate": "npx prisma migrate dev --name mig2",
+    "prisma": "prisma generate"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.38.0",
@@ -20,6 +21,7 @@
     "bcrypt": "^6.0.0",
     "clsx": "^2.1.1",
     "cookie": "^1.1.1",
+    "crypto": "^1.0.1",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "formik": "^2.4.9",

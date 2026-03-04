@@ -1,5 +1,6 @@
 import { LogOutIcon, Settings } from "lucide-react"
 import Tooltip from "../ui/tooltip"
+import { logOut } from "@/auth/auth.actions"
 
 const Header = () => {
   return (
@@ -17,7 +18,7 @@ const Header = () => {
           </button>
         </Tooltip>
         <Tooltip label="Logout">
-          <LogOutIcon className="cursor-pointer" size={20} />
+          <LogOutIcon className="cursor-pointer" size={20} onClick={async () => logOut()} />
         </Tooltip>
       </div>
     </header>

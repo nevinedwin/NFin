@@ -1,14 +1,14 @@
 'use server';
 
+import { getCurrentUser } from "@/auth/currentUser";
 import { AccountType } from "@/generated/prisma/client";
-import { getServerUser } from "@/lib/auth.server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 
 export async function createAccountAction(formData: FormData) {
-    const user = await getServerUser();
+    const user = await getCurrentUser();
 
     if (!user) throw new Error("Unauthorized");
 

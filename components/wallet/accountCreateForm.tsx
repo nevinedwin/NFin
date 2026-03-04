@@ -6,7 +6,7 @@ import FormSubmitBtn from "../ui/formSubmitBtn";
 import CustomDatePicker from "../ui/datePicker";
 import CloseButton from "../ui/closeButton";
 import { useRouter } from "next/navigation";
-import { createAccountAction } from "@/app/actions/accounts";
+import { createAccountAction } from "@/actions/accounts";
 import { useMainShellContext } from "@/app/(main)/context/mainShellContext";
 
 export default function AccountForm() {

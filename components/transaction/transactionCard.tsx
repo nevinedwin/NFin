@@ -1,9 +1,9 @@
 "use client";
 
-import { RUPEE_SYMBOL } from "@/app/constants";
+import { RUPEE_SYMBOL } from "@/lib/constants/constants";
 import TypeButton from "../ui/typeButton";
 import SelectField from "./selectField";
-import { createTransaction } from "@/app/actions/transactions";
+import { createTransaction } from "@/actions/transactions";
 import FormSubmitBtn from "../ui/formSubmitBtn";
 import { TransactionType } from "@/generated/prisma/client";
 import { useTransactionForm } from "@/app/(main)/features/transaction/useTransactionForm";

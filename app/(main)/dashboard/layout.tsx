@@ -1,11 +1,9 @@
-import { getServerUser } from "@/lib/auth.server";
+import { getCurrentUser } from "@/auth/currentUser";
 import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-    const user = await getServerUser();
-
-    console.log(user, 'dashboard');
+    const user = await getCurrentUser();
 
     if (!user) {
         redirect("/sign-up");

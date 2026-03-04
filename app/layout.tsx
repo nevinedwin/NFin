@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthProvider } from "@/context/AuthContext";
 import 'react-datepicker/dist/react-datepicker.css';
 import "./globals.css";
 
@@ -29,9 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark suppressHydrationWarning`}>
       <body className="bg-background">
-        <AuthProvider>
           {children}
-        </AuthProvider>
       </body>
     </html>
   );

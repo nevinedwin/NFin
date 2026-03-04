@@ -7,7 +7,6 @@ import { TransactionAccountType, TransactionCategoryType } from "@/types/transac
 import { MainShellProvider } from "@/app/(main)/context/mainShellContext";
 import TopLoader from "../ui/topLoader";
 import { usePathname } from "next/navigation";
-import ProtectedRoutes from "./protectedRoutes";
 
 const FOOTER_HEIGHT = 80;
 const FOOTER_PEEK = 30;

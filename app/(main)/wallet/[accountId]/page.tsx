@@ -1,7 +1,7 @@
 import React from 'react'
 import WalletChip from '@/components/wallet/walletChip';
 import { prisma } from '@/lib/prisma';
-import { getServerUser } from '@/lib/auth.server';
+import { getCurrentUser } from '@/auth/currentUser';
 
 type WalletSinglePageProps = {
   params: Promise<{ accountId: string }>
@@ -9,7 +9,7 @@ type WalletSinglePageProps = {
 
 const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
 
-  const user = await getServerUser();
+  const user = await getCurrentUser();
   if (!user) return <div>Unauthorized</div>
 
   const { accountId } = await params;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Input from '@/components/ui/input'
-import { useAuth } from '@/context/AuthContext'
+import { signIn } from '@/auth/auth.actions'
 
 type LoginFormProp = {
     handleClick: () => void
@@ -11,14 +11,11 @@ const LoginForm = ({ handleClick }: LoginFormProp) => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-
-    const { login } = useAuth();
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         try {
-            await login(email, password);
+            await signIn({ email, password });
         } catch (err) {
             console.error(err);
         } finally {

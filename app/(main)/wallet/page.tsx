@@ -7,7 +7,7 @@ import WalletChip from '@/components/wallet/walletChip';
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { redirect } from 'next/navigation';
-import { getServerUser } from '@/lib/auth.server';
+import { getCurrentUser } from '@/auth/currentUser';
 
 type WalletProp = {
   params: Promise<{
@@ -17,7 +17,7 @@ type WalletProp = {
 
 const Wallet = async ({ params }: WalletProp) => {
 
-  const user = await getServerUser();
+  const user = await getCurrentUser();
 
   if (!user) {
     return redirect('/sign-up')

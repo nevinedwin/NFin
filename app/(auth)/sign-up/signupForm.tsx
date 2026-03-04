@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useState } from 'react'
 import Input from '@/components/ui/input'
-import { useAuth } from '@/context/AuthContext'
+import { signUp } from '@/auth/auth.actions'
 
 
 type SignupFormProp = {
@@ -9,7 +11,7 @@ type SignupFormProp = {
 
 const SignupForm = ({ handleClick }: SignupFormProp) => {
 
-    const { signup } = useAuth();
+    // const { signup } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
@@ -19,8 +21,12 @@ const SignupForm = ({ handleClick }: SignupFormProp) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const data = await signup(name, email, password);
-            console.log(data);
+            const payload = {
+                name,
+                email,
+                password
+            }
+            const data = await signUp(payload);
 
         } catch (err) {
             console.error(err);
@@ -45,11 +51,11 @@ const SignupForm = ({ handleClick }: SignupFormProp) => {
                 <Input placeholder='Name' value={name} onChange={e => setName(e.target.value)} className='text-sm' containerClassName='w-full md:w-[300px] px-4' />
                 <Input placeholder='email' value={email} onChange={e => setEmail(e.target.value)} className='text-sm' containerClassName='w-full md:w-[300px] px-4' />
                 <Input placeholder='password' value={password} onChange={e => setPassword(e.target.value)} className='text-sm' containerClassName='w-full md:w-[300px] px-4' />
-                <div className='w-full px-4'>
+                <div className='w-full px-4 flex justify-center items-center'>
                     <button type="submit" disabled={loading} className='bg-black mt-2 border bodred-white w-full md:w-[200px] p-2 rounded-lg text-sm'>Sign Up</button>
                 </div>
             </form>
-            <div className='flex justify-center items-center gap-2 mt-2'>
+            <div className='flex justify-center items-center gap-2 mt-2 pb-4'>
                 <p className='text-sm mt-2 text-text-secondary '>Already have an account?</p>
                 <button className='text-sm text-center font-bold mt-2' onClick={handleClick}>Sign In</button>
             </div>

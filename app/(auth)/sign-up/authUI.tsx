@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react'
 import SignupLogo from '../../../components/ui/signupLogo'
-import { SIGNUP_DATA } from '../../constants'
+import { SIGNUP_DATA } from '../../../lib/constants/constants'
 import SignupForm from './signupForm'
-import LoginForm from './loginForm'
+import LoginForm from './signInForm'
 
 
 const SignupUI = () => {
@@ -19,7 +19,7 @@ const SignupUI = () => {
         <div className="min-h-dvh bg-background flex flex-col">
 
             {/* Top Branding (40%) */}
-            <div className="h-[42vh] flex items-center justify-center px-6 text-center">
+            <div className="h-[30vh] flex items-center justify-center px-6 text-center">
                 <SignupLogo
                     title={SIGNUP_DATA.TITLE}
                     subtitle={SIGNUP_DATA.SUBTITLE}

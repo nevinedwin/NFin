@@ -4,14 +4,12 @@ import MainShell from "@/components/layout/mainShell";
 import { prisma } from "@/lib/prisma";
 import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
 import { redirect } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
-import { getServerUser } from "@/lib/auth.server";
+import { getCurrentUser } from "@/auth/currentUser";
 
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
 
-    const user = await getServerUser();
-    console.log('user', user);
+    const user = await getCurrentUser();
     if (!user) return redirect('/sign-up')
 
     let accounts: TransactionAccountType[] = [];

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
 import { ArrowDown, ArrowUp, EyeIcon, EyeOffIcon, Wallet2 } from 'lucide-react'
-import { RUPEE_SYMBOL } from '@/app/constants'
+import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp';
 import { redirect } from 'next/navigation';
 

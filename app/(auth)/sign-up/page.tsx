@@ -1,12 +1,12 @@
 
 import React from 'react'
-import { redirect } from 'next/navigation'
-import SignupUI from './signup-ui'
-import { getServerUser } from '@/lib/auth.server';
+import SignupUI from './authUI'
+import { getCurrentUser } from '@/auth/currentUser';
+import { redirect } from 'next/navigation';
 
 const SignUpPage = async () => {
 
-    const user = await getServerUser();
+    const user = await getCurrentUser();
 
     if (user) redirect('/dashboard')
 

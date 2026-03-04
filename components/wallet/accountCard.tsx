@@ -3,7 +3,7 @@
 import React from 'react'
 import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
-import { RUPEE_SYMBOL } from '@/app/constants'
+import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp'
 
 type AccountCardProps = {
