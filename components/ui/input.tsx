@@ -27,9 +27,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ label, requiredLabel =
                     rounded-xl
                     p-3
                     outline-none
-                    bg-border
-                    text-gray-50
-                    placeholder:text-gray-700
+                    bg-white
+                    text-black
+                    placeholder:text-gray-400
                     border border-gray-900
 
                     shadow-inner

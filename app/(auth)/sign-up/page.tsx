@@ -1,16 +1,16 @@
 
 import React from 'react'
-import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import SignupUI from './signup-ui'
+import { getServerUser } from '@/lib/auth.server';
 
 const SignUpPage = async () => {
 
-    const {userId} = await auth();
+    const user = await getServerUser();
 
-    if (userId) redirect('/dashboard')
+    if (user) redirect('/dashboard')
 
-    return <SignupUI/>
+    return <SignupUI />
 }
 
 export default SignUpPage

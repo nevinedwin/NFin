@@ -1,12 +1,12 @@
 'use server';
 
 import { TransactionType } from "@/generated/prisma/client";
-import { getCurrentUser } from "@/lib/db";
+import { getServerUser } from "@/lib/auth.server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export async function createTransaction(formData: FormData) {
-    const user = await getCurrentUser();
+    const user = await getServerUser();
 
     if (!user) {
         throw new Error("Unauthorized!");

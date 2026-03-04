@@ -1,10 +1,12 @@
 import Splashscreen from "@/components/layout/splashscreen";
-import { auth } from "@clerk/nextjs/server";
+import { getServerUser } from "@/lib/auth.server";
 
 export default async function Home() {
-  const { userId } = await auth();
+  const user = await getServerUser();
 
-  const target = userId ? "/dashboard" : "/sign-up";
+  console.log('page');
+
+  const target = user ? "/dashboard" : "/sign-up";
 
   return <Splashscreen target={target} />;
 }

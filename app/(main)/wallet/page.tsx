@@ -4,10 +4,10 @@ import AccountCard from '@/components/wallet/accountCard'
 import BalanceCard from '@/components/wallet/balanceCard'
 import { PlusCircle } from 'lucide-react'
 import WalletChip from '@/components/wallet/walletChip';
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { getCurrentUser } from '@/lib/db';
+import { redirect } from 'next/navigation';
+import { getServerUser } from '@/lib/auth.server';
 
 type WalletProp = {
   params: Promise<{
@@ -17,10 +17,10 @@ type WalletProp = {
 
 const Wallet = async ({ params }: WalletProp) => {
 
-  const user = await getCurrentUser();
+  const user = await getServerUser();
 
   if (!user) {
-    return <div>Unauthorized</div>
+    return redirect('/sign-up')
   }
 
   const { accountId } = await params;

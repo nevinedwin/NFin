@@ -13,6 +13,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRoles {
+  USER
+  ADMIN
+}
+
 enum TransactionType {
   EXPENSE
   INCOME
@@ -82,24 +87,55 @@ enum InvestmentStatus {
 }
 
 model User {
-  id          String  @id @default(uuid())
-  clerkUserId String  @unique
-  email       String  @unique
-  name        String?
-  imageUrl    String?
+  id           String    @id @default(uuid())
+  email        String    @unique
+  name         String?
+  imageUrl     String?
+  passwordHash String?
+  role         UserRoles @default(USER)
+  isVerified   Boolean   @default(false)
 
-  transactions Transaction[]
-  accounts     Account[]
-  categories   Category[]
-  contacts     Contact[]
-  balances     ContactBalance[]
-  budgets      Budget[]
-  goals        Goal[]
-  investments Investment[]
-  insurancePolicies InsurancePolicy[]
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  transactions        Transaction[]
+  accounts            Account[]
+  categories          Category[]
+  contacts            Contact[]
+  balances            ContactBalance[]
+  budgets             Budget[]
+  goals               Goal[]
+  investments         Investment[]
+  insurancePolicies   InsurancePolicy[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model RefreshToken {
+  id String @id @default(uuid())
+
+  tokenHash String
+  expiresAt DateTime
+  revoked Boolean  @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id String @id @default(uuid())
+
+  tokenHash String
+  expiresAt DateTime
+
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  @@index([userId])
 }
 
 model Contact {
@@ -189,7 +225,7 @@ model Category {
   name String
   type CategoryType
 
-  isActive Boolean @default(true)
+  isActive  Boolean @default(true)
   isDeleted Boolean @default(false)
 
   //Self Relation(Parent Category)
@@ -250,9 +286,9 @@ model Transaction {
 model TransactionParticipant {
   id String @id @default(uuid())
 
-  shareAmount Float
+  shareAmount      Float
   obligationAmount Float
-  paidAmount  Float @default(0)
+  paidAmount       Float @default(0)
 
   status ObligationStatus @default(PENDING)
 
@@ -393,21 +429,21 @@ model Investment {
 
   status InvestmentStatus @default(ACTIVE)
 
-  investedAmount  Float
-  currentValue  Float?
+  investedAmount Float
+  currentValue   Float?
 
   folioNumber String?
-  brokerName String?
-  sipDate DateTime?
-  sipAmount Float?
+  brokerName  String?
+  sipDate     DateTime?
+  sipAmount   Float?
 
-  startDate DateTime
-  maturityDate  DateTime?
+  startDate    DateTime
+  maturityDate DateTime?
 
-  interestRate  Float
+  interestRate Float
 
-  userId  String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -419,15 +455,15 @@ model Investment {
 model InsurancePolicy {
   id String @id @default(uuid())
 
-  name String
-  premiumAmount Float
+  name           String
+  premiumAmount  Float
   coverageAmount Float
 
   startDate DateTime
-  endDate DateTime?
+  endDate   DateTime?
 
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import { AuthProvider } from "@/context/AuthContext";
 import 'react-datepicker/dist/react-datepicker.css';
 import "./globals.css";
 
@@ -27,12 +27,12 @@ export default function RootLayout({
 }>) {
 
   return (
-    <ClerkProvider>
-      <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark suppressHydrationWarning`}>
-        <body className="bg-background">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} dark suppressHydrationWarning`}>
+      <body className="bg-background">
+        <AuthProvider>
           {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }

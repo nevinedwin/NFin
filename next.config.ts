@@ -4,6 +4,9 @@ import withPWA from '@ducanh2912/next-pwa';
 const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: [
+    "http://10.201.101.116:3000"
+  ],
   reactStrictMode: true,
 
   // ✔ turbopack config must be an object even if empty

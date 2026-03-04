@@ -1,4 +1,3 @@
-import { SignOutButton } from "@clerk/nextjs"
 import { LogOutIcon, Settings } from "lucide-react"
 import Tooltip from "../ui/tooltip"
 
@@ -18,9 +17,7 @@ const Header = () => {
           </button>
         </Tooltip>
         <Tooltip label="Logout">
-          <SignOutButton redirectUrl="/">
-            <LogOutIcon className="cursor-pointer" size={20} />
-          </SignOutButton>
+          <LogOutIcon className="cursor-pointer" size={20} />
         </Tooltip>
       </div>
     </header>

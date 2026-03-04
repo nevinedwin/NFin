@@ -7,6 +7,7 @@ import { TransactionAccountType, TransactionCategoryType } from "@/types/transac
 import { MainShellProvider } from "@/app/(main)/context/mainShellContext";
 import TopLoader from "../ui/topLoader";
 import { usePathname } from "next/navigation";
+import ProtectedRoutes from "./protectedRoutes";
 
 const FOOTER_HEIGHT = 80;
 const FOOTER_PEEK = 30;
@@ -53,7 +54,7 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
         setLoading(false);
     };
 
-    
+
     useEffect(() => {
         startLoading()
         const timeout = setTimeout(() => {
@@ -146,9 +147,9 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
                             : "translateY(0px)",
                     }}
                     className="absolute bottom-0 left-0 right-0 bg-bar shadow-inner
-                   transition-transform duration-500
-                   ease-[cubic-bezier(0.22,1,0.36,1)]
-                   will-change-transform"
+                    transition-transform duration-500
+                    ease-[cubic-bezier(0.22,1,0.36,1)]
+                    will-change-transform"
                 >
                     <Footer
                         accounts={accounts}

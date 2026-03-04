@@ -3,13 +3,16 @@ import React from "react";
 import MainShell from "@/components/layout/mainShell";
 import { prisma } from "@/lib/prisma";
 import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
-import { getCurrentUser } from "@/lib/db";
+import { redirect } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { getServerUser } from "@/lib/auth.server";
 
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
 
-    const user = await getCurrentUser();
-    if (!user) return <div>UnAuthorized</div>
+    const user = await getServerUser();
+    console.log('user', user);
+    if (!user) return redirect('/sign-up')
 
     let accounts: TransactionAccountType[] = [];
     let category: TransactionCategoryType[] = [];
