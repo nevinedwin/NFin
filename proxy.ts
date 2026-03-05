@@ -1,4 +1,4 @@
-import { getUserFromSession } from '@/auth/core/session';
+import { getUserFromSession, updateSessionExpiration } from '@/auth/core/session';
 import { UserRoles } from '@/generated/prisma/client';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -6,7 +6,15 @@ const privateRoutes = ["/dashboard", '/wallet']
 const adminRoutes: string[] = []
 
 const middleware = async (request: NextRequest) => {
-    const response = await middlewareAuth(request) ?? NextResponse.next();
+    const response = (await middlewareAuth(request)) ?? NextResponse.next();
+
+    await updateSessionExpiration({
+        set: (key, value, options) => {
+            response.cookies.set({ ...options, name: key, value })
+        },
+        get: key => response.cookies.get(key)
+    });
+
     return response;
 }
 

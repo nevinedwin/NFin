@@ -80,3 +80,18 @@ export const removeUserFromSession = async (cookies: Pick<CookiesType, 'get' | '
     await prisma.refreshToken.delete({ where: { sessionId } });
     cookies.delete(COOKIE_SESSION_KEY);
 }
+
+export const updateSessionExpiration = async (cookies: Pick<CookiesType, 'get' | 'set'>) => {
+    const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value;
+    if (sessionId == null) return null;
+
+    const user = await getUserSessionById(sessionId);
+    if (user == null) return;
+
+    await prisma.refreshToken.create({
+        data: { sessionId, userId: user.id, expiresAt: new Date(Date.now() + SESSION_EXPIRY) }
+    })
+
+    setCookie(sessionId, cookies);
+
+}

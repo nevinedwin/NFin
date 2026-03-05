@@ -25,7 +25,7 @@ const SignupForm = ({ handleClick }: SignupFormProp) => {
         try {
             const payload = {
                 name,
-                email,
+                email: email.toLowerCase(),
                 password
             }
             const data = await signUp(payload);

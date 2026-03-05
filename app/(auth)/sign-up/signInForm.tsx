@@ -17,7 +17,7 @@ const LoginForm = ({ handleClick }: LoginFormProp) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const data = await signIn({ email, password });
+            const data = await signIn({ email: email.toLowerCase(), password });
             setError(data);
         } catch (err) {
             console.error(err);
