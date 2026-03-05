@@ -36,7 +36,7 @@ export default function Tooltip({
                     "transition-all duration-200 ease-out",
                     "pointer-events-none",
                     "bg-surface border border-border",
-                    "text-text-primary text-xs",
+                    "text-text-primary text-[7px]",
                     "px-2 py-1 rounded-md shadow-xl"
                 )}
                 role="tooltip"

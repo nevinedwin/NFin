@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Input from '@/components/ui/input'
 import { signUp } from '@/auth/auth.actions'
+import LoaderButton from '@/components/ui/loaderButton';
 
 
 type SignupFormProp = {
@@ -11,11 +12,12 @@ type SignupFormProp = {
 
 const SignupForm = ({ handleClick }: SignupFormProp) => {
 
-    // const { signup } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [showPassword, setShowpassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,13 +29,17 @@ const SignupForm = ({ handleClick }: SignupFormProp) => {
                 password
             }
             const data = await signUp(payload);
-
+            setError(data);
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        setError('');
+    }, [email, password, name]);
 
 
     return (
@@ -50,9 +56,12 @@ const SignupForm = ({ handleClick }: SignupFormProp) => {
             <form className="w-full px-4 flex flex-col items-center justify-center gap-3" onSubmit={handleSubmit}>
                 <Input placeholder='Name' value={name} onChange={e => setName(e.target.value)} className='text-sm' containerClassName='w-full md:w-[300px] px-4' />
                 <Input placeholder='email' value={email} onChange={e => setEmail(e.target.value)} className='text-sm' containerClassName='w-full md:w-[300px] px-4' />
-                <Input placeholder='password' value={password} onChange={e => setPassword(e.target.value)} className='text-sm' containerClassName='w-full md:w-[300px] px-4' />
+                <Input placeholder='password' value={password} isPassword={true} onChange={e => setPassword(e.target.value)} className='text-sm' containerClassName='w-full md:w-[300px] px-4' />
+                {error && <p className='text-red-500 text-sm'>{error}</p>}
                 <div className='w-full px-4 flex justify-center items-center'>
-                    <button type="submit" disabled={loading} className='bg-black mt-2 border bodred-white w-full md:w-[200px] p-2 rounded-lg text-sm'>Sign Up</button>
+                    <button type="submit" disabled={loading} className='bg-black mt-2 border bodred-white w-full md:w-[200px] p-2 rounded-lg text-sm flex items-center justify-center gap-3'>
+                        {loading ? <LoaderButton className='w-5 h-5' /> : 'Sign Up'}
+                    </button>
                 </div>
             </form>
             <div className='flex justify-center items-center gap-2 mt-2 pb-4'>

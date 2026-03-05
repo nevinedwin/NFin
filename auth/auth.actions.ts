@@ -1,16 +1,18 @@
 'use server';
 
 import { prisma } from "@/lib/prisma";
-import { CookiesType, FormData } from "@/types/auth";
+import { FormData } from "@/types/auth";
 import { redirect } from "next/navigation";
 import { comparePassword, generateSalt, hashPassword } from "./core/passwordHasher";
 import { createUserSession, removeUserFromSession } from "./core/session";
 import { cookies } from "next/headers";
+import { validateSignUp } from "./auth.validations";
 
 
 export const signUp = async (unSafeData: FormData) => {
 
-    if (!unSafeData.email || !unSafeData.password) return 'Email or Password is missing';
+    const errorMsg = validateSignUp(unSafeData);
+    if (errorMsg) return errorMsg;
 
     const existing = await prisma.user.findUnique({ where: { email: unSafeData.email } });
     if (existing) return 'Account already exists for this email';

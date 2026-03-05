@@ -1,15 +1,20 @@
-import React, { forwardRef } from 'react'
+import { Eye, EyeClosed, EyeClosedIcon, EyeOff, LucideEyeClosed } from 'lucide-react';
+import React, { forwardRef, useState } from 'react'
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
     label?: string;
     requiredLabel?: boolean;
     error?: string;
     containerClassName?: string;
+    isPassword?: boolean;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(({ label, requiredLabel = false, error, containerClassName = '', className = '', ...props }, ref) => {
+const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, requiredLabel = false, error, containerClassName = '', className = '', ...props }, ref) => {
+
+    const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const inputId = props.id;
+    const inputType = isPassword ? (showPassword ? "text" : "password") : props.type;
 
     return (
         <div className={`flex flex-col ${containerClassName}`}>
@@ -20,11 +25,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ label, requiredLabel =
                     </label>
                 )
             }
-            <input
-                id={inputId}
-                ref={ref}
-                className={`
+            <div className='relative w-full'>
+                <input
+                    id={inputId}
+                    ref={ref}
+                    type={inputType}
+                    className={`
                     rounded-xl
+                    w-full
                     p-3
                     outline-none
                     bg-white
@@ -43,8 +51,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ label, requiredLabel =
                     disabled:cursor-not-allowed
                 ${className}
                 `}
-                {...props}
-            />
+                    {...props}
+                />
+                {isPassword && (
+                    <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    >
+                        {showPassword ? <EyeOff size={17} onClick={() => setShowPassword(!showPassword)} /> : <Eye size={17} onClick={() => setShowPassword(!showPassword)} />}
+                    </button>
+                )}
+            </div>
             {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}
         </div>
     )
