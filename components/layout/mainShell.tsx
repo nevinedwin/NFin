@@ -160,7 +160,7 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
                         open={openTransactionCard}
                     />
                 </footer>}
-                {openTransactionCard && <footer>
+                {openTransactionCard && <div>
                     <div
                         className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm
                     transition-opacity duration-300
@@ -190,7 +190,7 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
                             </div>
                         )
                     }
-                </footer>}
+                </div>}
             </div>
         </MainShellProvider>
 
