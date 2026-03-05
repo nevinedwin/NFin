@@ -35,6 +35,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
                     w-full
                     p-3
                     outline-none
+                    !text-[16px]
                     bg-white
                     text-black
                     placeholder:text-gray-400

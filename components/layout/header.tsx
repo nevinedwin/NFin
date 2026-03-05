@@ -2,23 +2,21 @@ import { LogOutIcon, Settings } from "lucide-react"
 import Tooltip from "../ui/tooltip"
 import { logOut } from "@/auth/auth.actions"
 import LoaderButton from "../ui/loaderButton";
+import { useState } from "react";
 
-type HeaderProp = {
-  startLoading: () => void;
-  stopLoading: () => void;
-  loading: boolean;
-}
+const Header = () => {
 
-const Header = ({ startLoading, stopLoading, loading }: HeaderProp) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
 
   const handleLogOutClick = async () => {
-    startLoading();
+    setLoading(true);
     try {
-      logOut();
+      await logOut();
     } catch (error) {
       console.log(error);
     } finally {
-      stopLoading();
+      setLoading(false);
     }
   }
 
@@ -36,9 +34,11 @@ const Header = ({ startLoading, stopLoading, loading }: HeaderProp) => {
             <Settings size={20} />
           </button>
         </Tooltip>
-        <Tooltip label="Logout">
-          {loading ? <LoaderButton className="w-4 f-4" /> : <LogOutIcon className="cursor-pointer" size={20} onClick={handleLogOutClick} />}
-        </Tooltip>
+        {/* <Tooltip label="Logout"> */}
+        <button onClick={async () => await handleLogOutClick()} >
+          {loading ? <LoaderButton className="w-4 f-4" /> : <LogOutIcon className="cursor-pointer" size={20} />}
+        </button>
+        {/* </Tooltip> */}
       </div>
     </header>
   )
