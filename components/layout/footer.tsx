@@ -47,32 +47,7 @@ const Footer = memo(({ accounts, category, toggle, open }: FooterProp) => {
     return (
         <>
             {/* Backdrop */}
-            <div
-                className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm
-                    transition-opacity duration-300
-                    ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-                onClick={toggle}
-            />
-
-            {/* Expanding Panel */}
-            {
-                open && (
-                    <div className="fixed bottom-20 z-50 transition-all duration-300 ease-out">
-                        <div className="w-[100vw] h-[480px] rounded-t-3xl bg-black shadow-2xl p-5 text-slate-500">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-md font-semibold">New Transaction</h3>
-                                <CloseButton size={20} onClick={toggle} />
-                            </div>
-
-                            <TransactionCard
-                                accounts={accounts}
-                                category={category}
-                                closeFn={toggle}
-                            />
-                        </div>
-                    </div>
-                )
-            }
+            
 
             {/* Footer */}
             <footer className="footer">

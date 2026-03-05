@@ -7,6 +7,8 @@ import { TransactionAccountType, TransactionCategoryType } from "@/types/transac
 import { MainShellProvider } from "@/app/(main)/context/mainShellContext";
 import TopLoader from "../ui/topLoader";
 import { usePathname } from "next/navigation";
+import TransactionCard from "../transaction/transactionCard";
+import CloseButton from "../ui/closeButton";
 
 const FOOTER_HEIGHT = 80;
 const FOOTER_PEEK = 30;
@@ -139,17 +141,17 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
                 </main>
 
                 {/* Footer */}
-                <footer
+                {!openTransactionCard && <footer
                     style={{
                         height: FOOTER_HEIGHT,
                         transform: hideFooter
                             ? `translateY(${FOOTER_HEIGHT - FOOTER_PEEK}px)`
                             : "translateY(0px)",
                     }}
-                    className="absolute bottom-0 left-0 right-0 bg-bar shadow-inner
+                    className={`absolute bottom-0 left-0 right-0 bg-bar shadow-inner
                     transition-transform duration-500
                     ease-[cubic-bezier(0.22,1,0.36,1)]
-                    will-change-transform"
+                    will-change-transform`}
                 >
                     <Footer
                         accounts={accounts}
@@ -157,7 +159,38 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
                         toggle={toggleTransactionCard}
                         open={openTransactionCard}
                     />
-                </footer>
+                </footer>}
+                {openTransactionCard && <footer>
+                    <div
+                        className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm
+                    transition-opacity duration-300
+                    ${openTransactionCard ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                        onClick={toggleTransactionCard}
+                    />
+
+                    {/* Expanding Panel */}
+                    {
+                        openTransactionCard && (
+                            <div className={`fixed bottom-0 z-50 transition-all duration-300 ease-out`}>
+                                <div className="flex justify-end items-center pr-6 bg-transparent">
+                                    <CloseButton size={20} onClick={toggleTransactionCard} className="bg-black p-2 flex justify-center items-center rounded-full mb-1" />
+                                </div>
+                                <div className="w-[100vw] h-[480px] rounded-t-3xl bg-black shadow-2xl p-5 text-slate-500">
+                                    <div className="flex justify-between items-center mb-4 bg-transparent">
+                                        <h3 className="text-md font-semibold">New Transaction</h3>
+                                        {/* <CloseButton size={20} onClick={toggle} /> */}
+                                    </div>
+
+                                    <TransactionCard
+                                        accounts={accounts}
+                                        category={category}
+                                        closeFn={toggleTransactionCard}
+                                    />
+                                </div>
+                            </div>
+                        )
+                    }
+                </footer>}
             </div>
         </MainShellProvider>
 
