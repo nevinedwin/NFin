@@ -8,7 +8,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "migrate": "npx prisma migrate dev --name mig2",
+    "migrate": "npx prisma migrate dev --name",
     "prisma": "prisma generate"
   },
   "dependencies": {

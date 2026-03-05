@@ -1,0 +1,7 @@
+prisma migrate Command
+
+    npm run migrate -- [name of the migration]
+
+prisma generate
+
+    npm run prisma
