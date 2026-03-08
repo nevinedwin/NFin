@@ -191,9 +191,9 @@ model Account {
   countMeInTotal Boolean @default(true)
 
   // Credit Card Specific fields
-  CreditLimit Float?
-  billingDate Int?
-  dueDate     Int?
+  creditLimit Float?
+  billingDate String?
+  dueDate     String?
 
   // Bank Specific fields
   accountNumber String?

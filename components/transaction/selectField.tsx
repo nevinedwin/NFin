@@ -5,7 +5,10 @@ type SelectedFieldProp = {
     name: string;
     value?: string;
     onChange?: React.ChangeEventHandler<HTMLSelectElement>
-    required?: boolean
+    required?: boolean;
+    containerClass?: string;
+    labelClass?: string;
+    selectClass?: string;
 }
 
 const SelectField = ({
@@ -14,17 +17,20 @@ const SelectField = ({
     name,
     value,
     onChange,
-    required
+    required,
+    containerClass = '',
+    labelClass = '',
+    selectClass = ''
 }: SelectedFieldProp) => {
     return (
-        <div>
-            <label className="text-sm text-slate-500">{label}</label>
-            <select 
+        <div className={`${containerClass}`}>
+            <label className={`text-sm text-slate-500 ${labelClass}`}>{label} {required && <span className="text-red-500">*</span>}</label>
+            <select
                 name={name}
                 value={value}
                 onChange={onChange}
                 required={required}
-                className="w-full mt-1 border border-border rounded-xl h-11 px-3 text-base outline-none bg-black"
+                className={`w-full mt-1 border border-border rounded-xl h-11 px-3 text-base outline-none bg-black ${selectClass}`}
             >
                 {children}
             </select>

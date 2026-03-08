@@ -5,7 +5,8 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: [
-    "http://10.201.101.116:3000"
+    "http://10.201.101.116:3000",
+    "192.168.29.231"
   ],
   reactStrictMode: true,
 

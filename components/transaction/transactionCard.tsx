@@ -6,9 +6,10 @@ import SelectField from "./selectField";
 import { createTransaction } from "@/actions/transactions";
 import FormSubmitBtn from "../ui/formSubmitBtn";
 import { TransactionType } from "@/generated/prisma/client";
-import { useTransactionForm } from "@/app/(main)/features/transaction/useTransactionForm";
 import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
 import { useEffect } from "react";
+import { useForm } from "@/hooks/form/useForm";
+import { transactionFormInitalState } from "@/app/(main)/features/transaction/transaction.state";
 
 
 
@@ -21,7 +22,7 @@ type TransactionCardProp = {
 
 export default function TransactionCard({ accounts, category, closeFn }: TransactionCardProp) {
 
-    const { state, setField, reset } = useTransactionForm();
+    const { state, setField, reset } = useForm(transactionFormInitalState);
     const { accountId, amount, categoryId, description, repeat, type } = state;
 
     useEffect(() => {
