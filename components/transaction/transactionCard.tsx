@@ -136,7 +136,6 @@ export default function TransactionCard({ accounts, category, closeFn }: Transac
             <FormSubmitBtn
                 label="Save Transaction"
                 type="submit"
-                disabled={!accountId}
                 className="font-semibold"
             />
         </form>

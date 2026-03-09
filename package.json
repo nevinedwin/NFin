@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "migrate": "npx prisma migrate dev --name",
-    "prisma": "prisma generate"
+    "prisma": "prisma generate",
+    "prisma-reset": "prisma migrate reset"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.38.0",
