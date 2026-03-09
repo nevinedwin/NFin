@@ -9,7 +9,7 @@ import { useMemo } from "react";
 
 const Dashboard = () => {
 
-    const { accounts } = useMainShellContext();
+    const { accounts, userData } = useMainShellContext();
 
     const balance = useMemo(() => {
         return accounts.reduce((sum, acc) => {
@@ -23,7 +23,7 @@ const Dashboard = () => {
     return (
         <div className="flex justify-center items-center flex-col">
             <div className="w-full">
-                <HeaderCard balance={balance} expense={100} income={800} showBalance={true} />
+                <HeaderCard balance={balance} expense={100} income={800} showBalance={userData?.showBalance || false} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full p-4">
                 <CardSkeleton className="w-full" />

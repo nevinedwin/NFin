@@ -95,6 +95,7 @@ model User {
   salt         String?
   role         UserRoles @default(USER)
   isVerified   Boolean   @default(false)
+  showBalance  Boolean?   @default(false)
 
   refreshTokens       RefreshToken[]
   passwordResetTokens PasswordResetToken[]
@@ -195,7 +196,7 @@ model Account {
   billingDate String?
   dueDate     String?
 
-  cardNumber     String?
+  cardNumber String?
 
   // Bank Specific fields
   accountNumber String?

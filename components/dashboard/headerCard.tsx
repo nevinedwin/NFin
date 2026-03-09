@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
 import { ArrowDown, ArrowUp, EyeIcon, EyeOffIcon, Wallet2 } from 'lucide-react'
 import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp';
 import { redirect } from 'next/navigation';
+import { changeShowBalance } from '@/actions/userAction';
 
 type HeaderCardProp = {
     balance: number;
@@ -22,6 +23,10 @@ const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0, showB
     const balance = useCountUp(bal);
     const income = useCountUp(inc);
     const expense = useCountUp(exp);
+
+    useEffect(() => {
+        changeShowBalance(showBalance);
+    }, [showBalance])
 
     return (
         <Card className="rounded-none rounded-b-3xl w-full border-none h-[160px] bg-bar p-0 

@@ -9,6 +9,7 @@ import TopLoader from "../ui/topLoader";
 import { usePathname } from "next/navigation";
 import TransactionCard from "../transaction/transactionCard";
 import CloseButton from "../ui/closeButton";
+import { User } from "@/generated/prisma/client";
 
 const FOOTER_HEIGHT = 80;
 const FOOTER_PEEK = 30;
@@ -17,10 +18,11 @@ const SCROLL_THRESHOLD = 10;
 type MainShellProp = {
     children: React.ReactNode;
     accounts: TransactionAccountType[],
-    category: TransactionCategoryType[]
+    category: TransactionCategoryType[],
+    userData: User | null
 };
 
-const MainShell = ({ children, accounts, category }: MainShellProp) => {
+const MainShell = ({ children, accounts, category, userData }: MainShellProp) => {
     const pathname = usePathname();
 
     const mainRef = useRef<HTMLElement | null>(null);
@@ -104,6 +106,7 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
         closeTransactionCard,
         accounts,
         category,
+        userData,
         loading,
         startLoading,
         stopLoading
@@ -114,6 +117,7 @@ const MainShell = ({ children, accounts, category }: MainShellProp) => {
         closeTransactionCard,
         accounts,
         category,
+        userData,
         loading,
         startLoading,
         stopLoading

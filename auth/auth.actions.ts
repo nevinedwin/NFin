@@ -26,7 +26,8 @@ export const signUp = async (unSafeData: FormData) => {
                 email: unSafeData.email,
                 passwordHash: hashedPassword,
                 name: unSafeData.name,
-                salt
+                salt,
+                showBalance: true
             }
         });
 
@@ -35,6 +36,7 @@ export const signUp = async (unSafeData: FormData) => {
         await createUserSession(user, await cookies());
 
     } catch (error) {
+        console.log(error);
         return 'Unable to create accout';
     }
 

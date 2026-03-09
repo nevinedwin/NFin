@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp';
+import { changeShowBalance } from '@/actions/userAction';
 
 type BalanceCardProp = {
     showBalance: boolean;
@@ -14,10 +15,14 @@ type BalanceCardProp = {
 
 }
 
-const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0, label }: BalanceCardProp) => {
+const BalanceCard = ({ showBalance: showBal, totalBalance = 0, label }: BalanceCardProp) => {
 
     const [showBalance, setShowBalance] = useState<boolean>(showBal);
     const balance = useCountUp(totalBalance, 100)
+
+    useEffect(() => {
+        changeShowBalance(showBalance);
+    }, [showBalance])
 
     return (
         <Card className=" w-full border-none h-[160px] bg-surface p-0 
@@ -31,7 +36,7 @@ const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0, label }: 
                     <div className='w-full flex justify-between items-center'>
                         <h2 className='text-3xl  font-extrabold'><span>{RUPEE_SYMBOL}</span> {showBalance ? balance.toFixed(2) : '-----'}</h2>
                         {
-                            showBalance ? <EyeIcon onClick={() => setShowBalance(false)} className='cursor-pointer' /> : <EyeOffIcon onClick={() => setShowBalance(true)} className='cursor-pointer'/>
+                            showBalance ? <EyeIcon onClick={() => setShowBalance(false)} className='cursor-pointer' /> : <EyeOffIcon onClick={() => setShowBalance(true)} className='cursor-pointer' />
                         }
                     </div>
                 </div>

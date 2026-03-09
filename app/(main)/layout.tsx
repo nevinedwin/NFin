@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/auth/currentUser";
+import { User } from "@/generated/prisma/client";
 
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -14,6 +15,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
 
     let accounts: TransactionAccountType[] = [];
     let category: TransactionCategoryType[] = [];
+    let userData: User | null = null;
 
     if (user) {
         accounts = await prisma.account.findMany({
@@ -34,10 +36,16 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
                 name: true
             },
         });
+
+        userData = await prisma.user.findUnique({
+            where: {
+                id: user.id
+            }
+        })
     }
 
     return (
-        <MainShell accounts={accounts} category={category}>
+        <MainShell accounts={accounts} category={category} userData={userData}>
             {children}
         </MainShell>
     );
