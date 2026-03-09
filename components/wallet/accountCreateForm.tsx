@@ -5,25 +5,32 @@ import Input from "../ui/input";
 import FormSubmitBtn from "../ui/formSubmitBtn";
 import CloseButton from "../ui/closeButton";
 import { useRouter } from "next/navigation";
-import { createAccountAction } from "@/actions/accounts";
+import { createAccountAction, updateAccountAction } from "@/actions/accounts";
 import SelectField from "../transaction/selectField";
-import { AccountType } from "@/generated/prisma/client";
+import { Account, AccountType } from "@/generated/prisma/client";
 import { formatUnderScoredString } from "@/lib/utils/formats";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import YesNoToggle from "../ui/toggleButton";
 import { useFormStatus } from "react-dom";
 import SectionToggle from "../ui/sectionToggle";
+import { useForm } from "@/hooks/form/useForm";
+import { walletFormInitalState } from "@/app/(main)/features/wallet/wallet.state";
 
-export default function AccountForm() {
+type AccountFormProp = {
+    account?: Account;
+    isUpdate?: boolean;
+}
+
+export default function AccountForm({ account, isUpdate = false }: AccountFormProp) {
     const router = useRouter();
-    const { pending } = useFormStatus();
+
 
     const [showBankDetails, setShowBankDetails] = useState(false);
     const [showAtmDetails, setShowAtmDetails] = useState(false);
     const [showCreditCardDetails, setShowCreditCardDetails] = useState(false);
 
-    const [type, setType] = useState<AccountType>(AccountType.BANK);
-    const [countMeInTotal, setCountMeInTotal] = useState<boolean>(true);
+    const { state, setField } = useForm(account || walletFormInitalState);
+
+    const { type, name, balance, accountNumber, billingDate, branch, cardNumber, countMeInTotal, creditLimit, currency, cvv, dueDate, expiryDate, ifscCode } = state;
 
 
 
@@ -41,21 +48,24 @@ export default function AccountForm() {
 
                     <CloseButton
                         size={18}
-                        onClick={() => router.push("/wallet")}
+                        onClick={() => router.back()}
                         className="bg-slate-800 p-2 rounded-full"
                     />
                 </div>
 
                 {/* Scrollable form */}
                 <form
-                    action={createAccountAction}
+                    action={isUpdate ? updateAccountAction : createAccountAction}
                     className="flex-1 overflow-y-auto px-6 py-5 space-y-5"
                 >
+                    <input type="hidden" name="id" value={account?.id} />
                     <Input
                         type="text"
                         name="name"
                         required
                         requiredLabel
+                        value={name || ''}
+                        onChange={(e) => setField('name', e.target.value)}
                         label="Account Name"
                         placeholder="Enter account name"
                         className="!bg-black !text-slate-400"
@@ -69,6 +79,8 @@ export default function AccountForm() {
                             label="Balance"
                             required
                             requiredLabel
+                            value={balance || 0}
+                            onChange={(e) => setField('balance', parseInt(e.target.value))}
                             placeholder="0.00"
                             className="!bg-black !text-slate-400"
                         />
@@ -78,8 +90,8 @@ export default function AccountForm() {
                             name="type"
                             required
                             selectClass="text-slate-400"
-                            value={type}
-                            onChange={(e) => setType(e.target.value as AccountType)}
+                            value={type || AccountType.BANK}
+                            onChange={(e) => setField('type', e.target.value as AccountType)}
                         >
                             {Object.values(AccountType).map((t) => (
                                 <option key={t} value={t}>
@@ -91,8 +103,8 @@ export default function AccountForm() {
                     <div>
                         <YesNoToggle
                             label="Add me in Total Balance"
-                            value={countMeInTotal}
-                            onChange={setCountMeInTotal}
+                            value={countMeInTotal as boolean || true}
+                            onChange={() => setField('countMeInTotal', !countMeInTotal)}
                             name="countMeInTotal"
                         />
                     </div>
@@ -105,31 +117,35 @@ export default function AccountForm() {
                                 onToggle={() => setShowBankDetails((p) => !p)}
                             />
 
-                            {showBankDetails && (
-                                <div className="space-y-3">
-                                    <Input
-                                        name="accountNumber"
-                                        label="Account Number"
-                                        inputMode="numeric"
-                                        placeholder="XXXX XXXX XXXX"
-                                        className="!bg-black !text-slate-400"
-                                    />
+                            <div className={`space-y-3 ${!showBankDetails && 'hidden'}`}>
+                                <Input
+                                    name="accountNumber"
+                                    label="Account Number"
+                                    inputMode="numeric"
+                                    value={accountNumber as string || ''}
+                                    onChange={(e) => setField('accountNumber', e.target.value)}
+                                    placeholder="XXXX XXXX XXXX"
+                                    className="!bg-black !text-slate-400"
+                                />
 
-                                    <Input
-                                        name="branch"
-                                        label="Branch"
-                                        placeholder="Bank branch"
-                                        className="!bg-black !text-slate-400"
-                                    />
+                                <Input
+                                    name="branch"
+                                    label="Branch"
+                                    value={branch as string || ''}
+                                    onChange={(e) => setField('branch', e.target.value)}
+                                    placeholder="Bank branch"
+                                    className="!bg-black !text-slate-400"
+                                />
 
-                                    <Input
-                                        name="ifscCode"
-                                        label="IFSC Code"
-                                        placeholder="SBIN000000"
-                                        className="!bg-black !text-slate-400"
-                                    />
-                                </div>
-                            )}
+                                <Input
+                                    name="ifscCode"
+                                    label="IFSC Code"
+                                    value={ifscCode as string || ''}
+                                    onChange={(e) => setField('ifscCode', e.target.value)}
+                                    placeholder="SBIN000000"
+                                    className="!bg-black !text-slate-400"
+                                />
+                            </div>
 
                             {/* ATM Details */}
                             <SectionToggle
@@ -137,35 +153,38 @@ export default function AccountForm() {
                                 open={showAtmDetails}
                                 onToggle={() => setShowAtmDetails((p) => !p)}
                             />
+                            <div className={`space-y-3 ${!showAtmDetails && 'hidden'}`}>
+                                <Input
+                                    name="cardNumber"
+                                    label="ATM Card Number"
+                                    inputMode="numeric"
+                                    value={cardNumber as string || ''}
+                                    onChange={(e) => setField('cardNumber', e.target.value)}
+                                    placeholder="XXXX XXXX XXXX"
+                                    className="!bg-black !text-slate-400"
+                                />
 
-                            {showAtmDetails && (
-                                <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-4">
                                     <Input
-                                        name="cardNumber"
-                                        label="ATM Card Number"
-                                        inputMode="numeric"
-                                        placeholder="XXXX XXXX XXXX"
+                                        name="expiryDate"
+                                        label="Expiry"
+                                        value={expiryDate as string || ''}
+                                        onChange={(e) => setField('expiryDate', e.target.value)}
+                                        placeholder="MM/YY"
                                         className="!bg-black !text-slate-400"
                                     />
 
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input
-                                            name="expiryDate"
-                                            label="Expiry"
-                                            placeholder="MM/YY"
-                                            className="!bg-black !text-slate-400"
-                                        />
-
-                                        <Input
-                                            name="cvv"
-                                            label="CVV"
-                                            inputMode="numeric"
-                                            placeholder="..."
-                                            className="!bg-black !text-slate-400"
-                                        />
-                                    </div>
+                                    <Input
+                                        name="cvv"
+                                        label="CVV"
+                                        inputMode="numeric"
+                                        value={cvv as string || ''}
+                                        onChange={(e) => setField('cvv', e.target.value)}
+                                        placeholder="..."
+                                        className="!bg-black !text-slate-400"
+                                    />
                                 </div>
-                            )}
+                            </div>
                         </>
                     )}
                     {type === AccountType.CREDIT_CARD && (
@@ -176,52 +195,56 @@ export default function AccountForm() {
                                 open={showCreditCardDetails}
                                 onToggle={() => setShowCreditCardDetails((p) => !p)}
                             />
+                            <div className={`space-y-3 ${!showCreditCardDetails && 'hidden'}`}>
+                                <Input
+                                    name="cardNumber"
+                                    label="Credit Card Number"
+                                    inputMode="numeric"
+                                    value={cardNumber as string || ''}
+                                    onChange={(e) => setField('cardNumber', e.target.value)}
+                                    placeholder="XXXX XXXX XXXX"
+                                    className="!bg-black !text-slate-400"
+                                />
 
-                            {showCreditCardDetails && (
-                                <div className="space-y-3">
+                                <Input
+                                    type="number"
+                                    name="creditLimit"
+                                    inputMode="decimal"
+                                    label="Credit Card Limit"
+                                    value={creditLimit as number || 0}
+                                    onChange={(e) => setField('creditLimit', parseInt(e.target.value))}
+                                    placeholder="0.00"
+                                    className="!bg-black !text-slate-400"
+                                />
+
+                                <div className="flex gap-3">
                                     <Input
-                                        name="cardNumber"
-                                        label="Credit Card Number"
-                                        inputMode="numeric"
-                                        placeholder="XXXX XXXX XXXX"
+                                        name="billingDate"
+                                        label="Billing Date"
+                                        value={billingDate as string || ''}
+                                        onChange={(e) => setField('billingDate', e.target.value)}
+                                        placeholder="01"
                                         className="!bg-black !text-slate-400"
                                     />
 
                                     <Input
-                                        type="number"
-                                        name="creditLimit"
-                                        inputMode="decimal"
-                                        label="Credit Card Limit"
-                                        placeholder="0.00"
+                                        name="dueDate"
+                                        label="Due Date"
+                                        value={dueDate as string || ''}
+                                        onChange={(e) => setField('dueDate', e.target.value)}
+                                        placeholder="02"
                                         className="!bg-black !text-slate-400"
                                     />
-
-                                    <div className="flex gap-3">
-                                        <Input
-                                            name="billingDate"
-                                            label="Billing Date"
-                                            placeholder="01"
-                                            className="!bg-black !text-slate-400"
-                                        />
-
-                                        <Input
-                                            name="dueDate"
-                                            label="Due Date"
-                                            placeholder="02"
-                                            className="!bg-black !text-slate-400"
-                                        />
-                                    </div>
                                 </div>
-                            )}
+                            </div>
                         </>
                     )}
 
                     {/* Footer */}
                     <div className="pt-4">
                         <FormSubmitBtn
-                            label="Create Account"
+                            label={isUpdate ? 'Update Account' : 'Create Account'}
                             type="submit"
-                            disabled={pending}
                             className="font-semibold !bg-white !text-black"
                         />
                     </div>

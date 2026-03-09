@@ -72,7 +72,7 @@ const Wallet = async ({ params }: WalletProp) => {
         }
       </div>
       <div className='w-full'>
-        <BalanceCard showBalance={true} totalBalance={totalBalance} />
+        <BalanceCard showBalance={true} totalBalance={totalBalance} label='Total Balance'/>
       </div>
       <div className='w-full flex flex-col gap-4'>
         {accounts.map(acc => (

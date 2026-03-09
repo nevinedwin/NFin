@@ -2,7 +2,7 @@ import { AccountType } from '@/generated/prisma/client';
 import { z } from 'zod';
 
 
-export const createAccountSchema = z.object({
+export const accountBaseSchema = z.object({
     name: z.string().min(1, "Account name is required"),
 
     type: z.nativeEnum(AccountType),
@@ -27,4 +27,11 @@ export const createAccountSchema = z.object({
     dueDate: z.string().optional()
 });
 
+export const createAccountSchema = accountBaseSchema;
+
+export const updateAccountSchema = accountBaseSchema.extend({
+    id: z.string().min(1, 'Account id is required')
+})
+
 export type CreateAccountInput = z.infer<typeof createAccountSchema>;
+export type UpdateAccountInput = z.infer<typeof updateAccountSchema>;
