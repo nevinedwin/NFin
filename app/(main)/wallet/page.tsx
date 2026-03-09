@@ -38,6 +38,12 @@ const Wallet = async ({ params }: WalletProp) => {
     orderBy: { name: "desc" }
   });
 
+  const userData = await prisma.user.findUnique({
+    where: {
+      id: user.id
+    }
+  });
+
   const allAccounts = await prisma.account.findMany({
     where: { userId: user.id },
     orderBy: { name: "desc" }
@@ -72,7 +78,7 @@ const Wallet = async ({ params }: WalletProp) => {
         }
       </div>
       <div className='w-full'>
-        <BalanceCard showBalance={true} totalBalance={totalBalance} label='Total Balance'/>
+        <BalanceCard showBalance={userData?.showBalance || false} totalBalance={totalBalance} label='Total Balance' />
       </div>
       <div className='w-full flex flex-col gap-4'>
         {accounts.map(acc => (

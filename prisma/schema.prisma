@@ -95,7 +95,7 @@ model User {
   salt         String?
   role         UserRoles @default(USER)
   isVerified   Boolean   @default(false)
-  showBalance  Boolean   @default(false)
+  showBalance  Boolean?   @default(false)
 
   refreshTokens       RefreshToken[]
   passwordResetTokens PasswordResetToken[]
