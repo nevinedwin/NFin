@@ -10,9 +10,9 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/auth/currentUser';
 
 type WalletProp = {
-  params: Promise<{
+  params: {
     accountId?: string;
-  }>
+  }
 }
 
 const Wallet = async ({ params }: WalletProp) => {
@@ -23,30 +23,32 @@ const Wallet = async ({ params }: WalletProp) => {
     return redirect('/sign-up')
   }
 
-  const { accountId } = await params;
+  const { accountId } = params;
   const selectedAccount = accountId || 'all';
 
-  const accounts = await prisma.account.findMany({
-    where: {
-      userId: user.id,
-      ...(
-        selectedAccount && selectedAccount !== 'all'
-          ? { id: selectedAccount }
-          : {}
-      )
-    },
-    orderBy: { name: "desc" }
-  });
+  // const accounts = await prisma.account.findMany({
+  //   where: {
+  //     userId: user.id,
+  //     ...(
+  //       selectedAccount && selectedAccount !== 'all'
+  //         ? { id: selectedAccount }
+  //         : {}
+  //     )
+  //   },
+  //   orderBy: { name: "desc" }
+  // });
 
   const allAccounts = await prisma.account.findMany({
     where: { userId: user.id },
     orderBy: { name: "desc" }
   });
 
-  const totalBalance = accounts.reduce((sum, acc) => {
-    return sum + acc.balance;
-  }, 0)
+  // const totalBalance = accounts.reduce((sum, acc) => {
+  //   return sum + acc.balance;
+  // }, 0)
 
+  const totalBalance = 0;
+  
   return (
     <div className='flex flex-col justify-center items-center p-4 gap-6'>
       <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide'>
@@ -72,7 +74,7 @@ const Wallet = async ({ params }: WalletProp) => {
         <BalanceCard showBalance={true} totalBalance={totalBalance} />
       </div>
       <div className='w-full flex flex-col gap-4'>
-        {accounts.map(acc => (
+        {/* {accounts.map(acc => (
           <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
             <AccountCard
               name={acc.name}
@@ -81,7 +83,7 @@ const Wallet = async ({ params }: WalletProp) => {
               lastUpdated={new Date(acc.createdAt).toLocaleDateString("en-IN")}
             />
           </Link>
-        ))}
+        ))} */}
       </div>
       <Link className='flex justify-center items-center gap-2 cursor-pointer' href={'/account'}>
         <div ><PlusCircle size={20} className='text-green-400' /></div>
