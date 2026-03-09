@@ -32,10 +32,10 @@ enum AccountType {
   BANK
   WALLET
   CREDIT_CARD
-  INVESTMENT
-  EMERGENCY_FUND
-  POST_OFFICE
-  GOAL
+  // INVESTMENT
+  // EMERGENCY_FUND
+  // POST_OFFICE
+  // GOAL
 }
 
 enum CategoryType {
