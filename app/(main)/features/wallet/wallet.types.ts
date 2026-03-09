@@ -14,7 +14,7 @@ export type WalletFormType = {
     accountNumber?: string;
     ifscCode?: string;
     branch?: string;
-    atmNumber?: string;
+    cardNumber?: string;
     cvv?: string;
     expiryDate?: string;
 

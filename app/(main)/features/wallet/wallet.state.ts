@@ -7,7 +7,7 @@ export const walletFormInitalState: WalletFormType = {
     type: AccountType.BANK,
     balance: 0,
     accountNumber: '',
-    atmNumber: '',
+    cardNumber: '',
     billingDate: '',
     branch: '',
     countMeInTotal: true,
