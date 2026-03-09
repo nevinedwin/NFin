@@ -2,6 +2,9 @@ import React from 'react'
 import WalletChip from '@/components/wallet/walletChip';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/auth/currentUser';
+import BalanceCard from '@/components/wallet/balanceCard';
+import BalanceIndCard from '@/components/wallet/accountIndCard';
+import { CardSkeleton } from '@/components/ui/card/cardSkeleton';
 
 type WalletSinglePageProps = {
   params: Promise<{ accountId: string }>
@@ -49,6 +52,16 @@ const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
             />
           ))
         }
+      </div>
+      <div className='w-full'>
+        <BalanceIndCard showBalance={true} account={account} label={account.name}/>
+      </div>
+      <div className='w-full flex flex-col gap-3'>
+        <CardSkeleton className='w-full'/>
+        <CardSkeleton className='w-full'/>
+        <CardSkeleton className='w-full'/>
+        <CardSkeleton className='w-full'/>
+        <CardSkeleton className='w-full'/>
       </div>
     </div>
   )

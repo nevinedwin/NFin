@@ -10,10 +10,11 @@ import useCountUp from '@/hooks/useCountUp';
 type BalanceCardProp = {
     showBalance: boolean;
     totalBalance: number;
+    label: string;
 
 }
 
-const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0 }: BalanceCardProp) => {
+const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0, label }: BalanceCardProp) => {
 
     const [showBalance, setShowBalance] = useState<boolean>(showBal);
     const balance = useCountUp(totalBalance, 100)
@@ -25,7 +26,7 @@ const BalanceCard = ({ showBalance: showBal = false, totalBalance = 0 }: Balance
             <CardContent className="h-full animate-fade-in py-8 px-8">
                 <div className='w-full h-full flex justify-between items-center flex-col'>
                     <div className='w-full flex justify-start items-center'>
-                        <h2 className='text-sm font-medium text-slate-200'>TOTAL BALANCE</h2>
+                        <h2 className='text-sm font-medium text-slate-200'>{label.toUpperCase()}</h2>
                     </div>
                     <div className='w-full flex justify-between items-center'>
                         <h2 className='text-3xl  font-extrabold'><span>{RUPEE_SYMBOL}</span> {showBalance ? balance.toFixed(2) : '-----'}</h2>
