@@ -40,8 +40,6 @@ const Footer = memo(({ toggle, open }: FooterProp) => {
 
     const [loadingPath, setLoadingPath] = useState<string | null>(null);
 
-    console.log(loadingPath);
-
     const handleLinkCLick = (href: string) => {
         vibrate()
         setLoadingPath(href);

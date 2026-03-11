@@ -10,6 +10,7 @@ import { TransactionAccountType, TransactionCategoryType } from "@/types/transac
 import { useEffect } from "react";
 import { useForm } from "@/hooks/form/useForm";
 import { transactionFormInitalState } from "@/app/(main)/features/transaction/transaction.state";
+import SearchSelect from "../ui/searchSelect";
 
 
 
@@ -84,7 +85,7 @@ export default function TransactionCard({ accounts, category, closeFn }: Transac
 
             {/* Category */}
             <div className="grid grid-cols-2 gap-3">
-                <SelectField
+                {/* <SelectField
                     label="Category"
                     name="categoryId"
                     value={categoryId}
@@ -99,9 +100,9 @@ export default function TransactionCard({ accounts, category, closeFn }: Transac
                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))
                     }
-                </SelectField>
+                </SelectField> */}
                 {/* Account */}
-                <SelectField
+                {/* <SelectField
                     label="Account"
                     name="accountId"
                     value={accountId}
@@ -116,7 +117,19 @@ export default function TransactionCard({ accounts, category, closeFn }: Transac
                             <option key={acc.id} value={acc.id}>{acc.name}</option>
                         ))
                     }
-                </SelectField>
+                </SelectField> */}
+                <SearchSelect
+                    fetchUrl="/api/category"
+                    name="categoryId"
+                    label="Category"
+                    placeholder="Search Category"
+                />
+                <SearchSelect
+                    fetchUrl="/api/account"
+                    name="accountId"
+                    label="Account"
+                    placeholder="Search Account"
+                />
             </div>
 
             {/* Description */}
