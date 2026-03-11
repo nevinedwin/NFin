@@ -1,4 +1,4 @@
-import { getUserFromSession, updateSessionExpiration } from '@/auth/core/session';
+import { COOKIE_SESSION_KEY, getUserFromSession, updateSessionExpiration } from '@/auth/core/session';
 import { UserRoles } from '@/generated/prisma/client';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -19,21 +19,22 @@ const middleware = async (request: NextRequest) => {
 }
 
 export const middlewareAuth = async (request: NextRequest) => {
+
+    const session = request.cookies.get(COOKIE_SESSION_KEY);
+
     if (privateRoutes.includes(request.nextUrl.pathname)) {
-        const user = await getUserFromSession(request.cookies);
-        if (user == null) {
+        if (!session) {
             return NextResponse.redirect(new URL('/sign-up', request.url));
         }
     }
 
     if (adminRoutes.includes(request.nextUrl.pathname)) {
-        const user = await getUserFromSession(request.cookies)
-        if (user == null) {
+        if (!session) {
             return NextResponse.redirect(new URL('/sign-up', request.url));
         }
-        if (user.role !== UserRoles.ADMIN) {
-            return NextResponse.redirect(new URL('/', request.url));
-        }
+        // if (user.role !== UserRoles.ADMIN) {
+        //     return NextResponse.redirect(new URL('/', request.url));
+        // }
     }
 }
 

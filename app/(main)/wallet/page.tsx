@@ -26,28 +26,20 @@ const Wallet = async ({ params }: WalletProp) => {
   const { accountId } = params;
   const selectedAccount = accountId || 'all';
 
-  const accounts = await prisma.account.findMany({
-    where: {
-      userId: user.id,
-      ...(
-        selectedAccount && selectedAccount !== 'all'
-          ? { id: selectedAccount }
-          : {}
-      )
-    },
-    orderBy: { name: "desc" }
-  });
+  const [accounts, userData] = await Promise.all([
+    prisma.account.findMany({
+      where: { userId: user.id },
+      orderBy: { name: "desc" }
+    }),
+    prisma.user.findUnique({
+      where: { id: user.id }
+    })
+  ]);
 
-  const userData = await prisma.user.findUnique({
-    where: {
-      id: user.id
-    }
-  });
-
-  const allAccounts = await prisma.account.findMany({
-    where: { userId: user.id },
-    orderBy: { name: "desc" }
-  });
+  const filteredAccounts =
+    selectedAccount === "all"
+      ? accounts
+      : accounts.filter(acc => acc.id === selectedAccount);
 
   const totalBalance = accounts.reduce((sum, acc) => {
     if (acc.countMeInTotal) {
@@ -66,7 +58,7 @@ const Wallet = async ({ params }: WalletProp) => {
           href="/wallet"
         />
         {
-          allAccounts.map(acc => (
+          accounts.map(acc => (
             <WalletChip
               key={acc.id}
               href={`/wallet/${acc.id}`}
@@ -81,7 +73,7 @@ const Wallet = async ({ params }: WalletProp) => {
         <BalanceCard showBalance={userData?.showBalance || false} totalBalance={totalBalance} label='Total Balance' />
       </div>
       <div className='w-full flex flex-col gap-4'>
-        {accounts.map(acc => (
+        {filteredAccounts.map(acc => (
           <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
             <AccountCard
               name={acc.name}

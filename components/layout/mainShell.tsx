@@ -130,9 +130,8 @@ const MainShell = ({ children, accounts, category, userData }: MainShellProp) =>
 
                 {/* Header */}
                 <header className="h-[50px] shrink-0 z-10" >
-                    <Header />
+                    <Header loading={loading}/>
                 </header>
-                <TopLoader loading={loading} />
 
                 {/* Main */}
                 <main
