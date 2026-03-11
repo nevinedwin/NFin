@@ -23,8 +23,8 @@ const TopLoader = ({ loading }: TopLoaderProp) => {
     }, [loading]);
 
     return (
-        visible && <div className="absolute top-[50px] left-0 w-full overflow-hidden pointer-events-none">
-            <div className="w-full h-1 bg-black overflow-hidden">
+        visible && <div className="absolute top-[0px] right-0 left-0 w-full overflow-hidden pointer-events-none z-100">
+            <div className="w-full h-[0.5] bg-black overflow-hidden">
                 <div className="h-full w-full bg-white rounded-full animate-[progress_1.8s_ease-in-out_infinite]"></div>
             </div>
 

@@ -23,15 +23,12 @@ type AccountFormProp = {
 export default function AccountForm({ account, isUpdate = false }: AccountFormProp) {
     const router = useRouter();
 
+    const { state, setField } = useForm(account || walletFormInitalState);
+    const { type, name, balance, accountNumber, billingDate, branch, cardNumber, countMeInTotal, creditLimit, currency, cvv, dueDate, expiryDate, ifscCode } = state;
 
     const [showBankDetails, setShowBankDetails] = useState(false);
     const [showAtmDetails, setShowAtmDetails] = useState(false);
     const [showCreditCardDetails, setShowCreditCardDetails] = useState(false);
-
-    const { state, setField } = useForm(account || walletFormInitalState);
-
-    const { type, name, balance, accountNumber, billingDate, branch, cardNumber, countMeInTotal, creditLimit, currency, cvv, dueDate, expiryDate, ifscCode } = state;
-
 
 
     return (
@@ -103,7 +100,7 @@ export default function AccountForm({ account, isUpdate = false }: AccountFormPr
                     <div>
                         <YesNoToggle
                             label="Add me in Total Balance"
-                            value={countMeInTotal as boolean || true}
+                            value={countMeInTotal ?? true}
                             onChange={() => setField('countMeInTotal', !countMeInTotal)}
                             name="countMeInTotal"
                         />

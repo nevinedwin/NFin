@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,9 +11,8 @@ import {
     Wallet,
     X,
 } from "lucide-react";
-import CloseButton from "../ui/closeButton";
-import TransactionCard from "../transaction/transactionCard";
 import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
+import LoaderButton from "../ui/loaderButton";
 
 const NAV_ITEMS = [
     { href: "/budget", label: "Budget", icon: <HandCoins size={20} /> },
@@ -36,19 +35,25 @@ type FooterProp = {
     toggle: () => void
 }
 
-const Footer = memo(({ accounts, category, toggle, open }: FooterProp) => {
+const Footer = memo(({ toggle, open }: FooterProp) => {
     const pathname = usePathname();
 
-    const handleLinkCLick = () => {
+    const [loadingPath, setLoadingPath] = useState<string | null>(null);
+
+    console.log(loadingPath);
+
+    const handleLinkCLick = (href: string) => {
         vibrate()
-        open && toggle();
+        setLoadingPath(href);
+        if (open) toggle();
     };
+
+    useEffect(() => {
+        setLoadingPath(null);
+    }, [pathname]);
 
     return (
         <>
-            {/* Backdrop */}
-            
-
             {/* Footer */}
             <footer className="footer">
                 <div className="footer-curve" />
@@ -61,11 +66,11 @@ const Footer = memo(({ accounts, category, toggle, open }: FooterProp) => {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                onClick={handleLinkCLick}
+                                onClick={() => handleLinkCLick(item.href)}
                                 className={`footer-item  transform transition-transform duration-300 ease-out  ${active ? "active" : ""} ${index === 2 && !open ? "translate-y-4 scale-105" : "translate-y-0"
                                     }`}
                             >
-                                <span className="icon">{item.icon}</span>
+                                <span className="icon">{loadingPath === item.href ? <LoaderButton className="w-5 h-5" /> : item.icon}</span>
                                 <span className="label">{item.label}</span>
                             </Link>
                         );
