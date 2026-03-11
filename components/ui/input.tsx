@@ -20,7 +20,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
         <div className={`flex flex-col ${containerClassName}`}>
             {
                 label && (
-                    <label htmlFor={inputId} className='text-slate-400 text-sm mb-1 font-medium'>
+                    <label htmlFor={inputId} className='text-slate-500 text-sm mb-1 font-medium'>
                         {label} {requiredLabel && <span className='text-red-500'>*</span>}
                     </label>
                 )
@@ -38,7 +38,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
                     !text-[16px]
                     bg-white
                     text-black
-                    placeholder:text-gray-400
+                    placeholder:text-gray-600
                     border border-gray-900
 
                     shadow-inner

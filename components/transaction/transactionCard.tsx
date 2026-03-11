@@ -146,11 +146,20 @@ export default function TransactionCard({ accounts, category, closeFn }: Transac
             </div>
 
             {/* Submit */}
-            <FormSubmitBtn
-                label="Save Transaction"
-                type="submit"
-                className="font-semibold"
-            />
+            <div className="flex gap-4 justify-end">
+                <button
+                    type="button"
+                    onClick={() => closeFn()}
+                    className="text-zinc-400"
+                >
+                    Cancel
+                </button>
+                <FormSubmitBtn
+                    label="Save Transaction"
+                    type="submit"
+                    className="font-semibold px-4 py-2"
+                />
+            </div>
         </form>
     );
 }

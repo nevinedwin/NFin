@@ -1,12 +1,25 @@
-import UnderProgress from '@/components/layout/underProgress'
-import React from 'react'
+import { prisma } from "@/lib/prisma";
+import CategoryPageClient from "./categoryUI";
 
-const Category = () => {
+export default async function CategoryPage() {
+
+  const categories = await prisma.category.findMany({
+    where: { isDeleted: false },
+    include: { children: true },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const rootCategories = categories.filter(c => !c.parentId);
+
+  const parentCategories = rootCategories.map(c => ({
+    id: c.id,
+    name: c.name
+  }));
+
   return (
-    <div>
-      <UnderProgress title='Category'/>
-    </div>
-  )
+    <CategoryPageClient
+      categories={rootCategories}
+      parentCategories={parentCategories}
+    />
+  );
 }
-
-export default Category

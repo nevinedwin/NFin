@@ -238,11 +238,18 @@ export default function AccountForm({ account, isUpdate = false }: AccountFormPr
                     )}
 
                     {/* Footer */}
-                    <div className="pt-4">
+                    <div className="pt-4 flex justify-end gap-4">
+                        <button
+                            type="button"
+                            onClick={() => router.back()}
+                            className="text-zinc-400"
+                        >
+                            Cancel
+                        </button>
                         <FormSubmitBtn
                             label={isUpdate ? 'Update Account' : 'Create Account'}
                             type="submit"
-                            className="font-semibold !bg-white !text-black"
+                            className="font-semibold !bg-white !text-black px-4 py-2"
                         />
                     </div>
                 </form>

@@ -229,6 +229,8 @@ model Category {
 
   name String
   type CategoryType
+  
+  forType TransactionType
 
   isActive  Boolean @default(true)
   isDeleted Boolean @default(false)

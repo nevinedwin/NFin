@@ -18,7 +18,6 @@ const FormSubmitBtn = ({ className, label, type = 'button' }: FormSubmitBtnProp)
             type={type}
             disabled={pending}
             className={clsx(
-                "w-full h-12",
                 "rounded-xl bg-slate-300 text-black",
                 "transition-all duration-300 hover:scale-[1.02] active:scale-95",
                 "flex justify-center items-center",
