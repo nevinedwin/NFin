@@ -94,7 +94,7 @@ export default function TransactionCard({
                 </div>
 
                 {/* Category + Account */}
-                {(type === TransactionType.EXPENSE || type === TransactionType.INCOME) && <div className="grid grid-cols-2 gap-3">
+                {(type === TransactionType.EXPENSE || type === TransactionType.INCOME) && <div className="grid gap-3">
 
                     <SearchSelect
                         fetchUrl="/api/category"
