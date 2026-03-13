@@ -5,6 +5,13 @@ export const formatUnderScoredString = (str: string) => {
     return formatted.charAt(0).toUpperCase() + formatted.slice(1).toLowerCase();
 }
 
+
+export const formatUnderScoredStringCut = (str: string) => {
+    const formatted = str.split("_")[0];
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1).toLowerCase();
+}
+
+
 export const formDataConverter = (formData: FormData) => {
     return Object.fromEntries(formData.entries());
 };

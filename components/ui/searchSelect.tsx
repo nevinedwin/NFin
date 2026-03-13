@@ -1,5 +1,6 @@
 "use client";
 
+import { TransactionType } from "@/generated/prisma/client";
 import { useEffect, useRef, useState } from "react";
 
 type Option = {
@@ -13,6 +14,7 @@ type Props = {
   label?: string;
   placeholder?: string;
   onChange?: (val: string) => void;
+  type?: TransactionType | null
 };
 
 export default function SearchSelect({
@@ -20,7 +22,8 @@ export default function SearchSelect({
   fetchUrl,
   label,
   placeholder = "Search...",
-  onChange
+  onChange,
+  type
 }: Props) {
   const [query, setQuery] = useState("");
   const [options, setOptions] = useState<Option[]>([]);
@@ -29,10 +32,17 @@ export default function SearchSelect({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const fetchOptions = async (q?: string) => {
+  const fetchOptions = async (type?: TransactionType | null, q?: string) => {
+
     setLoading(true);
 
-    const url = q ? `${fetchUrl}?q=${q}` : fetchUrl;
+
+    const params = new URLSearchParams();
+
+    if (q) params.append("q", q);
+    if (type) params.append("type", type);
+
+    const url = `${fetchUrl}?${params.toString()}`;
 
     const res = await fetch(url);
     const data = await res.json();
@@ -46,7 +56,7 @@ export default function SearchSelect({
     if (!open) return;
 
     const delay = setTimeout(() => {
-      fetchOptions(query);
+      fetchOptions(type, query);
     }, 300);
 
     return () => clearTimeout(delay);
@@ -84,10 +94,10 @@ export default function SearchSelect({
           value={query}
           onFocus={() => {
             setOpen(true);
-            fetchOptions(); // load all
+            fetchOptions(type); // load all
           }}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-3 py-2 pr-10 bg-black border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="w-full px-3 py-2 pr-10 bg-black border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-green-500 placeholder:text-xs"
         />
 
         {/* loader */}
@@ -100,7 +110,7 @@ export default function SearchSelect({
       </div>
 
       {open && (
-        <div className="absolute z-50 w-full mt-1 bg-black border border-slate-700 rounded-lg max-h-60 overflow-y-auto">
+        <div className="absolute h-[110px] z-50 w-full mt-1 bg-black border border-slate-700 rounded-lg max-h-60 overflow-y-auto">
 
           {loading && (
             <div className="p-2 text-sm text-slate-500">

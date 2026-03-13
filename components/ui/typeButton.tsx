@@ -1,23 +1,28 @@
 
+export type ButtonColors = "red" | "green" | "blue" | "purple" | "yellow" | "orange";
 
 type TypeButtonProp = {
     active: boolean;
     onClick: () => void;
     label: string;
-    color: "red" | "green" | "blue";
+    color: ButtonColors;
 }
 
 
 const TypeButton = ({ active, onClick, label, color }: TypeButtonProp) => {
     const colors = {
-        red: active && "bg-red-500 text-white",
-        green: active && "bg-green-500 text-white",
-        blue: active && "bg-blue-500 text-white"
+        red: active && "bg-red-800 text-white",
+        green: active && "bg-green-800 text-white",
+        blue: active && "bg-blue-800 text-white",
+        yellow: active && "bg-yellow-800 text-white",
+        orange: active && "bg-orange-800 text-white",
+        purple: active && "bg-purple-800 text-white"
     };
 
     return (
         <button
             onClick={onClick}
+            type="button"
             className={`
                 h-8 w-[78px]
                 rounded-lg text-sm font-medium

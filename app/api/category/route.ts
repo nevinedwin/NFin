@@ -1,6 +1,7 @@
 'use server';
 
 import { getCurrentUser } from "@/auth/currentUser";
+import { TransactionType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createCategorySchema } from "@/schemas/category.schema";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,19 +10,27 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const q = searchParams.get("q");
+    const typeParam = searchParams.get("type");
+    const type = Object.values(TransactionType).includes(typeParam as TransactionType)
+        ? (typeParam as TransactionType)
+        : undefined;
+        
+    const where: any = {};
+
+    if (q) {
+        where.name = {
+            contains: q,
+            mode: "insensitive",
+        };
+    }
+
+    if (type) {
+        where.forType = type;
+    }
 
     const category = await prisma.category.findMany({
-        where: {
-            ...(q
-                ? {
-                    name: {
-                        contains: q,
-                        mode: "insensitive"
-                    }
-                }
-                : {})
-        },
-        take: 20
+        where,
+        take: 20,
     });
 
     return Response.json(

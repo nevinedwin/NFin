@@ -1,8 +1,7 @@
 "use client";
 
 import { RUPEE_SYMBOL } from "@/lib/constants/constants";
-import TypeButton from "../ui/typeButton";
-import SelectField from "./selectField";
+import TypeButton, { ButtonColors } from "../ui/typeButton";
 import { createTransaction } from "@/actions/transactions";
 import FormSubmitBtn from "../ui/formSubmitBtn";
 import { TransactionType } from "@/generated/prisma/client";
@@ -11,155 +10,170 @@ import { useEffect } from "react";
 import { useForm } from "@/hooks/form/useForm";
 import { transactionFormInitalState } from "@/app/(main)/features/transaction/transaction.state";
 import SearchSelect from "../ui/searchSelect";
-
-
+import { formatUnderScoredString, formatUnderScoredStringCut } from "@/lib/utils/formats";
+import YesNoToggle from "../ui/toggleButton";
 
 type TransactionCardProp = {
-    accounts: TransactionAccountType[],
-    category: TransactionCategoryType[],
-    closeFn: () => void
-}
+    accounts: TransactionAccountType[];
+    category: TransactionCategoryType[];
+    closeFn: () => void;
+};
 
+const colorButton: Record<TransactionType, string> = {
+    EXPENSE: "red",
+    INCOME: "green",
+    TRANSFER: "blue",
+    GROUP_SPLIT: "purple",
+    LEND: "yellow",
+    BORROW: "orange",
+};
 
-export default function TransactionCard({ accounts, category, closeFn }: TransactionCardProp) {
+export default function TransactionCard({
+    accounts,
+    category,
+    closeFn,
+}: TransactionCardProp) {
 
     const { state, setField, reset } = useForm(transactionFormInitalState);
-    const { accountId, amount, categoryId, description, repeat, type } = state;
+    const { amount, description, repeat, type } = state;
 
     useEffect(() => {
-        return () => {
-            reset();
-        };
-    }, [])
+        return () => reset();
+    }, []);
 
     return (
         <form
             action={createTransaction}
             onSubmit={() => closeFn()}
-            className="w-full max-w-md mx-auto rounded-3xl shadow-xl px-2 space-y-[-10] animate-fade-in"
+            className="flex flex-col h-[75vh] w-full max-w-md mx-auto bg-black rounded-3xl shadow-xl"
         >
 
             <input type="hidden" name="type" value={type} />
             <input type="hidden" name="repeat" value={String(repeat)} />
 
-            {/* Amount */}
-            <div className="grid grid-cols-2 mb-2">
+            {/* Scrollable Area */}
+            <div className="flex-1 overflow-y-auto px-4 pt-4 space-y-6 pb-24">
+
+                {/* Amount + Type */}
+                <div className="grid grid-cols-2 gap-4">
+
+                    <div>
+                        <label className="text-sm text-slate-500">Amount</label>
+
+                        <div className="flex items-center border border-border rounded-xl px-3 h-14">
+                            <span className="text-xl font-semibold mr-2">{RUPEE_SYMBOL}</span>
+
+                            <input
+                                name="amount"
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setField("amount", e.target.value)}
+                                placeholder="0.00"
+                                inputMode="decimal"
+                                required
+                                className="w-full outline-none text-2xl font-bold bg-black"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Type Buttons */}
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-2 w-full pr-3">
+                        {Object.keys(TransactionType).map((t) => (
+                            <div className="w-full flex" key={t}>
+                                <TypeButton
+                                    key={t}
+                                    active={type === t}
+                                    onClick={() => setField("type", t as TransactionType)}
+                                    label={formatUnderScoredStringCut(t)}
+                                    color={colorButton[t as TransactionType] as ButtonColors}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                </div>
+
+                {/* Category + Account */}
+                {(type === TransactionType.EXPENSE || type === TransactionType.INCOME) && <div className="grid grid-cols-2 gap-3">
+
+                    <SearchSelect
+                        fetchUrl="/api/category"
+                        type={type}
+                        name="categoryId"
+                        label="Category"
+                        placeholder="Search Category"
+                    />
+
+                    <SearchSelect
+                        fetchUrl="/api/account"
+                        name="accountId"
+                        label="Account"
+                        placeholder="Search Account"
+                    />
+
+                </div>}
+
+                {type === TransactionType.TRANSFER && <div className="grid grid-cols-2 gap-3">
+
+                    <SearchSelect
+                        fetchUrl="/api/account"
+                        name="accountId"
+                        label="From Account"
+                        placeholder="Search.."
+                    />
+
+                    <SearchSelect
+                        fetchUrl="/api/account"
+                        name="toAccountId"
+                        label="To Account"
+                        placeholder="Search.."
+                    />
+
+                </div>}
+
+                {/* Description */}
                 <div>
-                    <label className="text-sm text-slate-500">Amount</label>
-                    <div className="flex items-center border border-border rounded-xl px-3 h-14">
-                        <span className="text-xl font-semibold mr-2">{RUPEE_SYMBOL}</span>
-                        <input
-                            name="amount"
-                            type="number"
-                            value={amount}
-                            onChange={e => setField('amount', e.target.value)}
-                            placeholder="0.00"
-                            inputMode="decimal"
-                            required
-                            className="w-full outline-none text-2xl font-bold bg-black"
-                        />
-                    </div>
-                    {/* Date & Time */}
-                    <div className="text-xs text-slate-500 pt-3">
-                        {/* {formattedDate} */}
-                    </div>
+                    <label className="text-sm text-slate-500">Description</label>
+
+                    <textarea
+                        name="description"
+                        value={description}
+                        onChange={(e) => setField("description", e.target.value)}
+                        placeholder="Add note..."
+                        className="w-full mt-1 border border-border rounded-xl p-3 outline-none bg-black text-base"
+                        rows={3}
+                    />
                 </div>
-                <div className="grid gap-2 px-6 rounded-xl justify-center items-center">
-                    <TypeButton active={type === TransactionType.EXPENSE} onClick={() => setField("type", TransactionType.EXPENSE)} label="Expense" color="red" />
-                    <TypeButton active={type === TransactionType.INCOME} onClick={() => setField("type", TransactionType.INCOME)} label="Income" color="green" />
-                    <TypeButton active={type === TransactionType.TRANSFER} onClick={() => setField("type", TransactionType.TRANSFER)} label="Transfer" color="blue" />
-                </div>
+
                 {/* Repeat Toggle */}
-                <div className="flex justify-start items-center gap-3 mt-1">
-                    <span className="text-sm text-slate-600">Repeat</span>
-                    <button
-                        onClick={() => setField("repeat", !repeat)}
-                        className={`w-12 h-6 flex items-center rounded-full p-1 transition-all duration-300 ${repeat ? "bg-slate-500" : "bg-bar"}`}
-                    >
-                        <span
-                            className={`w-4 h-4 bg-black rounded-full shadow-md transform transition ${repeat ? "translate-x-6" : ""}`}
-                        />
-                    </button>
-                </div>
+                <YesNoToggle
+                    label={`Mark as repeated ${formatUnderScoredString(type)}`}
+                    value={repeat ?? true}
+                    onChange={() => setField("repeat", !repeat)}
+                    name="repeat"
+                />
+
             </div>
 
-            {/* Category */}
-            <div className="grid grid-cols-2 gap-3">
-                {/* <SelectField
-                    label="Category"
-                    name="categoryId"
-                    value={categoryId}
-                    onChange={(e) => setField("categoryId", e.target.value)}
-                    required
-                >
-                    <option value="" disabled>
-                        Select category
-                    </option>
-                    {
-                        category.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))
-                    }
-                </SelectField> */}
-                {/* Account */}
-                {/* <SelectField
-                    label="Account"
-                    name="accountId"
-                    value={accountId}
-                    onChange={(e) => setField("accountId", e.target.value)}
-                    required
-                >
-                    <option value="" disabled>
-                        Select account
-                    </option>
-                    {
-                        accounts.map((acc) => (
-                            <option key={acc.id} value={acc.id}>{acc.name}</option>
-                        ))
-                    }
-                </SelectField> */}
-                <SearchSelect
-                    fetchUrl="/api/category"
-                    name="categoryId"
-                    label="Category"
-                    placeholder="Search Category"
-                />
-                <SearchSelect
-                    fetchUrl="/api/account"
-                    name="accountId"
-                    label="Account"
-                    placeholder="Search Account"
-                />
-            </div>
+            {/* Fixed Footer */}
+            <div className="border-t border-border p-4 flex justify-end gap-4 bg-black sticky bottom-0">
 
-            {/* Description */}
-            <div>
-                <label className="text-sm text-slate-500">Description</label>
-                <textarea
-                    name="description"
-                    value={description}
-                    onChange={(e) => setField("description", e.target.value)}
-                    placeholder="Add note..."
-                    className="w-full mt-1 mb-4 border border-border rounded-xl p-3 outline-none bg-black text-base"
-                    rows={2}
-                />
-            </div>
-
-            {/* Submit */}
-            <div className="flex gap-4 justify-end">
                 <button
                     type="button"
-                    onClick={() => closeFn()}
+                    onClick={closeFn}
                     className="text-zinc-400"
                 >
                     Cancel
                 </button>
+
                 <FormSubmitBtn
                     label="Save Transaction"
                     type="submit"
                     className="font-semibold px-4 py-2"
                 />
+
             </div>
+
         </form>
     );
 }
