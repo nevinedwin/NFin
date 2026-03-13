@@ -45,7 +45,7 @@ export default function TransactionCard({
         <form
             action={createTransaction}
             onSubmit={() => closeFn()}
-            className="flex flex-col h-[75vh] w-full max-w-md mx-auto bg-black rounded-3xl shadow-xl"
+            className="flex flex-col h-full w-full max-w-md mx-auto bg-black rounded-3xl shadow-xl"
         >
 
             <input type="hidden" name="type" value={type} />

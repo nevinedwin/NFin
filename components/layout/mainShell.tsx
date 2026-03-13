@@ -178,7 +178,7 @@ const MainShell = ({ children, accounts, category, userData }: MainShellProp) =>
                                 <div className="flex justify-end items-center pr-6 bg-transparent">
                                     <CloseButton size={20} onClick={toggleTransactionCard} className="bg-black p-2 flex justify-center items-center rounded-full mb-1" />
                                 </div>
-                                <div className="w-[100vw] h-[480px] rounded-t-3xl bg-black shadow-2xl p-5 text-slate-500">
+                                <div className="w-[100vw]  h-[80vh] max-h-[650px] rounded-t-3xl bg-black shadow-2xl p-5 text-slate-500">
                                     <div className="flex justify-between items-center mb-4 bg-transparent">
                                         <h3 className="text-md font-semibold">New Transaction</h3>
                                         {/* <CloseButton size={20} onClick={toggle} /> */}
