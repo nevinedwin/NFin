@@ -5,14 +5,18 @@ import CategoryTree from "../features/category/categorytree";
 import CategoryForm from "../features/category/categoryForm";
 import CloseButton from "@/components/ui/closeButton";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function CategoryPageClient({
     categories,
     parentCategories
 }: any) {
 
+    const router = useRouter();
+
     const [open, setOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<any | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleCreate = () => {
         setEditingCategory(null);
@@ -23,6 +27,21 @@ export default function CategoryPageClient({
         setEditingCategory(category);
         setOpen(true);
     };
+
+    const handleDelete = async (category: any) => {
+        setLoading(true);
+        if (!confirm("Delete this category?")) {
+            setLoading(false)
+            return;
+        };
+
+        await fetch(`/api/category/${category.id}`, {
+            method: "DELETE"
+        });
+
+        router.refresh();
+        setLoading(false);
+    }
 
     return (
         <div className="max-w-3xl mx-auto p-6 space-y-6">
@@ -38,7 +57,7 @@ export default function CategoryPageClient({
                 </button>
             </div>
 
-            <CategoryTree categories={categories} onEdit={handleEdit} />
+            <CategoryTree categories={categories} onEdit={handleEdit} onDelete={handleDelete} loading={loading} />
             {open && <div
                 className={`fixed inset-0 bg-black/40 backdrop-blur-sm
                     transition-opacity duration-300

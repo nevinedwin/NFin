@@ -5,7 +5,7 @@ import CategoryActions from "./categoryActions";
 import { ChevronDown, ChevronUp, EllipsisVertical } from "lucide-react";
 import { stringToColor } from "@/lib/utils/colors";
 
-export default function CategoryItem({ category, onEdit }: any) {
+export default function CategoryItem({ category, onEdit, onDelete, loading }: any) {
 
     const [open, setOpen] = useState(true);
     const [openAction, setOpenAction] = useState(false);
@@ -33,7 +33,7 @@ export default function CategoryItem({ category, onEdit }: any) {
                     </button>}
                 </div>
 
-                {openAction && <CategoryActions category={category} onEdit={onEdit} closeAction={()=>setOpenAction(false)}/>}
+                {openAction && <CategoryActions category={category} onEdit={onEdit} onDelete={onDelete} loading={loading} closeAction={()=>setOpenAction(false)}/>}
 
             </div>
 

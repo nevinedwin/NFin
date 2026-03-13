@@ -21,7 +21,7 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
 
     const router = useRouter();
 
-    const isEdit = !!categoryFormState;
+    const isEdit = !!categoryFormState?.id;
 
     const { state, setField, reset } = useForm(categoryFormState ?? categoryFormInitalState);
     const { name, forType, type, parentId } = state;
@@ -34,13 +34,15 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
         setLoading(true);
 
 
-        await fetch(`/api/category${isEdit ? `/${categoryFormState.id}` : ""}`, {
-            method: isEdit ? "PATCH" : "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(state)
-        });
+        await fetch(
+            isEdit ? `/api/category/${categoryFormState.id}` : "/api/category/",
+            {
+                method: isEdit ? "PATCH" : "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(state)
+            });
 
         reset();
         onClose();
