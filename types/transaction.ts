@@ -1,4 +1,5 @@
-import { Prisma } from "@/generated/prisma/client";
+import { Account, AccountType, Category, CategoryType, Prisma, TransactionType } from "@/generated/prisma/client";
+import { string } from "zod";
 
 export type TransactionAccountType = {
     id: string;
@@ -31,4 +32,16 @@ export type TransactionAccountPayloadType = Prisma.AccountGetPayload<{
 export type TransactionCategoryType = {
     id: string;
     name: string;
-} 
+}
+
+export type transactionDataType = {
+    id: string;
+    amount: number;
+    description: string | undefined;
+    category: Category;
+    date: Date;
+    updateAt?: Date;
+    account: Account;
+    toAccount?: Account;
+    type: TransactionType
+}

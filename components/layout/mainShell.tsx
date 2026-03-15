@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Header from "../../components/layout/header";
 import Footer from "../../components/layout/footer";
-import { AccountSafeType, TransactionCategoryType } from "@/types/transaction";
+import { AccountSafeType, TransactionCategoryType, transactionDataType } from "@/types/transaction";
 import { MainShellProvider } from "@/app/(main)/context/mainShellContext";
 import { usePathname } from "next/navigation";
 import TransactionCard from "../transaction/transactionCard";
@@ -18,10 +18,11 @@ type MainShellProp = {
     children: React.ReactNode;
     accounts: AccountSafeType[],
     category: TransactionCategoryType[],
-    userData: User | null
+    userData: User | null,
+    recentTransaction: transactionDataType[]
 };
 
-const MainShell = ({ children, accounts, category, userData }: MainShellProp) => {
+const MainShell = ({ children, accounts, category, userData, recentTransaction }: MainShellProp) => {
     const pathname = usePathname();
 
     const mainRef = useRef<HTMLElement | null>(null);
@@ -108,7 +109,8 @@ const MainShell = ({ children, accounts, category, userData }: MainShellProp) =>
         userData,
         loading,
         startLoading,
-        stopLoading
+        stopLoading,
+        recentTransaction
 
     }), [
         openTransactionCard,
@@ -119,7 +121,8 @@ const MainShell = ({ children, accounts, category, userData }: MainShellProp) =>
         userData,
         loading,
         startLoading,
-        stopLoading
+        stopLoading,
+        recentTransaction
     ])
 
     return (

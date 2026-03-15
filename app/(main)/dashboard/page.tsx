@@ -5,11 +5,12 @@ import HeaderCard from "@/components/dashboard/headerCard";
 import { CardSkeleton } from "@/components/ui/card/cardSkeleton";
 import { useMainShellContext } from "../context/mainShellContext";
 import { useMemo } from "react";
+import RecentTransaction from "@/components/transaction/recentTransactions.tsx/recentTransaction";
 
 
 const Dashboard = () => {
 
-    const { accounts, userData } = useMainShellContext();
+    const { accounts, userData, recentTransaction } = useMainShellContext();
 
     const balance = useMemo(() => {
         return accounts.reduce((sum, acc) => {
@@ -26,13 +27,7 @@ const Dashboard = () => {
                 <HeaderCard balance={balance} expense={100} income={800} showBalance={userData?.showBalance || false} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full p-4">
-                <CardSkeleton className="w-full" />
-                <CardSkeleton className="w-full" />
-                <CardSkeleton className="w-full" />
-                <CardSkeleton className="w-full" />
-                <CardSkeleton className="w-full" />
-                <CardSkeleton className="w-full" />
-                <CardSkeleton className="w-full" />
+                <RecentTransaction recentTransaction={recentTransaction}/>
                 <CardSkeleton className="w-full" />
                 <CardSkeleton className="w-full" />
                 <CardSkeleton className="w-full" />
