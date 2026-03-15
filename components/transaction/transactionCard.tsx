@@ -5,16 +5,17 @@ import TypeButton, { ButtonColors } from "../ui/typeButton";
 import { createTransaction } from "@/actions/transactions";
 import FormSubmitBtn from "../ui/formSubmitBtn";
 import { TransactionType } from "@/generated/prisma/client";
-import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
-import { useEffect } from "react";
+import { AccountSafeType, TransactionCategoryType } from "@/types/transaction";
+import { useActionState, useEffect } from "react";
 import { useForm } from "@/hooks/form/useForm";
 import { transactionFormInitalState } from "@/app/(main)/features/transaction/transaction.state";
 import SearchSelect from "../ui/searchSelect";
 import { formatUnderScoredString, formatUnderScoredStringCut } from "@/lib/utils/formats";
 import YesNoToggle from "../ui/toggleButton";
+import { useRouter } from "next/navigation";
 
 type TransactionCardProp = {
-    accounts: TransactionAccountType[];
+    accounts: AccountSafeType[];
     category: TransactionCategoryType[];
     closeFn: () => void;
 };
@@ -34,17 +35,26 @@ export default function TransactionCard({
     closeFn,
 }: TransactionCardProp) {
 
-    const { state, setField, reset } = useForm(transactionFormInitalState);
-    const { amount, description, repeat, type } = state;
+    const router = useRouter();
+
+    const [state, formAction] = useActionState(createTransaction, null);
+
+    const { state: formState, setField, reset } = useForm(transactionFormInitalState);
+    const { amount, description, repeat, type } = formState;
+
+
 
     useEffect(() => {
-        return () => reset();
-    }, []);
+        if (state?.success) {
+            router.refresh();
+            closeFn();
+        }
+        return () => reset()
+    }, [state]);
 
     return (
         <form
-            action={createTransaction}
-            onSubmit={() => closeFn()}
+            action={formAction}
             className="flex flex-col h-full w-full max-w-md mx-auto bg-black rounded-3xl shadow-xl"
         >
 
@@ -71,6 +81,8 @@ export default function TransactionCard({
                                 placeholder="0.00"
                                 inputMode="decimal"
                                 required
+                                step={0.01}
+                                min={0}
                                 className="w-full outline-none text-2xl font-bold bg-black"
                             />
                         </div>
@@ -150,28 +162,31 @@ export default function TransactionCard({
                     label={`Mark as repeated ${formatUnderScoredString(type)}`}
                     value={repeat ?? true}
                     onChange={() => setField("repeat", !repeat)}
-                    name="repeat"
                 />
 
             </div>
 
             {/* Fixed Footer */}
-            <div className="border-t border-border p-4 flex justify-end gap-4 bg-black sticky bottom-0">
+            <div className="border-t border-border p-4 flex flex-col justify-end gap-4 bg-black sticky bottom-0">
+                {state?.errors && <div className="flex justify-center">
+                    <p className="text-red-500">{state?.errors?.toString()}</p>
+                </div>}
+                <div className="flex justify-end gap-4">
+                    <button
+                        type="button"
+                        onClick={closeFn}
+                        className="text-zinc-400"
+                    >
+                        Cancel
+                    </button>
 
-                <button
-                    type="button"
-                    onClick={closeFn}
-                    className="text-zinc-400"
-                >
-                    Cancel
-                </button>
+                    <FormSubmitBtn
+                        label="Save Transaction"
+                        type="submit"
+                        className="font-semibold px-4 py-2"
+                    />
 
-                <FormSubmitBtn
-                    label="Save Transaction"
-                    type="submit"
-                    className="font-semibold px-4 py-2"
-                />
-
+                </div>
             </div>
 
         </form>

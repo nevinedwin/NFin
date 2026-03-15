@@ -19,3 +19,7 @@ export const formDataConverter = (formData: FormData) => {
 
 export const formatDateTime = (date: Date) =>
   format(date, "h:mm a, do MMM yyyy");
+
+export function serializeDecimal<T>(data: T): T {
+  return JSON.parse(JSON.stringify(data));
+}

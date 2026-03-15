@@ -2,23 +2,19 @@
 import React from "react";
 import MainShell from "@/components/layout/mainShell";
 import { prisma } from "@/lib/prisma";
-import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
+import { AccountSafeType, TransactionAccountPayloadType, TransactionCategoryType } from "@/types/transaction";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/auth/currentUser";
 import { User } from "@/generated/prisma/client";
-
+import { serializeDecimal } from "@/lib/utils/formats";
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
 
     const user = await getCurrentUser();
     if (!user) return redirect('/sign-up')
 
-    let accounts: TransactionAccountType[] = [];
-    let category: TransactionCategoryType[] = [];
-    let userData: User | null = null;
-
-    if (user) {
-        accounts = await prisma.account.findMany({
+    const [rawAccounts, category, userData] = await Promise.all([
+        prisma.account.findMany({
             where: { userId: user.id },
             select: {
                 id: true,
@@ -26,23 +22,24 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
                 accountNumber: true,
                 balance: true,
                 countMeInTotal: true
-            },
-        });
-
-        category = await prisma.category.findMany({
+            }
+        }),
+        prisma.category.findMany({
             where: { userId: user.id },
             select: {
                 id: true,
                 name: true
             },
-        });
-
-        userData = await prisma.user.findUnique({
-            where: {
-                id: user.id
-            }
+        }),
+        prisma.user.findUnique({
+            where: { id: user.id }
         })
-    }
+    ]);
+
+    const accounts: AccountSafeType[] = rawAccounts.map(acc => ({
+        ...acc,
+        balance: acc.balance.toString()
+    }));
 
     return (
         <MainShell accounts={accounts} category={category} userData={userData}>
@@ -50,5 +47,4 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
         </MainShell>
     );
 }
-
 export default MainLayout;

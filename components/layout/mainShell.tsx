@@ -1,11 +1,10 @@
 "use client";
 
-import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Header from "../../components/layout/header";
 import Footer from "../../components/layout/footer";
-import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
+import { AccountSafeType, TransactionCategoryType } from "@/types/transaction";
 import { MainShellProvider } from "@/app/(main)/context/mainShellContext";
-import TopLoader from "../ui/topLoader";
 import { usePathname } from "next/navigation";
 import TransactionCard from "../transaction/transactionCard";
 import CloseButton from "../ui/closeButton";
@@ -17,7 +16,7 @@ const SCROLL_THRESHOLD = 10;
 
 type MainShellProp = {
     children: React.ReactNode;
-    accounts: TransactionAccountType[],
+    accounts: AccountSafeType[],
     category: TransactionCategoryType[],
     userData: User | null
 };
@@ -130,7 +129,7 @@ const MainShell = ({ children, accounts, category, userData }: MainShellProp) =>
 
                 {/* Header */}
                 <header className="h-[50px] shrink-0 z-10" >
-                    <Header loading={loading}/>
+                    <Header loading={loading} />
                 </header>
 
                 {/* Main */}

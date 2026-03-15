@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/auth/currentUser';
+import { AccountSafeType } from '@/types/transaction';
 
 type WalletProp = {
   params: {
@@ -26,7 +27,7 @@ const Wallet = async ({ params }: WalletProp) => {
   const { accountId } = params;
   const selectedAccount = accountId || 'all';
 
-  const [accounts, userData] = await Promise.all([
+  const [rawAccounts, userData] = await Promise.all([
     prisma.account.findMany({
       where: { userId: user.id },
       orderBy: { name: "desc" }
@@ -36,6 +37,11 @@ const Wallet = async ({ params }: WalletProp) => {
     })
   ]);
 
+  const accounts: AccountSafeType[] = rawAccounts.map(acc => ({
+    ...acc,
+    balance: acc.balance.toString()
+  }));
+
   const filteredAccounts =
     selectedAccount === "all"
       ? accounts
@@ -43,7 +49,7 @@ const Wallet = async ({ params }: WalletProp) => {
 
   const totalBalance = accounts.reduce((sum, acc) => {
     if (acc.countMeInTotal) {
-      return sum + acc.balance;
+      return sum + Number(acc.balance);
     }
     return sum;
   }, 0)
@@ -78,8 +84,8 @@ const Wallet = async ({ params }: WalletProp) => {
             <AccountCard
               name={acc.name}
               accountNumber={acc.accountNumber ?? "—"}
-              balance={acc.balance}
-              lastUpdated={new Date(acc.createdAt).toLocaleDateString("en-IN")}
+              balance={parseFloat(acc.balance)}
+              lastUpdated={new Date(acc.createdAt!).toLocaleDateString("en-IN")}
             />
           </Link>
         ))}

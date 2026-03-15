@@ -1,9 +1,9 @@
 import { User } from "@/generated/prisma/client";
-import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction"
+import { AccountSafeType, TransactionCategoryType } from "@/types/transaction"
 
 
 export type MainShellContextType = {
-    accounts: TransactionAccountType[],
+    accounts: AccountSafeType[],
     category: TransactionCategoryType[],
     userData: User | null,
 

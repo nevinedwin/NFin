@@ -11,7 +11,7 @@ import {
     Wallet,
     X,
 } from "lucide-react";
-import { TransactionAccountType, TransactionCategoryType } from "@/types/transaction";
+import { AccountSafeType, TransactionCategoryType } from "@/types/transaction";
 import LoaderButton from "../ui/loaderButton";
 
 const NAV_ITEMS = [
@@ -29,7 +29,7 @@ const vibrate = () => {
 };
 
 type FooterProp = {
-    accounts: TransactionAccountType[],
+    accounts: AccountSafeType[],
     category: TransactionCategoryType[],
     open: boolean,
     toggle: () => void

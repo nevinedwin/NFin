@@ -29,6 +29,7 @@ export default function SearchSelect({
   const [options, setOptions] = useState<Option[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [id, setId] = useState('');
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +61,7 @@ export default function SearchSelect({
     }, 300);
 
     return () => clearTimeout(delay);
-  }, [query]);
+  }, [query, type]);
 
   // close on outside click
   useEffect(() => {
@@ -131,6 +132,7 @@ export default function SearchSelect({
               onClick={() => {
                 setQuery(opt.label);
                 setOpen(false);
+                setId(opt.value);
                 onChange?.(opt.value);
               }}
             >
@@ -141,7 +143,7 @@ export default function SearchSelect({
         </div>
       )}
 
-      <input type="hidden" name={name} value={query} />
+      <input type="hidden" name={name} value={id} />
 
     </div>
   );
