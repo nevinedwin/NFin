@@ -76,7 +76,7 @@ export default function AccountForm({ account, isUpdate = false }: AccountFormPr
                             label="Balance"
                             required
                             requiredLabel
-                            value={balance || 0}
+                            value={Number(balance) || 0}
                             onChange={(e) => setField('balance', parseInt(e.target.value))}
                             placeholder="0.00"
                             className="!bg-black !text-slate-400"

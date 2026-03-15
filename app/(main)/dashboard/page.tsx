@@ -14,7 +14,7 @@ const Dashboard = () => {
     const balance = useMemo(() => {
         return accounts.reduce((sum, acc) => {
             if (acc.countMeInTotal) {
-                return sum + acc.balance;
+                return sum + Number(acc.balance);
             }
             return sum;
         }, 0);

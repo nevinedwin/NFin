@@ -21,7 +21,7 @@ type BalanceIndCardProp = {
 const BalanceIndCard = ({ showBalance: showBal = false, account, label }: BalanceIndCardProp) => {
 
     const [showBalance, setShowBalance] = useState<boolean>(showBal);
-    const balanceInd = useCountUp(account.balance, 100)
+    const balanceInd = useCountUp(Number(account.balance), 100)
 
     return (
         <Card className=" w-full border-none h-[160px] bg-surface p-0 
