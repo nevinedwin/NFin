@@ -1,9 +1,11 @@
+
+
+import React from 'react'
 import { getCurrentUser } from '@/auth/currentUser';
 import AccountForm from '@/components/wallet/accountCreateForm'
 import { Account } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 import { AccountFormType } from '@/types/account';
-import React from 'react'
 
 type AccountEditFormProps = {
     params: Promise<{ accountId: string }>

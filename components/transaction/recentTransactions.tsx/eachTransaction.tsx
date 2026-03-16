@@ -6,6 +6,7 @@ import { TransactionType } from "@/generated/prisma/client";
 import { formatTimeDate } from "@/lib/utils/formats";
 import { transactionDataType } from "@/types/transaction";
 import { ArrowDownUp, BanknoteArrowUp, HandCoins } from "lucide-react";
+import CategoryIcon from "@/components/ui/caetgoryIcon";
 
 type EachTransactionProp = {
     recentTransaction: transactionDataType;
@@ -25,14 +26,8 @@ const EachTransaction = ({ recentTransaction }: EachTransactionProp) => {
             <div className="flex items-start gap-3">
 
                 {/* ICON */}
-                <div className=" rounded-xl  flex items-center justify-center text-xs font-semibold">
-                    {
-                        type === TransactionType.EXPENSE
-                            ? <HandCoins className="text-white" />
-                            : type === TransactionType.INCOME
-                                ? <BanknoteArrowUp className="text-white" />
-                                : <ArrowDownUp className="text-white" />
-                    }
+                <div className="w-6 h-6 flex justify-center items-center font-bold" >
+                    <CategoryIcon name={category.icon!} className="w-full h-full" containerClassName="w-full h-full flex item-center justify-center" />
                 </div>
 
                 {/* TEXT */}
@@ -68,7 +63,7 @@ const EachTransaction = ({ recentTransaction }: EachTransactionProp) => {
                 </p>
 
                 {/* ACCOUNT */}
-                <div className="text-xs text-zinc-400 flex gap-1 justify-center items-center">
+                <div className="text-[10px] text-zinc-400 flex gap-1 justify-center items-center">
                     From <AccountLogo className="w-3 h-3 text-[7px] font-bold" name={account.name} /> ··{account?.accountNumber?.slice(-4)}8989
                 </div>
             </div>

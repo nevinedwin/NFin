@@ -48,10 +48,7 @@ const Wallet = async ({ params }: WalletProp) => {
       : accounts.filter(acc => acc.id === selectedAccount);
 
   const totalBalance = accounts.reduce((sum, acc) => {
-    if (acc.countMeInTotal) {
-      return sum + Number(acc.balance);
-    }
-    return sum;
+    return sum + Number(acc.balance);
   }, 0)
 
   return (
@@ -85,7 +82,7 @@ const Wallet = async ({ params }: WalletProp) => {
               name={acc.name}
               accountNumber={acc.accountNumber ?? "—"}
               balance={parseFloat(acc.balance)}
-              lastUpdated={new Date(acc.createdAt!).toLocaleString("en-IN")}
+              lastUpdated={new Date(acc.updatedAt!).toLocaleString("en-IN")}
             />
           </Link>
         ))}
