@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/auth/currentUser';
 import AccountForm from '@/components/wallet/accountCreateForm'
 import { Account } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
+import { AccountFormType } from '@/types/account';
 import React from 'react'
 
 type AccountEditFormProps = {
@@ -16,16 +17,21 @@ const AccountEditForm = async ({ params }: AccountEditFormProps) => {
 
     const { accountId } = await params;
 
-    const account = await prisma.account.findFirst({
+    const safeAccount = await prisma.account.findFirst({
         where: {
             id: accountId,
             userId: user.id
         }
     })
+    const account = {
+        ...safeAccount,
+        balance: safeAccount?.balance?.toNumber(),
+        creditLimit: safeAccount?.creditLimit?.toNumber()
+    }
 
     return (
         <div>
-            <AccountForm account={account as Account} isUpdate={true}/>
+            <AccountForm account={account as AccountFormType} isUpdate={true}/>
         </div>
     )
 }

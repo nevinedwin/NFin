@@ -5,6 +5,7 @@ import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
 import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp'
+import { formatDateTime } from '@/lib/utils/formats';
 
 type AccountCardProps = {
     balance: number;
@@ -24,7 +25,7 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
             <CardContent className="h-full animate-fade-in">
                 <div className='w-full h-full flex justify-between items-center'>
                     <div className='w-full flex justify-start items-center gap-4'>
-                        <div className='w-7 h-7 rounded-full bg-slate-400 text-black flex justify-center items-center font-bold'>{name?.slice(0, 2).toUpperCase()}</div>
+                        <div className='w-7 h-7 rounded-full bg-white text-black flex justify-center items-center font-bold'>{name?.slice(0, 2).toUpperCase()}</div>
                         <div className='flex flex-col items-start justify-center'>
                             <h3 className='text-sm flex items-center justify-center gap-1 font-medium text-slate-300'> <span className="text-center">··</span>{accountNumber.slice(-4)}</h3>
                             <h3 className='text-sm text-slate-300 truncate w-40'>{name}</h3>
@@ -32,7 +33,7 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
                     </div>
                     <div className='w-full flex justify-center items-end flex-col'>
                         <h3 className='text-sm flex items-center justify-center gap-1 font-medium '> <span className="text-center">{RUPEE_SYMBOL}</span>{federalBalance.toFixed(2)}</h3>
-                        <h3 className='text-sm text-slate-300'>{lastUpdated}</h3>
+                        <h3 className='text-[10px] text-slate-300 truncate'>{formatDateTime(lastUpdated)}</h3>
                     </div>
                 </div>
             </CardContent>

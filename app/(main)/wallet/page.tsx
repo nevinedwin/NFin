@@ -85,7 +85,7 @@ const Wallet = async ({ params }: WalletProp) => {
               name={acc.name}
               accountNumber={acc.accountNumber ?? "—"}
               balance={parseFloat(acc.balance)}
-              lastUpdated={new Date(acc.createdAt!).toLocaleDateString("en-IN")}
+              lastUpdated={new Date(acc.createdAt!).toLocaleString("en-IN")}
             />
           </Link>
         ))}

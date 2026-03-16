@@ -21,7 +21,7 @@ const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
                     recentTransaction.length > 0
                         ? recentTransaction.map((eachTransaction) =>
                             <EachTransaction recentTransaction={eachTransaction} key={eachTransaction.id} />)
-                        : <p>No recent transactions.</p>
+                        : <p className='h-full w-full flex justify-center items-center'>No recent transactions.</p>
                 }
             </div>
         </div>

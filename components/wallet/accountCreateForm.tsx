@@ -14,13 +14,15 @@ import { useFormStatus } from "react-dom";
 import SectionToggle from "../ui/sectionToggle";
 import { useForm } from "@/hooks/form/useForm";
 import { walletFormInitalState } from "@/app/(main)/features/wallet/wallet.state";
+import { AccountFormType } from "@/types/account";
 
 type AccountFormProp = {
-    account?: Account;
+    account?: AccountFormType;
     isUpdate?: boolean;
 }
 
-export default function AccountForm({ account, isUpdate = false }: AccountFormProp) {
+export default function 
+({ account, isUpdate = false }: AccountFormProp) {
     const router = useRouter();
 
     const { state, setField } = useForm(account || walletFormInitalState);
