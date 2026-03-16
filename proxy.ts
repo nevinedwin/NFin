@@ -2,7 +2,7 @@ import { COOKIE_SESSION_KEY, getUserFromSession, updateSessionExpiration } from 
 import { UserRoles } from '@/generated/prisma/client';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const privateRoutes = ["/dashboard", '/wallet']
+const privateRoutes = ["/dashboard", '/wallet', '/account', '/transaction'];
 const adminRoutes: string[] = []
 
 const middleware = async (request: NextRequest) => {

@@ -3,10 +3,11 @@
 import React from 'react'
 import { ChevronRight } from 'lucide-react'
 import EachTransaction from './eachTransaction'
-import { transactionDataType } from '@/types/transaction'
+import { TransactionDataType } from '@/types/transaction'
+import Link from 'next/link';
 
 type RecentTransactionProp = {
-    recentTransaction: transactionDataType[];
+    recentTransaction: TransactionDataType[];
 }
 
 const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
@@ -14,7 +15,9 @@ const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
         <div className='w-full h-full space-y-2'>
             <div className='w-full flex justify-between'>
                 <p className='text-sm font-semibold'>Recent Transactions</p>
-                <button className='flex justify-center font-semibold text-sm items-center text-blue-500'>View all <ChevronRight size={15} /></button>
+                <Link href={'/transaction'}>
+                    <button className='flex justify-center font-semibold text-sm items-center text-blue-500'>View all <ChevronRight size={15} /></button>
+                </Link>
             </div>
             <div className='w-full h-[270px] bg-surface rounded-xl px-4'>
                 {

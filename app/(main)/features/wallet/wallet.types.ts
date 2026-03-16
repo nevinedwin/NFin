@@ -3,7 +3,7 @@ import { AccountType } from "@/generated/prisma/client";
 export type WalletFormType = {
     name: string;
     type: AccountType;
-    balance: number;
+    balance: string;
     currency?: string;
     countMeInTotal?: boolean;
 

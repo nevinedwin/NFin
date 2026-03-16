@@ -4,12 +4,12 @@ import React from "react";
 import AccountLogo from "@/components/wallet/accountLogo";
 import { TransactionType } from "@/generated/prisma/client";
 import { formatTimeDate } from "@/lib/utils/formats";
-import { transactionDataType } from "@/types/transaction";
+import { TransactionDataType } from "@/types/transaction";
 import { ArrowDownUp, BanknoteArrowUp, HandCoins } from "lucide-react";
 import CategoryIcon from "@/components/ui/caetgoryIcon";
 
 type EachTransactionProp = {
-    recentTransaction: transactionDataType;
+    recentTransaction: TransactionDataType;
 }
 
 

@@ -119,3 +119,47 @@ export async function createTransaction(prevState: any, formData: FormData) {
         };
     }
 }
+
+const PAGE_SIZE = 10;
+export async function getTransactions(cursor?: { date: Date; id: string }) {
+    const user = await getCurrentUser();
+    if (!user) return { data: [], nextCursor: null };
+
+    const transactions = await prisma.transaction.findMany({
+        where: { userId: user.id },
+        orderBy: [
+            { date: "desc" },
+            { id: "desc" }
+        ],
+        take: PAGE_SIZE + 1,
+        ...(cursor && {
+            cursor: {
+                date: cursor.date,
+                id: cursor.id
+            },
+            skip: 1
+        }),
+        select: {
+            id: true,
+            amount: true,
+            type: true,
+            date: true,
+            category: { select: { name: true, icon: true } },
+            account: { select: { accountNumber: true, name: true } }
+        }
+    });
+
+    let nextCursor = null;
+    if (transactions.length > PAGE_SIZE) {
+        transactions.pop();
+        const last = transactions[transactions.length - 1];
+        nextCursor = { date: last.date, id: last.id };
+    }
+
+    const safeTransactions = transactions.map((t) => ({
+        ...t,
+        amount: t.amount.toNumber()
+    }));
+
+    return { data: safeTransactions, nextCursor };
+}

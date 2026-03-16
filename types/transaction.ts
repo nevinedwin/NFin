@@ -35,7 +35,7 @@ export type TransactionCategoryType = {
     name: string;
 }
 
-export type transactionDataType = {
+export type TransactionDataType = {
     id: string;
     amount: number;
     description: string | undefined;

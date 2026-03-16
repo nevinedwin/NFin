@@ -21,8 +21,8 @@ type AccountFormProp = {
     isUpdate?: boolean;
 }
 
-export default function 
-({ account, isUpdate = false }: AccountFormProp) {
+export default function
+    ({ account, isUpdate = false }: AccountFormProp) {
     const router = useRouter();
 
     const { state, setField } = useForm(account || walletFormInitalState);
@@ -78,7 +78,7 @@ export default function
                             label="Balance"
                             required
                             requiredLabel
-                            value={Number(balance) || 0}
+                            value={balance}
                             onChange={(e) => setField('balance', parseInt(e.target.value))}
                             placeholder="0.00"
                             className="!bg-black !text-slate-400"

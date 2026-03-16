@@ -1,12 +1,12 @@
 import { User } from "@/generated/prisma/client";
-import { AccountSafeType, TransactionCategoryType, transactionDataType } from "@/types/transaction"
+import { AccountSafeType, TransactionCategoryType, TransactionDataType } from "@/types/transaction"
 
 
 export type MainShellContextType = {
     accounts: AccountSafeType[],
     category: TransactionCategoryType[],
     userData: User | null,
-    recentTransaction: transactionDataType[]
+    recentTransaction: TransactionDataType[]
 
     openTransactionCard: boolean;
     toggleTransactionCard: () => void;

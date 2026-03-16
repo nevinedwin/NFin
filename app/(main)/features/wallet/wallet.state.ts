@@ -5,7 +5,7 @@ import { WalletFormType } from "./wallet.types";
 export const walletFormInitalState: WalletFormType = {
     name: '',
     type: AccountType.BANK,
-    balance: 0,
+    balance: '',
     accountNumber: '',
     cardNumber: '',
     billingDate: '',

@@ -1,12 +1,20 @@
-import UnderProgress from '@/components/layout/underProgress'
-import React from 'react'
+'use server';
 
-const Transaction = () => {
+import React from 'react'
+import TransactionList from '@/components/transaction/transactionList';
+import { TransactionDataType } from '@/types/transaction';
+import { getTransactions } from '@/actions/transactions';
+
+const Transaction = async () => {
+
+  const { data, nextCursor } = await getTransactions();
+
   return (
-    <div>
-      <UnderProgress title='Transaction'/>
-    </div>
+    <TransactionList
+      initialTransaction={data}
+      initialCursor={nextCursor}
+    />
   )
 }
 
-export default Transaction
+export default Transaction;

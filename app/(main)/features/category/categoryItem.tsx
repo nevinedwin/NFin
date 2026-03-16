@@ -10,7 +10,7 @@ import { formatUnderScoredStringCut } from "@/lib/utils/formats";
 
 export default function CategoryItem({ category, onEdit, onDelete, loading, hasBorder = true }: any) {
 
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [openAction, setOpenAction] = useState(false);
 
     return (

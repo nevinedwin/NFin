@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Header from "../../components/layout/header";
 import Footer from "../../components/layout/footer";
-import { AccountSafeType, TransactionCategoryType, transactionDataType } from "@/types/transaction";
+import { AccountSafeType, TransactionCategoryType, TransactionDataType } from "@/types/transaction";
 import { MainShellProvider } from "@/app/(main)/context/mainShellContext";
 import { usePathname } from "next/navigation";
 import TransactionCard from "../transaction/transactionCard";
@@ -19,7 +19,7 @@ type MainShellProp = {
     accounts: AccountSafeType[],
     category: TransactionCategoryType[],
     userData: User | null,
-    recentTransaction: transactionDataType[]
+    recentTransaction: TransactionDataType[]
 };
 
 const MainShell = ({ children, accounts, category, userData, recentTransaction }: MainShellProp) => {
