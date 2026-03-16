@@ -65,7 +65,7 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
             onSubmit={handleSubmit}
             className="relative flex flex-col w-full h-full"
         >
-            <div className="flex-1 overflow-y-auto space-y-4 px-4 pb-40">
+            <div className="flex-1 overflow-y-auto space-y-4 px-4 pb-16">
                 <div className="space-y-1">
                     <Input
                         type="text"
@@ -139,28 +139,28 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
                 <div className="w-full">
                     <IconPicker onSelect={(name) => setField('icon', String(name))} name='icon' />
                 </div>
-            </div>
 
-            {/* actions */}
+                {/* actions */}
 
-            <div className="sticky bottom-0 bg-black border-t border-border flex justify-end items-center gap-3 px-4  pb-[env(safe-area-inset-bottom)] py-3">
+                <div className=" bg-black border-t border-border flex justify-end items-center gap-3 px-4  pb-[env(safe-area-inset-bottom)] py-3">
 
-                <button
-                    type="button"
-                    onClick={onClose}
-                    className="text-zinc-400"
-                >
-                    Cancel
-                </button>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="text-zinc-400"
+                    >
+                        Cancel
+                    </button>
 
-                <button
-                    disabled={loading}
-                    type="submit"
-                    className="px-4 py-2 mb-3 bg-white text-black rounded-lg font-medium"
-                >
-                    {loading ? <LoaderButton className="w-5 h-5" /> : isEdit ? "Update Category" : "Create Category"}
-                </button>
+                    <button
+                        disabled={loading}
+                        type="submit"
+                        className="px-4 py-2 mb-3 bg-white text-black rounded-lg font-medium"
+                    >
+                        {loading ? <LoaderButton className="w-5 h-5" /> : isEdit ? "Update Category" : "Create Category"}
+                    </button>
 
+                </div>
             </div>
 
         </form>
