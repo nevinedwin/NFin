@@ -63,9 +63,9 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
 
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col h-full max-h-screen "
+            className="relative flex flex-col w-full h-full"
         >
-            <div className="flex-1 overflow-y-auto space-y-4 px-4 pb-28">
+            <div className="flex-1 overflow-y-auto space-y-4 px-4 pb-40">
                 <div className="space-y-1">
                     <Input
                         type="text"
@@ -143,7 +143,7 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
 
             {/* actions */}
 
-            <div className="sticky bottom-0 right-0 left-0 bg-black border-t border-border flex justify-end gap-3 p-4">
+            <div className="sticky bottom-0 bg-black border-t border-border flex justify-end items-center gap-3 px-4  pb-[env(safe-area-inset-bottom)] py-3">
 
                 <button
                     type="button"
@@ -155,7 +155,8 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
 
                 <button
                     disabled={loading}
-                    className="px-4 py-2 bg-white text-black rounded-lg font-medium"
+                    type="submit"
+                    className="px-4 py-2 mb-3 bg-white text-black rounded-lg font-medium"
                 >
                     {loading ? <LoaderButton className="w-5 h-5" /> : isEdit ? "Update Category" : "Create Category"}
                 </button>
