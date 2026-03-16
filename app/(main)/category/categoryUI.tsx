@@ -57,7 +57,8 @@ export default function CategoryPageClient({
                 </button>
             </div>
 
-            <CategoryTree categories={categories} onEdit={handleEdit} onDelete={handleDelete} loading={loading} />
+            {categories.length > 0 && <CategoryTree categories={categories} onEdit={handleEdit} onDelete={handleDelete} loading={loading} />}
+            {categories.length <= 0 && <div className="w-full h-full flex justify-center items-center">No categories found</div>}
             {open && <div
                 className={`fixed inset-0 bg-black/40 backdrop-blur-sm
                     transition-opacity duration-300

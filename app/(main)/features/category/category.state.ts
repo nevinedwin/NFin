@@ -8,6 +8,7 @@ export const categoryFormInitalState: CategoryFormType = {
     forType: TransactionType.EXPENSE,
     isActive: true,
     isDeleted: false,
-    parentId: null
+    parentId: null,
+    icon: ''
 };
 

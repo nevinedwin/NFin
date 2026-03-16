@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
             )
         }
 
-        const { name, type, forType, parentId } = parsed.data;
+        const { name, type, forType, parentId, icon } = parsed.data;
 
         if (parentId) {
             const parentExists = await prisma.category.findFirst({
@@ -91,7 +91,8 @@ export async function POST(req: NextRequest) {
                 type,
                 forType,
                 parentId,
-                userId: user.id
+                userId: user.id,
+                icon
             },
             select: {
                 id: true,

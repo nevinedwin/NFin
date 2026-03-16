@@ -8,6 +8,8 @@ const categoryBaseSchema = z.object({
     forType: z.nativeEnum(TransactionType),
 
     parentId: z.string().optional().nullable(),
+
+    icon: z.string()
 });
 
 export const createCategorySchema = categoryBaseSchema;

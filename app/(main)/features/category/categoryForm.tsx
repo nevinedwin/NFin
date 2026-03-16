@@ -10,6 +10,8 @@ import { useForm } from "@/hooks/form/useForm";
 import { categoryFormInitalState } from "./category.state";
 import LoaderButton from "@/components/ui/loaderButton";
 import { CategoryFormType } from "./category.types";
+import IconPicker from "@/components/iconPicker/iconPicker";
+import DynamicIcon from "@/components/iconPicker/dynamicIcon";
 
 type Props = {
     parentCategories: any[];
@@ -24,7 +26,7 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
     const isEdit = !!categoryFormState?.id;
 
     const { state, setField, reset } = useForm(categoryFormState ?? categoryFormInitalState);
-    const { name, forType, type, parentId } = state;
+    const { name, forType, type, parentId, icon } = state;
 
     const [loading, setLoading] = useState(false);
 
@@ -61,83 +63,87 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
 
         <form
             onSubmit={handleSubmit}
-            className="space-y-4 flex flex-col justify-center "
+            className="flex flex-col h-full max-h-screen "
         >
+            <div className="flex-1 overflow-y-auto space-y-4 px-4 pb-28">
+                <div className="space-y-1">
+                    <Input
+                        type="text"
+                        name="name"
+                        label="Category Name"
+                        required
+                        requiredLabel
+                        value={name}
+                        onChange={(e) => setField('name', e.target.value)}
+                        placeholder="Food"
+                        className="!bg-black !text-slate-400"
+                    />
+                </div>
 
-            <div className="space-y-1">
-                <Input
-                    type="text"
-                    name="name"
-                    label="Category Name"
-                    required
-                    requiredLabel
-                    value={name}
-                    onChange={(e) => setField('name', e.target.value)}
-                    placeholder="Food"
-                    className="!bg-black !text-slate-400"
-                />
-            </div>
+                <div className="flex gap-2 justify-center items-center">
+                    <SelectField
+                        label="Category Type"
+                        name="type"
+                        required
+                        selectClass="text-slate-400"
+                        value={type ?? CategoryType.MAIN}
+                        onChange={(e) => setField('type', e.target.value as CategoryType)}
+                    >
+                        {Object.values(CategoryType).map((t) => (
+                            <option key={t} value={t}>
+                                {formatUnderScoredString(t)}
+                            </option>
+                        ))}
+                    </SelectField>
 
-            <div className="flex gap-2 justify-center items-center">
-                <SelectField
-                    label="Category Type"
-                    name="type"
-                    required
-                    selectClass="text-slate-400"
-                    value={type ?? CategoryType.MAIN}
-                    onChange={(e) => setField('type', e.target.value as CategoryType)}
-                >
-                    {Object.values(CategoryType).map((t) => (
-                        <option key={t} value={t}>
-                            {formatUnderScoredString(t)}
+                    <SelectField
+                        label="Transaction Type"
+                        name="forType"
+                        required
+                        selectClass="text-slate-400"
+                        value={forType ?? TransactionType.EXPENSE}
+                        onChange={(e) => setField('forType', e.target.value as TransactionType)}
+                    >
+                        {Object.values(TransactionType).map((t) => (
+                            <option key={t} value={t}>
+                                {formatUnderScoredString(t)}
+                            </option>
+                        ))}
+                    </SelectField>
+                </div>
+
+                <div className="space-y-1">
+                    <SelectField
+                        label="Parent Category"
+                        name="parentId"
+                        selectClass="text-slate-400"
+                        containerClass={`${type === CategoryType.MAIN && 'hidden'}`}
+                        value={parentId ?? ""}
+                        onChange={(e) => setField('parentId', e.target.value || null)}
+                    >
+                        <option value="">
+                            None
                         </option>
-                    ))}
-                </SelectField>
 
-                <SelectField
-                    label="Transaction Type"
-                    name="forType"
-                    required
-                    selectClass="text-slate-400"
-                    value={forType ?? TransactionType.EXPENSE}
-                    onChange={(e) => setField('forType', e.target.value as TransactionType)}
-                >
-                    {Object.values(TransactionType).map((t) => (
-                        <option key={t} value={t}>
-                            {formatUnderScoredString(t)}
-                        </option>
-                    ))}
-                </SelectField>
+                        {parentCategories.map((c) => (
+                            <option
+                                key={c.id}
+                                value={c.id}
+                            >
+                                {c.name}
+                            </option>
+                        ))}
+                    </SelectField>
+                </div>
+
+                <div className="w-full">
+                    <IconPicker onSelect={(name) => setField('icon', String(name))} name='icon' />
+                </div>
             </div>
-
-            <div className="space-y-1">
-                <SelectField
-                    label="Parent Category"
-                    name="parentId"
-                    selectClass="text-slate-400"
-                    containerClass={`${type === CategoryType.MAIN && 'hidden'}`}
-                    value={parentId ?? ""}
-                    onChange={(e) => setField('parentId', e.target.value || null)}
-                >
-                    <option value="">
-                        None
-                    </option>
-
-                    {parentCategories.map((c) => (
-                        <option
-                            key={c.id}
-                            value={c.id}
-                        >
-                            {c.name}
-                        </option>
-                    ))}
-                </SelectField>
-            </div>
-
 
             {/* actions */}
 
-            <div className="flex justify-end gap-3 pt-3 fixed bottom-0 left-0 right-0 pb-6 px-4">
+            <div className="sticky bottom-0 right-0 left-0 bg-black border-t border-border flex justify-end gap-3 p-4">
 
                 <button
                     type="button"

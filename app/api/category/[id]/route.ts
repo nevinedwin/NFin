@@ -31,7 +31,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             return outputResp({ message: 'Invalid data', status: 400, error: parsedBody.error.flatten() });
         }
 
-        const { name, type, forType, parentId } = parsedBody.data;
+        const { name, type, forType, parentId, icon} = parsedBody.data;
 
         const existingCategory = await prisma.category.findFirst({
             where: {
@@ -75,16 +75,18 @@ export async function PATCH(req: NextRequest, { params }: Params) {
                 name,
                 type,
                 forType,
-                parentId
+                parentId,
+                icon
             },
             select: {
                 id: true,
                 name: true,
-                parentId: true
+                parentId: true,
+                icon: true
             }
         });
 
-        return NextResponse.json(outputResp);
+        return NextResponse.json(updateCategory);
 
     } catch (error) {
         console.log("CATEGORY PATH ERROR", error);

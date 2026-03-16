@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import CategoryActions from "./categoryActions";
 import { ChevronDown, ChevronUp, EllipsisVertical } from "lucide-react";
 import { stringToColor } from "@/lib/utils/colors";
+import DynamicIcon from "@/components/iconPicker/dynamicIcon";
+import CategoryIcon from "@/components/ui/caetgoryIcon";
+import { formatUnderScoredStringCut } from "@/lib/utils/formats";
 
 export default function CategoryItem({ category, onEdit, onDelete, loading }: any) {
 
@@ -25,15 +28,20 @@ export default function CategoryItem({ category, onEdit, onDelete, loading }: an
                                 {open ? <ChevronUp /> : <ChevronDown />}
                             </span>
                         )}
-                        <div className="w-5 h-5 rounded-full" style={{ background: stringToColor(category.name) }}></div>
-                        <span>{category.name}</span>
+                        <div className="w-6 h-6 flex justify-center items-center font-bold" >
+                            <CategoryIcon name={category.icon} className="w-full h-full" containerClassName="w-full h-full flex item-center justify-center" />
+                        </div>
+                        <div className="flex flex-col gap-2 justify-start items-start">
+                            <div>{category.name}</div>
+                            <div className="border border-border px-2 rounded-lg text-xs">{formatUnderScoredStringCut(category.forType)}</div>
+                        </div>
                     </div>
                     {!openAction && <button className="" onClick={() => setOpenAction(prev => !prev)}>
                         <EllipsisVertical />
                     </button>}
                 </div>
 
-                {openAction && <CategoryActions category={category} onEdit={onEdit} onDelete={onDelete} loading={loading} closeAction={()=>setOpenAction(false)}/>}
+                {openAction && <CategoryActions category={category} onEdit={onEdit} onDelete={onDelete} loading={loading} closeAction={() => setOpenAction(false)} />}
 
             </div>
 

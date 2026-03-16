@@ -229,6 +229,8 @@ model Category {
 
   name String
   type CategoryType
+
+  icon String?
   
   forType TransactionType
 
