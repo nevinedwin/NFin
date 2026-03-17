@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/auth/currentUser";
 import { Prisma, TransactionType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createTransactionSchema } from "@/schemas/transaction.schema";
+import { ActiveFilters } from "@/types/filters";
 import { revalidatePath } from "next/cache";
 
 export async function createTransaction(prevState: any, formData: FormData) {
@@ -128,17 +129,38 @@ export async function createTransaction(prevState: any, formData: FormData) {
 }
 
 const PAGE_SIZE = 10;
-export async function getTransactions(cursor?: { date: Date; id: string }, search?: string) {
+export async function getTransactions(cursor?: { date: Date; id: string }, search?: string, filters?: ActiveFilters) {
 
     const user = await getCurrentUser();
     if (!user) return { data: [], nextCursor: null };
 
-    const searchFilter = search?.trim()
-        ? { description: { contains: search.trim(), mode: 'insensitive' as const } }
-        : {};
+    const where: any = { userId: user.id };
+
+    if (search?.trim()) {
+        where.description = { contains: search.trim(), mode: "insensitive" };
+    }
+
+    if (filters?.bankId) {
+        where.accountId = filters.bankId;
+    }
+
+    if (filters?.type) {
+        where.type = filters.type;
+    }
+
+    if (filters?.categoryId) {
+        where.categoryId = filters.categoryId;
+    }
+
+    if (filters?.date?.from && filters?.date?.to) {
+        where.date = {
+            gte: new Date(filters.date.from),
+            lte: new Date(filters.date.to + "T23:59:59.999Z"),
+        };
+    }
 
     const transactions = await prisma.transaction.findMany({
-        where: { userId: user.id, ...searchFilter },
+        where,
         orderBy: [
             { date: "desc" },
             { id: "desc" }
@@ -177,4 +199,67 @@ export async function getTransactions(cursor?: { date: Date; id: string }, searc
     }));
 
     return { data: safeTransactions, nextCursor };
+}
+
+
+export type MonthSummary = {
+    key: string;
+    label: string;
+    count: number;
+    totalIncome: number;
+    totalExpense: number;
+};
+
+export async function getMonthlyTotals(
+    search?: string,
+    filters?: ActiveFilters
+): Promise<MonthSummary[]> {
+    const user = await getCurrentUser();
+    if (!user) return [];
+
+    const where: any = { userId: user.id };
+
+    if (search?.trim()) {
+        where.description = { contains: search.trim(), mode: "insensitive" };
+    }
+    if (filters?.bankId) where.accountId = filters.bankId;
+    if (filters?.type) where.type = filters.type;
+    if (filters?.categoryId) where.categoryId = filters.categoryId;
+    if (filters?.date?.from && filters?.date?.to) {
+        where.date = {
+            gte: new Date(filters.date.from),
+            lte: new Date(filters.date.to + "T23:59:59.999Z"),
+        };
+    }
+
+    const transactions = await prisma.transaction.findMany({
+        where,
+        orderBy: [{ date: "desc" }],
+        select: {
+            id: true,
+            date: true,
+            type: true,
+            amount: true,
+        },
+    });
+
+    const map = new Map<string, MonthSummary>();
+
+    for (const tx of transactions) {
+        const date = new Date(tx.date);
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        const label = date.toLocaleString("default", { month: "long", year: "numeric" });
+        const amount = tx.amount.toNumber();
+
+        if (!map.has(key)) {
+            map.set(key, { key, label, count: 0, totalIncome: 0, totalExpense: 0 });
+        }
+
+        const g = map.get(key)!;
+        g.count++;
+        if (tx.type === "INCOME") g.totalIncome += amount;
+        if (tx.type === "EXPENSE") g.totalExpense += amount;
+    }
+
+    return Array.from(map.values());
 }

@@ -23,3 +23,17 @@ export async function createCategory(data: FormData) {
         }
     });
 }
+
+
+export const getCategories = async () => {
+
+    const user = await getCurrentUser();
+    if (!user) throw new Error('unAuthorized');
+
+    const categories = await prisma.category.findMany({
+        where: { userId: user.id },
+        select: { id: true, name: true },
+    });
+
+    return categories;
+};

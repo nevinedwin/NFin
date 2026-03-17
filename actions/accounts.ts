@@ -65,3 +65,16 @@ export async function updateAccountAction(formData: FormData) {
 
     redirect(`/wallet/${id}`);
 }
+
+export const getAccounts = async () => {
+
+    const user = await getCurrentUser();
+    if (!user) throw new Error('unAuthorized');
+
+    const account = await prisma.account.findMany({
+        where: { userId: user.id },
+        select: { id: true, name: true, accountNumber: true },
+    })
+
+    return account;
+};
