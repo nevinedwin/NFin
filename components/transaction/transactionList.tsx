@@ -50,7 +50,7 @@ export default function TransactionList({ initialTransaction, initialCursor }: {
     return (
         <div className="p-4">
             {transactions.map((tx: any) => (
-                <EachTransaction key={tx.id} recentTransaction={tx} />
+                <EachTransaction key={tx.id} recentTransaction={tx} recentCard={false}/>
             ))}
             <div ref={loaderRef} className="h-16 flex justify-center items-center">
                 {loading && <span>Loading...</span>}

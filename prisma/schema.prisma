@@ -265,6 +265,8 @@ model Transaction {
   date   DateTime @default(now())
   repeat Boolean  @default(false)
 
+  balance Decimal @default(0)
+
   //Relations
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

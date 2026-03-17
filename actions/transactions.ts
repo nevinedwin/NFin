@@ -50,6 +50,28 @@ export async function createTransaction(prevState: any, formData: FormData) {
 
             const updates: Promise<any>[] = [];
 
+            const account = await tx.account.findUnique({
+                where: { id: accountId },
+                select: { balance: true }
+            });
+
+            if (!account) throw new Error("Account not found");
+
+            let newBalance = account.balance;
+
+            switch (type) {
+                case TransactionType.EXPENSE:
+                case TransactionType.TRANSFER:
+                    newBalance = newBalance.minus(amount);
+                    break;
+
+                case TransactionType.INCOME:
+                    newBalance = newBalance.plus(amount);
+                    break;
+            };
+
+
+
             await tx.transaction.create({
                 data: {
                     amount,
@@ -57,6 +79,7 @@ export async function createTransaction(prevState: any, formData: FormData) {
                     type,
                     date,
                     repeat,
+                    balance: newBalance,
                     category: { connect: { id: categoryId } },
                     account: { connect: { id: accountId } },
                     user: { connect: { id: user!.id } },
@@ -64,34 +87,16 @@ export async function createTransaction(prevState: any, formData: FormData) {
                 }
             });
 
+            updates.push(
+                tx.account.update({
+                    where: { id: accountId },
+                    data: { balance: newBalance }
+                })
+            );
+
             switch (type) {
 
-                case TransactionType.EXPENSE:
-                    updates.push(
-                        tx.account.update({
-                            where: { id: accountId },
-                            data: { balance: { decrement: amount } }
-                        })
-                    );
-                    break;
-
-                case TransactionType.INCOME:
-                    updates.push(
-                        tx.account.update({
-                            where: { id: accountId },
-                            data: { balance: { increment: amount } }
-                        })
-                    );
-                    break;
-
                 case TransactionType.TRANSFER:
-                    updates.push(
-                        tx.account.update({
-                            where: { id: accountId },
-                            data: { balance: { decrement: amount } }
-                        })
-                    );
-
                     updates.push(
                         tx.account.update({
                             where: { id: toAccountId! },
@@ -112,6 +117,8 @@ export async function createTransaction(prevState: any, formData: FormData) {
         };
 
     } catch (error) {
+
+        console.log(error);
 
         return {
             success: false,
@@ -144,6 +151,7 @@ export async function getTransactions(cursor?: { date: Date; id: string }) {
             amount: true,
             type: true,
             date: true,
+            balance: true,
             category: { select: { name: true, icon: true } },
             account: { select: { accountNumber: true, name: true } }
         }
@@ -158,7 +166,8 @@ export async function getTransactions(cursor?: { date: Date; id: string }) {
 
     const safeTransactions = transactions.map((t) => ({
         ...t,
-        amount: t.amount.toNumber()
+        amount: t.amount.toNumber(),
+        balance: t.balance.toNumber()
     }));
 
     return { data: safeTransactions, nextCursor };

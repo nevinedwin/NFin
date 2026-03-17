@@ -10,12 +10,13 @@ import CategoryIcon from "@/components/ui/caetgoryIcon";
 
 type EachTransactionProp = {
     recentTransaction: TransactionDataType;
+    recentCard: boolean;
 }
 
 
-const EachTransaction = ({ recentTransaction }: EachTransactionProp) => {
+const EachTransaction = ({ recentTransaction, recentCard = false }: EachTransactionProp) => {
 
-    const { account, category, date, description, id, toAccount, updateAt, amount, type } = recentTransaction;
+    const { account, category, date, description, id, toAccount, updateAt, amount, type, balance } = recentTransaction;
 
     const isExpense = type === TransactionType.EXPENSE;
 
@@ -57,15 +58,18 @@ const EachTransaction = ({ recentTransaction }: EachTransactionProp) => {
 
                 {/* AMOUNT */}
                 <p
-                    className={`text-sm font-semibold `}
+                    className={`text-sm font-semibold ${!recentCard && type === TransactionType.INCOME && 'text-green-500'}`}
                 >
                     {isExpense ? "-" : "+"} ₹ {amount}
                 </p>
 
                 {/* ACCOUNT */}
                 <div className="text-[10px] text-zinc-400 flex gap-1 justify-center items-center">
-                    From <AccountLogo className="w-3 h-3 text-[7px] font-bold" name={account.name} /> ··{account?.accountNumber?.slice(-4)}8989
+                    From <AccountLogo className="w-3 h-3 text-[7px] font-bold" name={account.name} />{account.accountNumber && `·· ${account.accountNumber?.slice(-4)}`}
                 </div>
+                {!recentCard && <div className="text-[10px] text-slate-500">
+                    Balance: ₹ {balance}
+                </div>}
             </div>
         </div>
     );

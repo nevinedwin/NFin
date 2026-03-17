@@ -44,5 +44,6 @@ export type TransactionDataType = {
     updateAt?: Date;
     account: Account;
     toAccount?: Account;
-    type: TransactionType
+    type: TransactionType;
+    balance: number;
 }
