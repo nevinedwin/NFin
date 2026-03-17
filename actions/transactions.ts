@@ -128,12 +128,17 @@ export async function createTransaction(prevState: any, formData: FormData) {
 }
 
 const PAGE_SIZE = 10;
-export async function getTransactions(cursor?: { date: Date; id: string }) {
+export async function getTransactions(cursor?: { date: Date; id: string }, search?: string) {
+
     const user = await getCurrentUser();
     if (!user) return { data: [], nextCursor: null };
 
+    const searchFilter = search?.trim()
+        ? { description: { contains: search.trim(), mode: 'insensitive' as const } }
+        : {};
+
     const transactions = await prisma.transaction.findMany({
-        where: { userId: user.id },
+        where: { userId: user.id, ...searchFilter },
         orderBy: [
             { date: "desc" },
             { id: "desc" }
@@ -152,6 +157,7 @@ export async function getTransactions(cursor?: { date: Date; id: string }) {
             type: true,
             date: true,
             balance: true,
+            description: true,
             category: { select: { name: true, icon: true } },
             account: { select: { accountNumber: true, name: true } }
         }
