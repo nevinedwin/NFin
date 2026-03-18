@@ -1,10 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import CategoryPageClient from "./categoryUI";
+import { getCurrentUser } from "@/auth/currentUser";
+import { redirect } from "next/navigation";
 
 export default async function CategoryPage() {
 
+  const user = await getCurrentUser();
+  if (!user) return redirect('/sign-up')
+
   const categories = await prisma.category.findMany({
-    where: { isDeleted: false },
+    where: { userId: user.id, isDeleted: false },
     include: { children: true },
     orderBy: { createdAt: "desc" }
   });

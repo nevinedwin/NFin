@@ -4,10 +4,12 @@ import { logOut } from "@/auth/auth.actions"
 import LoaderButton from "../ui/loaderButton";
 import { useState } from "react";
 import TopLoader from "../ui/topLoader";
+import { useMainShellContext } from "@/app/(main)/context/mainShellContext";
 
-const Header = ({loading: pageLoading}: {loading: boolean}) => {
+const Header = ({ loading: pageLoading }: { loading: boolean }) => {
 
   const [loading, setLoading] = useState<boolean>(false);
+  const { userData } = useMainShellContext();
 
 
   const handleLogOutClick = async () => {
@@ -28,7 +30,7 @@ const Header = ({loading: pageLoading}: {loading: boolean}) => {
 
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold cursor-pointer hover:scale-105 transition">
-            NE
+            {userData?.name?.slice(0, 2).toUpperCase()}
           </div>
           {/* <h1 className="text-lg font-semibold">NFin</h1> */}
         </div>
