@@ -24,7 +24,7 @@ const Dashboard = () => {
     return (
         <div className="flex justify-center space-y-6 items-center flex-col">
             <div className="w-full">
-                <HeaderCard balance={balance} expense={100} income={800} showBalance={userData?.showBalance || false} />
+                <HeaderCard balance={balance} expense={100} income={800} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 space-y-8 w-full p-4">
                 <RecentTransaction recentTransaction={recentTransaction}/>

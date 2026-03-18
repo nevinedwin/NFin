@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
 import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp'
 import { formatDateTime } from '@/lib/utils/formats';
+import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
 
 type AccountCardProps = {
     balance: number;
@@ -16,10 +17,13 @@ type AccountCardProps = {
 
 const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Jan '26", name = 'unKnown' }: AccountCardProps) => {
 
+    const { showBalance } = useMainShellContext();
+
     const accountBalance = useCountUp(balance);
 
+
     return (
-        <Card className=" w-full border-none h-[60px] bg-surface p-0 py-2
+        <Card className=" w-full border-none h-[60px] p-0 py-2
                  transition-all duration-300 ease-out 
                  hover:shadow-md hover:scale-[1.01]">
             <CardContent className="h-full animate-fade-in">
@@ -32,7 +36,10 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
                         </div>
                     </div>
                     <div className='w-full flex justify-center items-end flex-col'>
-                        <h3 className='text-sm flex items-center justify-center gap-1 font-medium '> <span className="text-center">{RUPEE_SYMBOL}</span>{Math.abs(accountBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</h3>
+                        <h3 className='text-sm flex items-center justify-center gap-1 font-medium '>
+                            <span className="text-center">{RUPEE_SYMBOL}</span>
+                            {showBalance ? Math.abs(accountBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}
+                        </h3>
 
                         <h3 className='text-[10px] text-slate-300 truncate'>{formatDateTime(lastUpdated)}</h3>
                     </div>

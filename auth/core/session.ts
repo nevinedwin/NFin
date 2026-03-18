@@ -23,7 +23,8 @@ const getUserSessionById = async (sessionId: string) => {
                     select: {
                         id: true,
                         email: true,
-                        role: true
+                        role: true,
+                        showBalance: true
                     }
                 }
             }

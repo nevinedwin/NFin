@@ -8,25 +8,21 @@ import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp';
 import { redirect } from 'next/navigation';
 import { changeShowBalance } from '@/actions/userAction';
+import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
 
 type HeaderCardProp = {
     balance: number;
     expense: number;
     income: number;
-    showBalance: boolean;
 }
 
-const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0, showBalance: showBal = false }: HeaderCardProp) => {
+const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0 }: HeaderCardProp) => {
 
-    const [showBalance, setShowBalance] = useState<boolean>(showBal);
+    const { showBalance, setShowBalance } = useMainShellContext();
 
     const balance = useCountUp(bal);
     const income = useCountUp(inc);
     const expense = useCountUp(exp);
-
-    useEffect(() => {
-        changeShowBalance(showBalance);
-    }, [showBalance])
 
     return (
         <Card className="rounded-none rounded-b-3xl w-full border-none h-[160px] bg-bar p-0 

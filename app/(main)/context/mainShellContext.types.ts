@@ -15,4 +15,7 @@ export type MainShellContextType = {
     loading: boolean;
     startLoading: () => void;
     stopLoading: () => void;
+
+    showBalance: boolean;
+    setShowBalance: React.Dispatch<React.SetStateAction<boolean>>;
 };

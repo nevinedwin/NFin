@@ -6,23 +6,18 @@ import CardContent from '../ui/card/cardContent'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp';
-import { changeShowBalance } from '@/actions/userAction';
+import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
 
 type BalanceCardProp = {
-    showBalance: boolean;
     totalBalance: number;
     label: string;
 
 }
 
-const BalanceCard = ({ showBalance: showBal, totalBalance = 0, label }: BalanceCardProp) => {
+const BalanceCard = ({ totalBalance = 0, label }: BalanceCardProp) => {
 
-    const [showBalance, setShowBalance] = useState<boolean>(showBal);
+    const { showBalance, setShowBalance } = useMainShellContext();
     const balance = useCountUp(totalBalance, 100)
-
-    useEffect(() => {
-        changeShowBalance(showBalance);
-    }, [showBalance])
 
     return (
         <Card className=" w-full border-none h-[160px] bg-surface p-0 

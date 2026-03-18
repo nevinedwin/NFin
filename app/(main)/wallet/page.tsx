@@ -1,3 +1,4 @@
+'use server';
 
 import React from 'react'
 import AccountCard from '@/components/wallet/accountCard'
@@ -11,6 +12,7 @@ import { getCurrentUser } from '@/auth/currentUser';
 import { AccountSafeType } from '@/types/transaction';
 import { formatType, ORDER_MAP } from '@/lib/utils/formats';
 import { AccountType } from '@/generated/prisma/client';
+import { RUPEE_SYMBOL } from '@/lib/constants/constants';
 
 type WalletProp = {
   params: {
@@ -49,6 +51,8 @@ const Wallet = async ({ params }: WalletProp) => {
       ? accounts
       : accounts.filter(acc => acc.id === selectedAccount);
 
+  const groupTotals: Partial<Record<AccountType, number>> = {};
+
   const groupedAccounts = accounts.reduce<Partial<Record<AccountType, AccountSafeType[]>>>(
     (acc, account) => {
       const key = account.type as AccountType;
@@ -57,11 +61,18 @@ const Wallet = async ({ params }: WalletProp) => {
         acc[key] = [];
       }
 
+      if (!groupTotals[key]) {
+        groupTotals[key] = parseFloat(account.balance);
+      } else {
+        groupTotals[key] += parseFloat(account.balance);
+      }
+
       acc[key].push(account);
       return acc;
     },
     {}
   );
+
 
   const ORDER: AccountType[] = [AccountType.BANK, AccountType.CREDIT_CARD, AccountType.WALLET, AccountType.CASH];
 
@@ -82,8 +93,8 @@ const Wallet = async ({ params }: WalletProp) => {
   }, 0)
 
   return (
-    <div className='flex flex-col justify-center items-center p-4 gap-6'>
-      <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide'>
+    <div className='flex flex-col justify-center items-center py-4 gap-6'>
+      <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide px-4'>
         <WalletChip
           text="All"
           isAll
@@ -102,14 +113,17 @@ const Wallet = async ({ params }: WalletProp) => {
           ))
         }
       </div>
-      <div className='w-full'>
-        <BalanceCard showBalance={userData?.showBalance || false} totalBalance={totalBalance} label='Total Balance' />
+      <div className='w-full px-4'>
+        <BalanceCard totalBalance={totalBalance} label='Total Balance' />
       </div>
       <div className='w-full flex flex-col gap-3'>
         {
           sortedGroups.map(([type, group]) => (
-            <div key={type} className='flex flex-col gap-3 py-3'>
-              <h2 className='text-lg font-light'>{formatType(type)}</h2>
+            <div key={type} className='flex flex-col pb-8'>
+              <div className='flex justify-between bg-surface p-4'>
+                <h2 className='text-lg font-medium'>{formatType(type)}</h2>
+                <h2 className='text-lg font-light'>{RUPEE_SYMBOL} {groupTotals[type]}</h2>
+              </div>
               {group.map(acc => (
                 <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
                   <AccountCard

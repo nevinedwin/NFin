@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import TransactionCard from "../transaction/transactionCard";
 import CloseButton from "../ui/closeButton";
 import { User } from "@/generated/prisma/client";
+import { changeShowBalance } from "@/actions/userAction";
 
 const FOOTER_HEIGHT = 80;
 const FOOTER_PEEK = 30;
@@ -33,6 +34,7 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
     const [hideFooter, setHideFooter] = useState<boolean>(false);
     const [openTransactionCard, setOpenTransactionCard] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [showBalance, setShowBalance] = useState<boolean>(userData?.showBalance || true);
 
     const vibrate = useCallback(() => {
         if (typeof navigator !== "undefined" && navigator.vibrate) {
@@ -99,6 +101,10 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
         return () => el.removeEventListener("scroll", onScroll);
     }, []);
 
+    useEffect(() => {
+        changeShowBalance(showBalance);
+    }, [showBalance])
+
 
     const contextValue = useMemo(() => ({
         openTransactionCard,
@@ -110,7 +116,9 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
         loading,
         startLoading,
         stopLoading,
-        recentTransaction
+        recentTransaction,
+        showBalance,
+        setShowBalance
 
     }), [
         openTransactionCard,
@@ -122,7 +130,9 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
         loading,
         startLoading,
         stopLoading,
-        recentTransaction
+        recentTransaction,
+        showBalance,
+        setShowBalance
     ])
 
     return (
