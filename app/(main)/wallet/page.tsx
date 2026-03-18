@@ -122,7 +122,7 @@ const Wallet = async ({ params }: WalletProp) => {
             <div key={type} className='flex flex-col pb-8'>
               <div className='flex justify-between bg-surface p-4'>
                 <h2 className='text-lg font-medium'>{formatType(type)}</h2>
-                <h2 className='text-lg font-light'>{RUPEE_SYMBOL} {groupTotals[type]}</h2>
+                <h2 className='text-lg font-light'>{RUPEE_SYMBOL} {Math.abs(groupTotals[type] || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</h2>
               </div>
               {group.map(acc => (
                 <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
