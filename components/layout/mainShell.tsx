@@ -34,7 +34,7 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
     const [hideFooter, setHideFooter] = useState<boolean>(false);
     const [openTransactionCard, setOpenTransactionCard] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [showBalance, setShowBalance] = useState<boolean>(userData?.showBalance || true);
+    const [showBalance, setShowBalance] = useState<boolean>(userData?.showBalance ?? true);
 
     const vibrate = useCallback(() => {
         if (typeof navigator !== "undefined" && navigator.vibrate) {
