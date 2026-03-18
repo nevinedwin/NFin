@@ -9,6 +9,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/auth/currentUser';
 import { AccountSafeType } from '@/types/transaction';
+import { formatType, ORDER_MAP } from '@/lib/utils/formats';
+import { AccountType } from '@/generated/prisma/client';
 
 type WalletProp = {
   params: {
@@ -47,6 +49,34 @@ const Wallet = async ({ params }: WalletProp) => {
       ? accounts
       : accounts.filter(acc => acc.id === selectedAccount);
 
+  const groupedAccounts = accounts.reduce<Partial<Record<AccountType, AccountSafeType[]>>>(
+    (acc, account) => {
+      const key = account.type as AccountType;
+
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+
+      acc[key].push(account);
+      return acc;
+    },
+    {}
+  );
+
+  const ORDER: AccountType[] = [AccountType.BANK, AccountType.CREDIT_CARD, AccountType.WALLET, AccountType.CASH];
+
+  const entries = Object.entries(groupedAccounts) as [
+    AccountType,
+    AccountSafeType[]
+  ][];
+
+  const sortedGroups = (Object.entries(groupedAccounts) as [
+    AccountType,
+    AccountSafeType[]
+  ][]).sort(
+    ([a], [b]) => ORDER_MAP[a] - ORDER_MAP[b]
+  );
+
   const totalBalance = accounts.reduce((sum, acc) => {
     return sum + Number(acc.balance);
   }, 0)
@@ -75,17 +105,24 @@ const Wallet = async ({ params }: WalletProp) => {
       <div className='w-full'>
         <BalanceCard showBalance={userData?.showBalance || false} totalBalance={totalBalance} label='Total Balance' />
       </div>
-      <div className='w-full flex flex-col gap-4'>
-        {filteredAccounts.map(acc => (
-          <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
-            <AccountCard
-              name={acc.name}
-              accountNumber={acc.accountNumber ?? "—"}
-              balance={parseFloat(acc.balance)}
-              lastUpdated={new Date(acc.updatedAt!).toLocaleString("en-IN")}
-            />
-          </Link>
-        ))}
+      <div className='w-full flex flex-col gap-3'>
+        {
+          sortedGroups.map(([type, group]) => (
+            <div key={type} className='flex flex-col gap-3 py-3'>
+              <h2 className='text-lg font-light'>{formatType(type)}</h2>
+              {group.map(acc => (
+                <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
+                  <AccountCard
+                    name={acc.name}
+                    accountNumber={acc.accountNumber ?? "—"}
+                    balance={parseFloat(acc.balance)}
+                    lastUpdated={new Date(acc.updatedAt!).toLocaleString("en-IN")}
+                  />
+                </Link>
+              ))}
+            </div>
+          ))
+        }
       </div>
       <Link className='flex justify-center items-center gap-2 cursor-pointer' href={'/account'}>
         <div ><PlusCircle size={20} className='text-green-400' /></div>

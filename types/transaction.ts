@@ -18,6 +18,7 @@ export type AccountSafeType = {
     countMeInTotal: boolean;
     createdAt?: Date;
     updatedAt?: Date;
+    type?: string;
 }
 
 export type TransactionAccountPayloadType = Prisma.AccountGetPayload<{

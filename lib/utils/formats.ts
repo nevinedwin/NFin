@@ -1,3 +1,4 @@
+import { AccountType } from "@/generated/prisma/client";
 import { format, parseISO, parse } from "date-fns";
 
 export const formatUnderScoredString = (str: string) => {
@@ -19,13 +20,13 @@ export const formDataConverter = (formData: FormData) => {
 
 export const formatDateTime = (date: Date | string | null | undefined) => {
   if (!date) return "";
-  
+
   let d: Date;
-  
+
   if (typeof date === "string") {
     d = date.includes("/")
-    ? parse(date, "d/M/yyyy, h:mm:s a", new Date())
-    : parseISO(date);
+      ? parse(date, "d/M/yyyy, h:mm:s a", new Date())
+      : parseISO(date);
   } else {
     d = date;
   }
@@ -41,3 +42,20 @@ export const formatTimeDate = (date: Date) =>
 export function serializeDecimal<T>(data: T): T {
   return JSON.parse(JSON.stringify(data));
 }
+
+export const formatType = (type: AccountType) => {
+  switch (type) {
+    case AccountType.BANK: return "Bank Accounts";
+    case AccountType.CREDIT_CARD: return "Credit Cards";
+    case AccountType.CASH: return "Cash in Hand";
+    case AccountType.WALLET: return "Wallet";
+    default: return type;
+  }
+};
+
+export const ORDER_MAP: Record<AccountType, number> = {
+  BANK: 0,
+  CREDIT_CARD: 1,
+  WALLET: 2,
+  CASH: 3
+};
