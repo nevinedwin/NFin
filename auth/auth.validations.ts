@@ -1,7 +1,8 @@
-import { ALLOWED_EMAILS } from "@/lib/constants/allowedEmailList";
+import { ALLOWED_EMAILS, EnvType } from "@/lib/constants/allowedEmailList";
 import { FormData } from "@/types/auth";
 
 const isRestrictEmail = process.env.NEXT_PUBLIC_EMAIL_RESTRICTION;
+const env: EnvType = process.env.NEXT_PUBLIC_APP_ENV as EnvType;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const validateSignUp = ({ email, password, name }: FormData) => {
@@ -16,7 +17,7 @@ export const validateSignUp = ({ email, password, name }: FormData) => {
     } else {
 
         if (isRestrictEmail === 'true') {
-            const isValidEmail = ALLOWED_EMAILS.includes(email.toLowerCase());
+            const isValidEmail = ALLOWED_EMAILS[env].includes(email.toLowerCase());
             if (!isValidEmail) {
                 error = 'Account creation requires permission. Please contact Nevin';
             }
