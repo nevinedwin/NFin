@@ -13,6 +13,7 @@ import { AccountSafeType } from '@/types/transaction';
 import { formatType, ORDER_MAP } from '@/lib/utils/formats';
 import { AccountType } from '@/generated/prisma/client';
 import { RUPEE_SYMBOL } from '@/lib/constants/constants';
+import BalanceTotalGroup from '@/components/wallet/balanceTotalGroup';
 
 type WalletProp = {
   params: {
@@ -120,10 +121,7 @@ const Wallet = async ({ params }: WalletProp) => {
         {
           sortedGroups.map(([type, group]) => (
             <div key={type} className='flex flex-col pb-8'>
-              <div className='flex justify-between bg-surface p-4'>
-                <h2 className='text-lg font-medium'>{formatType(type)}</h2>
-                <h2 className='text-lg font-light'>{RUPEE_SYMBOL} {Math.abs(groupTotals[type] || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</h2>
-              </div>
+              <BalanceTotalGroup type={type} groupTotal={groupTotals[type] ?? 0} />
               {group.map(acc => (
                 <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
                   <AccountCard

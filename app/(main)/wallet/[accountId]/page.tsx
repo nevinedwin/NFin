@@ -54,7 +54,7 @@ const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
         }
       </div>
       <div className='w-full'>
-        <BalanceIndCard showBalance={true} account={account} label={account.name}/>
+        <BalanceIndCard account={account}/>
       </div>
       <div className='w-full flex flex-col gap-3'>
         <CardSkeleton className='w-full'/>
