@@ -11,11 +11,11 @@ import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
 type AccountCardProps = {
     balance: number;
     name: string;
-    lastUpdated: string;
+    lastUpdated: Date;
     accountNumber: string;
 }
 
-const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Jan '26", name = 'unKnown' }: AccountCardProps) => {
+const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated, name = 'unKnown' }: AccountCardProps) => {
 
     const { showBalance } = useMainShellContext();
 
@@ -41,7 +41,7 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
                             {showBalance ? Math.abs(accountBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}
                         </h3>
 
-                        <h3 className='text-[10px] text-slate-300 truncate'>{lastUpdated}</h3>
+                        <h3 className='text-[10px] text-slate-300 truncate'>{formatDateTime(lastUpdated)}</h3>
                     </div>
                 </div>
             </CardContent>

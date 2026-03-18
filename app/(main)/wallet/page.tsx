@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/auth/currentUser';
 import { AccountSafeType } from '@/types/transaction';
-import { formatTimeDate, formatType, ORDER_MAP } from '@/lib/utils/formats';
+import { formatType, ORDER_MAP } from '@/lib/utils/formats';
 import { AccountType } from '@/generated/prisma/client';
 import { RUPEE_SYMBOL } from '@/lib/constants/constants';
 import BalanceTotalGroup from '@/components/wallet/balanceTotalGroup';
@@ -128,7 +128,7 @@ const Wallet = async ({ params }: WalletProp) => {
                     name={acc.name}
                     accountNumber={acc.accountNumber ?? "—"}
                     balance={parseFloat(acc.balance)}
-                    lastUpdated={formatTimeDate(acc.updatedAt!)}
+                    lastUpdated={acc.updatedAt!}
                   />
                 </Link>
               ))}
