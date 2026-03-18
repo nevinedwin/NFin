@@ -79,7 +79,7 @@ export default function
                             required
                             requiredLabel
                             value={balance}
-                            onChange={(e) => setField('balance', parseInt(e.target.value))}
+                            onChange={(e) => setField('balance', e.target.value)}
                             placeholder="0.00"
                             className="!bg-black !text-slate-400"
                         />

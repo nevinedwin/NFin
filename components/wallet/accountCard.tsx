@@ -16,7 +16,7 @@ type AccountCardProps = {
 
 const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Jan '26", name = 'unKnown' }: AccountCardProps) => {
 
-    const federalBalance = useCountUp(balance);
+    const accountBalance = useCountUp(balance);
 
     return (
         <Card className=" w-full border-none h-[60px] bg-surface p-0 
@@ -32,7 +32,8 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
                         </div>
                     </div>
                     <div className='w-full flex justify-center items-end flex-col'>
-                        <h3 className='text-sm flex items-center justify-center gap-1 font-medium '> <span className="text-center">{RUPEE_SYMBOL}</span>{federalBalance.toFixed(2)}</h3>
+                        <h3 className='text-sm flex items-center justify-center gap-1 font-medium '> <span className="text-center">{RUPEE_SYMBOL}</span>{Math.abs(accountBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</h3>
+
                         <h3 className='text-[10px] text-slate-300 truncate'>{formatDateTime(lastUpdated)}</h3>
                     </div>
                 </div>

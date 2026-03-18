@@ -37,7 +37,7 @@ const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0, showB
                     <div>
                         <h2 className="text-sm font-light text-slate-500">Total Balance</h2>
                         <div className='flex justify-center items-center gap-4'>
-                            <h1 className="text-3xl  font-extrabold"><span>{RUPEE_SYMBOL}</span>{showBalance ? balance.toFixed(2) : '-----'}</h1>
+                            <h1 className="text-3xl  font-extrabold"><span>{RUPEE_SYMBOL}</span>{showBalance ? Math.abs(balance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}</h1>
                             {
                                 showBalance ? <EyeIcon onClick={() => setShowBalance(false)} /> : <EyeOffIcon onClick={() => setShowBalance(true)} />
                             }

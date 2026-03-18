@@ -34,7 +34,7 @@ const BalanceCard = ({ showBalance: showBal, totalBalance = 0, label }: BalanceC
                         <h2 className='text-sm font-medium text-slate-200'>{label.toUpperCase()}</h2>
                     </div>
                     <div className='w-full flex justify-between items-center'>
-                        <h2 className='text-3xl  font-extrabold'><span>{RUPEE_SYMBOL}</span> {showBalance ? balance.toFixed(2) : '-----'}</h2>
+                        <h2 className='text-3xl  font-extrabold'><span>{RUPEE_SYMBOL}</span> {showBalance ? Math.abs(balance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}</h2>
                         {
                             showBalance ? <EyeIcon onClick={() => setShowBalance(false)} className='cursor-pointer' /> : <EyeOffIcon onClick={() => setShowBalance(true)} className='cursor-pointer' />
                         }
