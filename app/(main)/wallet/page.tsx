@@ -58,6 +58,8 @@ const Wallet = async ({ params }: WalletProp) => {
     (acc, account) => {
       const key = account.type as AccountType;
 
+      console.log(formatTimeDate(account.updatedAt!));
+
       if (!acc[key]) {
         acc[key] = [];
       }

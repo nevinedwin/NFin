@@ -41,7 +41,7 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
                             {showBalance ? Math.abs(accountBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}
                         </h3>
 
-                        <h3 className='text-[10px] text-slate-300 truncate'>{formatDateTime(lastUpdated)}</h3>
+                        <h3 className='text-[10px] text-slate-300 truncate'>{lastUpdated}</h3>
                     </div>
                 </div>
             </CardContent>
