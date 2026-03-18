@@ -19,7 +19,7 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
     const accountBalance = useCountUp(balance);
 
     return (
-        <Card className=" w-full border-none h-[60px] bg-surface p-0 
+        <Card className=" w-full border-none h-[60px] bg-surface p-0 py-2
                  transition-all duration-300 ease-out 
                  hover:shadow-md hover:scale-[1.01]">
             <CardContent className="h-full animate-fade-in">
@@ -27,8 +27,8 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated = "21 Ja
                     <div className='w-full flex justify-start items-center gap-4'>
                         <div className='w-7 h-7 rounded-full bg-white text-black flex justify-center items-center font-bold'>{name?.slice(0, 2).toUpperCase()}</div>
                         <div className='flex flex-col items-start justify-center'>
-                            <h3 className='text-sm flex items-center justify-center gap-1 font-medium text-slate-300'> <span className="text-center">··</span>{accountNumber.slice(-4)}</h3>
                             <h3 className='text-sm text-slate-300 truncate w-40'>{name}</h3>
+                            {accountNumber && <h3 className='text-sm flex items-center justify-center gap-1 font-medium text-slate-300'> <span className="text-center">··</span>{accountNumber.slice(-4)}</h3>}
                         </div>
                     </div>
                     <div className='w-full flex justify-center items-end flex-col'>
