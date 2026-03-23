@@ -81,7 +81,7 @@ export async function createTransaction(prevState: any, formData: FormData) {
                     date,
                     repeat,
                     balance: newBalance,
-                    category: { connect: { id: categoryId } },
+                    ...(categoryId && { category: { connect: { id: categoryId } } }),
                     account: { connect: { id: accountId } },
                     user: { connect: { id: user!.id } },
                     ...(toAccountId && { toAccount: { connect: { id: toAccountId } } })
