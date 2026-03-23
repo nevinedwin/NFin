@@ -3,7 +3,7 @@
 import React from "react";
 import AccountLogo from "@/components/wallet/accountLogo";
 import { TransactionType } from "@/generated/prisma/client";
-import { formatTimeDate } from "@/lib/utils/formats";
+import { formatTimeDate, formatUnderScoredStringCut } from "@/lib/utils/formats";
 import { TransactionDataType } from "@/types/transaction";
 import { ArrowDownUp, BanknoteArrowUp, HandCoins } from "lucide-react";
 import CategoryIcon from "@/components/ui/caetgoryIcon";
@@ -28,7 +28,7 @@ const EachTransaction = ({ recentTransaction, recentCard = false }: EachTransact
 
                 {/* ICON */}
                 <div className="w-6 h-6 flex justify-center items-center font-bold" >
-                    <CategoryIcon name={category.icon!} className="w-full h-full" containerClassName="w-full h-full flex item-center justify-center" />
+                    <CategoryIcon name={category?.icon ?? 'ArrowRightLeft'} className="w-full h-full" containerClassName="w-full h-full flex item-center justify-center" />
                 </div>
 
                 {/* TEXT */}
@@ -36,7 +36,7 @@ const EachTransaction = ({ recentTransaction, recentCard = false }: EachTransact
 
                     {/* CATEGORY */}
                     <p className="text-sm font-medium text-white">
-                        {category.name}
+                        {category?.name ?? formatUnderScoredStringCut(type)}
                     </p>
 
                     {/* DATE */}
