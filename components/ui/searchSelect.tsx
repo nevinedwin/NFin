@@ -1,11 +1,17 @@
 "use client";
 
 import { TransactionType } from "@/generated/prisma/client";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 type Option = {
   label: string;
   value: string;
+};
+
+export type SearchSelectRef = {
+  focus: () => void;
+  clear?: () => void;
+  open?: () => void;
 };
 
 type Props = {
@@ -14,17 +20,19 @@ type Props = {
   label?: string;
   placeholder?: string;
   onChange?: (val: string) => void;
-  type?: TransactionType | null
+  type?: TransactionType | null;
+  onSelect?: () => void;
 };
 
-export default function SearchSelect({
+const SearchSelect = forwardRef<SearchSelectRef, Props>(({
   name,
   fetchUrl,
   label,
   placeholder = "Search...",
   onChange,
-  type
-}: Props) {
+  type,
+  onSelect
+}, ref) => {
   const [query, setQuery] = useState("");
   const [options, setOptions] = useState<Option[]>([]);
   const [open, setOpen] = useState(false);
@@ -32,6 +40,13 @@ export default function SearchSelect({
   const [id, setId] = useState('');
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    }
+  }));
 
   const fetchOptions = async (type?: TransactionType | null, q?: string) => {
 
@@ -93,6 +108,7 @@ export default function SearchSelect({
           type="text"
           placeholder={placeholder}
           value={query}
+          ref={inputRef}
           onFocus={() => {
             setOpen(true);
             fetchOptions(type); // load all
@@ -134,6 +150,7 @@ export default function SearchSelect({
                 setOpen(false);
                 setId(opt.value);
                 onChange?.(opt.value);
+                onSelect?.();
               }}
             >
               {opt.label}
@@ -147,4 +164,6 @@ export default function SearchSelect({
 
     </div>
   );
-}
+});
+
+export default SearchSelect;

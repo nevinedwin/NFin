@@ -16,7 +16,7 @@ export async function createTransaction(prevState: any, formData: FormData) {
         errors: "Unauthorized User"
     };;
 
-    const body = Object.fromEntries(formData);
+    const body = Object.fromEntries(formData) as Record<string, string>;
 
     const parsed = createTransactionSchema.safeParse({
         ...body,
@@ -81,9 +81,11 @@ export async function createTransaction(prevState: any, formData: FormData) {
                     date,
                     repeat,
                     balance: newBalance,
-                    ...(categoryId && { category: { connect: { id: categoryId } } }),
                     account: { connect: { id: accountId } },
                     user: { connect: { id: user!.id } },
+                    ...(categoryId && {
+                        category: { connect: { id: categoryId } }
+                    }),
                     ...(toAccountId && { toAccount: { connect: { id: toAccountId } } })
                 }
             });

@@ -6,10 +6,10 @@ import { createTransaction } from "@/actions/transactions";
 import FormSubmitBtn from "../ui/formSubmitBtn";
 import { TransactionType } from "@/generated/prisma/client";
 import { AccountSafeType, TransactionCategoryType } from "@/types/transaction";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { useForm } from "@/hooks/form/useForm";
 import { transactionFormInitalState } from "@/app/(main)/features/transaction/transaction.state";
-import SearchSelect from "../ui/searchSelect";
+import SearchSelect, { SearchSelectRef } from "../ui/searchSelect";
 import { formatUnderScoredString, formatUnderScoredStringCut } from "@/lib/utils/formats";
 import YesNoToggle from "../ui/toggleButton";
 import { useRouter } from "next/navigation";
@@ -41,6 +41,12 @@ export default function TransactionCard({
 
     const { state: formState, setField, reset } = useForm(transactionFormInitalState);
     const { amount, description, repeat, type } = formState;
+
+    const amountRef = useRef<HTMLInputElement>(null);
+    const categoryRef = useRef<SearchSelectRef>(null);
+    const accountRef = useRef<SearchSelectRef>(null);
+    const toAccountRef = useRef<SearchSelectRef>(null);
+    const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
 
 
@@ -77,12 +83,25 @@ export default function TransactionCard({
                                 name="amount"
                                 type="number"
                                 value={amount}
-                                onChange={(e) => setField("amount", e.target.value)}
+                                ref={amountRef}
+                                onChange={(e) => {
+                                    setField("amount", e.target.value)
+                                }}
                                 placeholder="0.00"
                                 inputMode="decimal"
                                 required
                                 step={0.01}
                                 min={0}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        if(type === 'TRANSFER') {
+                                            accountRef.current?.focus();
+                                        }else {
+                                            categoryRef.current?.focus();
+                                        }
+                                    }
+                                }}
                                 className="w-full outline-none text-2xl font-bold bg-black"
                             />
                         </div>
@@ -114,6 +133,8 @@ export default function TransactionCard({
                         name="categoryId"
                         label="Category"
                         placeholder="Search Category"
+                        ref={categoryRef}
+                        onSelect={() => accountRef.current?.focus?.()}
                     />
 
                     <SearchSelect
@@ -121,6 +142,8 @@ export default function TransactionCard({
                         name="accountId"
                         label="Account"
                         placeholder="Search Account"
+                        ref={accountRef}
+                        onSelect={() => descriptionRef.current?.focus?.()}
                     />
 
                 </div>}
@@ -132,6 +155,9 @@ export default function TransactionCard({
                         name="accountId"
                         label="From Account"
                         placeholder="Search.."
+                        ref={accountRef}
+                        onSelect={() => toAccountRef.current?.focus?.()}
+
                     />
 
                     <SearchSelect
@@ -139,6 +165,8 @@ export default function TransactionCard({
                         name="toAccountId"
                         label="To Account"
                         placeholder="Search.."
+                        ref={toAccountRef}
+                        onSelect={() => descriptionRef.current?.focus?.()}
                     />
 
                 </div>}
@@ -154,6 +182,7 @@ export default function TransactionCard({
                         placeholder="Add note..."
                         className="w-full mt-1 border border-border rounded-xl p-3 outline-none bg-black text-base"
                         rows={3}
+                        ref={descriptionRef}
                     />
                 </div>
 

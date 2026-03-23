@@ -16,7 +16,7 @@ const baseTransactionSchema = z.object({
     accountId: z.string().uuid(),
     toAccountId: z.string().uuid().optional(),
 
-    categoryId: z.string().uuid().optional(),
+    categoryId: z.string().uuid().nullable().optional(),
 
     date: z
         .union([z.string().datetime(), z.date()])
