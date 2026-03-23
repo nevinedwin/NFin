@@ -277,8 +277,8 @@ model Transaction {
   toAccountId String?
   toAccount   Account? @relation("TransferTo", fields: [toAccountId], references: [id])
 
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
 
   participants TransactionParticipant[]
 
