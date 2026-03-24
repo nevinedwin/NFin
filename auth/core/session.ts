@@ -67,9 +67,9 @@ export const createUserSession = async (user: sessionPayload, cookie: Pick<Cooki
 
 export const setCookie = (sessionId: string, cookie: Pick<CookiesType, 'set'>) => {
     cookie.set(COOKIE_SESSION_KEY, sessionId, {
-        secure: true,
+        secure: false,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         expires: Date.now() + SESSION_EXPIRY
     })
 }
