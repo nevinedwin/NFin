@@ -18,6 +18,8 @@ const baseTransactionSchema = z.object({
 
     categoryId: z.string().uuid().nullable().optional(),
 
+    tranferType: z.nativeEnum(TransactionType).nullable().optional(),
+
     date: z
         .union([z.string().datetime(), z.date()])
         .optional()

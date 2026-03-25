@@ -44,7 +44,9 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
                 type: true,
                 date: true,
                 category: { select: { name: true, icon: true } },
-                account: { select: { name: true } }
+                account: { select: { name: true } },
+                transferGroupId: true,
+                transferType: true
             }
         })
     ]);

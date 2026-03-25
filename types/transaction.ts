@@ -1,4 +1,4 @@
-import { Account, AccountType, Category, CategoryType, Prisma, TransactionType } from "@/generated/prisma/client";
+import { Account, AccountType, Category, CategoryType, Prisma, TransactionType, TransferType } from "@/generated/prisma/client";
 import { string } from "zod";
 
 export type TransactionAccountType = {
@@ -44,7 +44,8 @@ export type TransactionDataType = {
     date: Date;
     updateAt?: Date;
     account: Account;
-    toAccount?: Account;
     type: TransactionType;
     balance: number;
+    transferType?: TransferType,
+    transferGroupId?: string;
 }

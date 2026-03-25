@@ -14,6 +14,8 @@ import { formatType, ORDER_MAP } from '@/lib/utils/formats';
 import { AccountType } from '@/generated/prisma/client';
 import { RUPEE_SYMBOL } from '@/lib/constants/constants';
 import BalanceTotalGroup from '@/components/wallet/balanceTotalGroup';
+import BackButton from '@/components/ui/backButton';
+import BackArrowButton from '@/components/ui/backArrowbutton';
 
 type WalletProp = {
   params: {
@@ -95,6 +97,9 @@ const Wallet = async ({ params }: WalletProp) => {
 
   return (
     <div className='flex flex-col justify-center items-center py-4 gap-6'>
+      <div className='w-full pl-4 flex justify-start items-center'>
+        <BackArrowButton size={20}/>
+      </div>
       <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide px-4'>
         <WalletChip
           text="All"

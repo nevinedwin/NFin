@@ -5,6 +5,8 @@ import { getCurrentUser } from '@/auth/currentUser';
 import BalanceCard from '@/components/wallet/balanceCard';
 import BalanceIndCard from '@/components/wallet/accountIndCard';
 import { CardSkeleton } from '@/components/ui/card/cardSkeleton';
+import { Account } from '@/generated/prisma/client';
+import { AccountSafe } from '@/types/account';
 
 type WalletSinglePageProps = {
   params: Promise<{ accountId: string }>
@@ -17,13 +19,20 @@ const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
 
   const { accountId } = await params;
 
-  const account = await prisma.account.findFirst({
+  const singleAccount = await prisma.account.findFirst({
     where: {
       id: accountId,
       userId: user.id
     }
-  })
+  });
 
+  if (!singleAccount) return <div>Account Not Found</div>;
+
+  const account: AccountSafe = {
+    ...singleAccount,
+    balance: singleAccount.balance.toString(),
+    creditLimit: singleAccount.creditLimit?.toString() ?? null
+  };
 
   const allAccounts = await prisma.account.findMany({
     where: { userId: user.id },
@@ -54,14 +63,14 @@ const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
         }
       </div>
       <div className='w-full'>
-        <BalanceIndCard account={account}/>
+        <BalanceIndCard account={account} />
       </div>
       <div className='w-full flex flex-col gap-3'>
-        <CardSkeleton className='w-full'/>
-        <CardSkeleton className='w-full'/>
-        <CardSkeleton className='w-full'/>
-        <CardSkeleton className='w-full'/>
-        <CardSkeleton className='w-full'/>
+        <CardSkeleton className='w-full' />
+        <CardSkeleton className='w-full' />
+        <CardSkeleton className='w-full' />
+        <CardSkeleton className='w-full' />
+        <CardSkeleton className='w-full' />
       </div>
     </div>
   )

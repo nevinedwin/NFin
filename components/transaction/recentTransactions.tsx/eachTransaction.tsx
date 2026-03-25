@@ -2,10 +2,10 @@
 
 import React from "react";
 import AccountLogo from "@/components/wallet/accountLogo";
-import { TransactionType } from "@/generated/prisma/client";
+import { TransactionType, TransferType } from "@/generated/prisma/client";
 import { formatTimeDate, formatUnderScoredStringCut } from "@/lib/utils/formats";
 import { TransactionDataType } from "@/types/transaction";
-import { ArrowDownUp, BanknoteArrowUp, HandCoins } from "lucide-react";
+import { ArrowDownUp, ArrowRight, ArrowRightLeft, BanknoteArrowUp, HandCoins } from "lucide-react";
 import CategoryIcon from "@/components/ui/caetgoryIcon";
 
 type EachTransactionProp = {
@@ -16,9 +16,11 @@ type EachTransactionProp = {
 
 const EachTransaction = ({ recentTransaction, recentCard = false }: EachTransactionProp) => {
 
-    const { account, category, date, description, id, toAccount, updateAt, amount, type, balance } = recentTransaction;
+    const { account, category, date, description, id, updateAt, amount, type, balance, transferGroupId, transferType } = recentTransaction;
 
     const isExpense = type === TransactionType.EXPENSE;
+    const isCashOut = type === TransactionType.TRANSFER && transferType === TransferType.TRANSFER_OUT;
+    const isTransfer = type === TransactionType.TRANSFER;
 
     return (
         <div className="w-full flex items-center justify-between border-b border-border py-4">
@@ -60,12 +62,14 @@ const EachTransaction = ({ recentTransaction, recentCard = false }: EachTransact
                 <p
                     className={`text-sm font-semibold ${!recentCard && type === TransactionType.INCOME && 'text-green-500'}`}
                 >
-                    {isExpense ? "-" : "+"} ₹ {amount}
+                    {isExpense || isCashOut ? "-" : "+"} ₹ {amount}
                 </p>
 
                 {/* ACCOUNT */}
-                <div className="text-[10px] text-zinc-400 flex gap-1 justify-center items-center">
-                    From <AccountLogo className="w-3 h-3 text-[7px] font-bold" name={account.name} />{account.accountNumber && `·· ${account.accountNumber?.slice(-4)}`}
+                <div className="text-[10px] text-zinc-400 flex justify-center items-center gap-3">
+                    <p className="flex gap-1 justify-center items-center">
+                        {!isTransfer && 'From'}<AccountLogo className="w-3 h-3 text-[7px] font-bold" name={account.name} />{account.accountNumber && `·· ${account.accountNumber?.slice(-4)}`}
+                    </p>
                 </div>
                 {!recentCard && <div className="text-[10px] text-slate-500">
                     Balance: ₹ {balance}

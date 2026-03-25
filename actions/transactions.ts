@@ -1,11 +1,12 @@
 'use server';
 
 import { getCurrentUser } from "@/auth/currentUser";
-import { Prisma, TransactionType } from "@/generated/prisma/client";
+import { Prisma, Transaction, TransactionType, TransferType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createTransactionSchema } from "@/schemas/transaction.schema";
 import { ActiveFilters } from "@/types/filters";
 import { revalidatePath } from "next/cache";
+import { v4 as uuidV4 } from 'uuid';
 
 export async function createTransaction(prevState: any, formData: FormData) {
 
@@ -52,18 +53,53 @@ export async function createTransaction(prevState: any, formData: FormData) {
             const updates: Promise<any>[] = [];
 
             const account = await tx.account.findUnique({
-                where: { id: accountId },
+                where: { id: accountId, userId: user.id },
                 select: { balance: true }
             });
 
             if (!account) throw new Error("Account not found");
 
             let newBalance = account.balance;
+            let toAccountBalance;
+            let tranferGroupId;
+
+            if (type === TransactionType.TRANSFER) {
+                const toAccount = await tx.account.findUnique({
+                    where: { id: toAccountId, userId: user.id },
+                    select: { balance: true }
+                });
+
+                if (!toAccount) throw new Error("To account not found");
+
+                toAccountBalance = toAccount?.balance;
+            }
+
+            const txPayload: Prisma.TransactionCreateInput = {
+                amount,
+                description: description as string,
+                type,
+                date: date as Date,
+                repeat,
+                account: { connect: { id: accountId } },
+                user: { connect: { id: user!.id } },
+                ...(categoryId && {
+                    category: { connect: { id: categoryId } }
+                }),
+            }
+
 
             switch (type) {
                 case TransactionType.EXPENSE:
+                    newBalance = newBalance.minus(amount);
+                    break;
+
                 case TransactionType.TRANSFER:
                     newBalance = newBalance.minus(amount);
+                    toAccountBalance = toAccountBalance?.plus(amount);
+                    tranferGroupId = uuidV4();
+                    txPayload.transferType = TransferType.TRANSFER_OUT;
+                    txPayload.transferGroupId = tranferGroupId;
+                    txPayload.balance = newBalance;
                     break;
 
                 case TransactionType.INCOME:
@@ -74,20 +110,7 @@ export async function createTransaction(prevState: any, formData: FormData) {
 
 
             await tx.transaction.create({
-                data: {
-                    amount,
-                    description,
-                    type,
-                    date,
-                    repeat,
-                    balance: newBalance,
-                    account: { connect: { id: accountId } },
-                    user: { connect: { id: user!.id } },
-                    ...(categoryId && {
-                        category: { connect: { id: categoryId } }
-                    }),
-                    ...(toAccountId && { toAccount: { connect: { id: toAccountId } } })
-                }
+                data: txPayload
             });
 
             updates.push(
@@ -100,12 +123,29 @@ export async function createTransaction(prevState: any, formData: FormData) {
             switch (type) {
 
                 case TransactionType.TRANSFER:
+
+                    await tx.transaction.create({
+                        data: {
+                            amount,
+                            description,
+                            type,
+                            date,
+                            repeat,
+                            balance: toAccountBalance,
+                            account: { connect: { id: toAccountId } },
+                            user: { connect: { id: user!.id } },
+                            transferType: TransferType.TRANSFER_IN,
+                            transferGroupId: tranferGroupId
+                        }
+                    });
+
                     updates.push(
                         tx.account.update({
                             where: { id: toAccountId! },
                             data: { balance: { increment: amount } }
                         })
                     );
+
                     break;
             }
 
@@ -183,7 +223,9 @@ export async function getTransactions(cursor?: { date: Date; id: string }, searc
             balance: true,
             description: true,
             category: { select: { name: true, icon: true } },
-            account: { select: { accountNumber: true, name: true } }
+            account: { select: { accountNumber: true, name: true } },
+            transferGroupId: true,
+            transferType: true
         }
     });
 

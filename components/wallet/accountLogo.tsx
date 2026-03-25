@@ -9,8 +9,8 @@ type AccountLogoProp = {
 
 const AccountLogo = ({ name, className }: AccountLogoProp) => {
     return (
-        <div className={`rounded-full bg-white text-black flex justify-center items-center font-bold ${className}`}>{name?.slice(0, 2).toUpperCase()}</div>
+        <span className={`rounded-full bg-white text-black flex justify-center items-center font-bold ${className}`}>{name?.slice(0, 2).toUpperCase()}</span>
     )
 }
 
-export default AccountLogo
+export default AccountLogo;

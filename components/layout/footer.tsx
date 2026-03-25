@@ -13,8 +13,8 @@ import LoaderButton from "../ui/loaderButton";
 
 const NAV_ITEMS = [
     { href: "/budget", label: "Budget", icon: <HandCoins size={20} /> },
-    { href: "/wallet", label: "Wallet", icon: <Wallet size={20} /> },
     { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
+    { href: "/wallet", label: "Wallet", icon: <Wallet size={20} /> },
     { href: "/category", label: "Category", icon: <Layers2 size={20} /> },
     { href: "/report", label: "Report", icon: <ClipboardMinus size={20} /> },
 ] as const;
@@ -70,15 +70,15 @@ const Footer = memo(({ toggle, open }: FooterProps) => {
                 {NAV_ITEMS.map((item, index) => {
                     const isActive = pathname === item.href;
                     const isLoading = isPending && loadingPath === item.href;
-
                     return (
                         <button
                             key={item.href}
                             onClick={() => handleLinkClick(item.href)}
-                            disabled={isPending}
+                            disabled={isPending || item.label === 'Wallet'}
                             className={[
                                 "footer-item transform transition-transform duration-300 ease-out",
                                 isActive ? "active" : "",
+                                item.label === 'Wallet' ? 'invisible pointer-events-none' : '',
                                 index === 2 && !open ? "translate-y-4 scale-105" : "translate-y-0",
                             ].join(" ")}
                         >

@@ -66,10 +66,15 @@ export const createUserSession = async (user: sessionPayload, cookie: Pick<Cooki
 }
 
 export const setCookie = (sessionId: string, cookie: Pick<CookiesType, 'set'>) => {
+
+    const cookieSecure = process.env.COOKIE_SECURE ?? 'yes';
+    const isSecure = cookieSecure !== 'no';
+
+
     cookie.set(COOKIE_SESSION_KEY, sessionId, {
-        secure: true,
+        secure: isSecure,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: isSecure ? 'strict' : 'lax',
         expires: Date.now() + SESSION_EXPIRY
     })
 }

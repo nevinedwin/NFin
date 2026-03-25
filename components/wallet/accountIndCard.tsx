@@ -19,15 +19,16 @@ import {
     EyeIcon,
     EyeOffIcon,
 } from 'lucide-react'
+import { AccountSafe } from '@/types/account';
 
 type BalanceIndCardProp = {
-    account: Account;
+    account: AccountSafe;
 }
 
 const BalanceIndCard = ({ account }: BalanceIndCardProp) => {
 
     const { showBalance, setShowBalance } = useMainShellContext();
-    const balanceInd = useCountUp(Number(account.balance), 100)
+    const balanceInd = useCountUp(parseInt(account.balance), 100)
 
     return (
         <Card className=" w-full border-none h-[160px] bg-surface p-0 

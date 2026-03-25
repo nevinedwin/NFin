@@ -86,6 +86,11 @@ enum InvestmentStatus {
   CLOSED
 }
 
+enum TransferType {
+  TRANSFER_OUT
+  TRANSFER_IN
+}
+
 model User {
   id           String    @id @default(uuid())
   email        String    @unique
@@ -213,8 +218,7 @@ model Account {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  transactionsFrom Transaction[] @relation("TransferFrom")
-  transactionsTo   Transaction[] @relation("TransferTo")
+  transactions Transaction[]
 
   isDeleted Boolean @default(false)
 
@@ -267,15 +271,16 @@ model Transaction {
 
   balance Decimal @default(0)
 
+  transferType TransferType?
+
+  transferGroupId String?
+
   //Relations
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  accountId String?
-  account   Account? @relation("TransferFrom", fields: [accountId], references: [id])
-
-  toAccountId String?
-  toAccount   Account? @relation("TransferTo", fields: [toAccountId], references: [id])
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id])
 
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])

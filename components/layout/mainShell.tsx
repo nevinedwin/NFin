@@ -23,6 +23,8 @@ type MainShellProp = {
     recentTransaction: TransactionDataType[]
 };
 
+const footerVisiblePath = ['/dashboard', '/category', '/budget', '/report'];
+
 const MainShell = ({ children, accounts, category, userData, recentTransaction }: MainShellProp) => {
     const pathname = usePathname();
 
@@ -156,29 +158,33 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
                 </main>
 
                 {/* Footer */}
-                {!openTransactionCard && <footer
-                    style={{
-                        height: FOOTER_HEIGHT,
-                        transform: hideFooter
-                            ? `translateY(${FOOTER_HEIGHT - FOOTER_PEEK}px)`
-                            : "translateY(0px)",
-                    }}
-                    className={`absolute bottom-0 left-0 right-0 bg-bar shadow-inner
-                    transition-transform duration-500
-                    ease-[cubic-bezier(0.22,1,0.36,1)]
-                    will-change-transform`}
-                >
-                    <Footer
-                        accounts={accounts}
-                        category={category}
-                        toggle={toggleTransactionCard}
-                        open={openTransactionCard}
-                    />
-                </footer>}
+                {footerVisiblePath.includes(pathname) &&
+                    <>
+                        {!openTransactionCard && <footer
+                            style={{
+                                height: FOOTER_HEIGHT,
+                                transform: hideFooter
+                                    ? `translateY(${FOOTER_HEIGHT - FOOTER_PEEK}px)`
+                                    : "translateY(0px)",
+                            }}
+                            className={`absolute bottom-0 left-0 right-0 bg-bar shadow-inner
+                        transition-transform duration-500
+                        ease-[cubic-bezier(0.22,1,0.36,1)]
+                        will-change-transform`}
+                        >
+                            <Footer
+                                accounts={accounts}
+                                category={category}
+                                toggle={toggleTransactionCard}
+                                open={openTransactionCard}
+                            />
+                        </footer>}
+                    </>
+                }
                 {openTransactionCard && <div>
                     <div
                         className={`fixed inset-0 z-40 bg-black/40 backdrop-blur-sm
-                    transition-opacity duration-300
+                            transition-opacity duration-300
                     ${openTransactionCard ? "opacity-100" : "opacity-0 pointer-events-none"}`}
                         onClick={toggleTransactionCard}
                     />

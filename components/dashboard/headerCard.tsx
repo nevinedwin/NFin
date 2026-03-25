@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { Card } from '../ui/card/card'
 import CardContent from '../ui/card/cardContent'
 import { ArrowDown, ArrowUp, EyeIcon, EyeOffIcon, Wallet2 } from 'lucide-react'
 import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { changeShowBalance } from '@/actions/userAction';
 import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
+import LoaderButton from '../ui/loaderButton';
 
 type HeaderCardProp = {
     balance: number;
@@ -18,11 +19,21 @@ type HeaderCardProp = {
 
 const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0 }: HeaderCardProp) => {
 
+    const router = useRouter();
+
     const { showBalance, setShowBalance } = useMainShellContext();
+
+    const [isPending, startTransition] = useTransition();
 
     const balance = useCountUp(bal);
     const income = useCountUp(inc);
     const expense = useCountUp(exp);
+
+    const handleWalletClick = () => {
+        startTransition(() => {
+            router.push('/wallet');
+        })
+    };
 
     return (
         <Card className="rounded-none rounded-b-3xl w-full border-none h-[160px] bg-bar p-0 
@@ -39,8 +50,13 @@ const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0 }: Hea
                             }
                         </div>
                     </div>
-                    <div className='h-full flex justify-between items-center group'>
-                        <Wallet2 width={40} height={40} className="text-text-dull transition-transform duration-300 group-hover:rotate-6" onClick={() => redirect('/wallet')} />
+                    <div className='h-full flex flex-col justify-center items-center group pr-3'>
+                        {
+                            isPending
+                                ? <LoaderButton className='w-10 h-10' />
+                                : <Wallet2 width={40} height={40} className="text-text-dull transition-transform duration-300 group-hover:rotate-6" onClick={handleWalletClick} />
+                        }
+                        <p className='text-[10px] text-text-dull'>Wallet</p>
                     </div>
                 </div>
                 <div className='h-px bg-text-dull'></div>
