@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
                     type,
                     date,
                     repeat,
-                    category: { connect: { id: categoryId } },
+                    category: { connect: { id: categoryId ?? '' } },
                     account: { connect: { id: accountId } },
                     user: { connect: { id: user!.id } },
                     ...(toAccountId && { toAccount: { connect: { id: toAccountId } } })
