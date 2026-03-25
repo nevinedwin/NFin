@@ -1,12 +1,14 @@
+'use server';
+
 import React from 'react'
 import WalletChip from '@/components/wallet/walletChip';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/auth/currentUser';
-import BalanceCard from '@/components/wallet/balanceCard';
 import BalanceIndCard from '@/components/wallet/accountIndCard';
 import { CardSkeleton } from '@/components/ui/card/cardSkeleton';
-import { Account } from '@/generated/prisma/client';
 import { AccountSafe } from '@/types/account';
+import BackArrowButton from '@/components/ui/backArrowbutton';
+import WalletBackHandler from '@/components/ui/walletBackHandler';
 
 type WalletSinglePageProps = {
   params: Promise<{ accountId: string }>
@@ -43,6 +45,9 @@ const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
 
   return (
     <div className='flex flex-col justify-center items-center p-4 gap-6'>
+      <div className='w-full flex justify-start items-center'>
+        <BackArrowButton size={20} href="/dashboard" />
+      </div>
       <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide'>
         <WalletChip
           text="All"
@@ -72,6 +77,7 @@ const WalletSinglePage = async ({ params }: WalletSinglePageProps) => {
         <CardSkeleton className='w-full' />
         <CardSkeleton className='w-full' />
       </div>
+      <WalletBackHandler />
     </div>
   )
 }

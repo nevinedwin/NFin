@@ -59,3 +59,17 @@ export const ORDER_MAP: Record<AccountType, number> = {
   WALLET: 2,
   CASH: 3
 };
+export const balanceFormating = (value: number): [string, string] => {
+  const formatted = Math.abs(value).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const [int, dec] = formatted.split(".");
+  return [int, dec];
+};
+
+
+export const formatDate = (date: Date) => {
+  return date.toISOString().split("T")[0];
+};

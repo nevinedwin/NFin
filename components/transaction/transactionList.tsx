@@ -10,6 +10,8 @@ import FilterBars from "./filterBars";
 import { FILTER_BUTTONS } from "./FilteKeys";
 import FilterSheet from "./filterSheet";
 import MonthHeader from "./monthHeader";
+import BackArrowButton from "../ui/backArrowbutton";
+import { useRouter } from "next/navigation";
 
 type Cursor = { date: Date; id: string } | null;
 
@@ -26,6 +28,9 @@ export default function TransactionList({
     accounts: { id: string; label: string; sub?: string }[];
     categories: { id: string; label: string }[];
 }) {
+
+    const router = useRouter();
+
     const [transactions, setTransactions] = useState(initialTransaction);
     const [monthlyTotals, setMonthlyTotals] = useState<MonthSummary[]>(initialMonthlyTotals);
     const [loading, setLoading] = useState(false);
@@ -98,6 +103,10 @@ export default function TransactionList({
         setFilters(EMPTY_FILTERS);
     }, []);
 
+    const handleTransactionDetails = useCallback((id: string) => {
+        router.push(`transaction/${id}`)
+    }, []);
+
     useEffect(() => {
         if (isFirstRender.current) { isFirstRender.current = false; return; }
         fetchTransactions(null, debounceQuery, filters, true);
@@ -122,6 +131,9 @@ export default function TransactionList({
 
     return (
         <div className="py-4 flex flex-col gap-3">
+            <div className='w-full pl-4 flex justify-start items-center'>
+                <BackArrowButton size={20} href="/dashboard" />
+            </div>
             <div className="w-full px-4">
                 <SearchInput
                     name="transaction-search"
@@ -162,7 +174,7 @@ export default function TransactionList({
                     />
                     {group.transactions.map((tx: any) => (
                         <div key={tx.id} className="w-full px-4">
-                            <EachTransaction recentTransaction={tx} recentCard={false} />
+                            <EachTransaction recentTransaction={tx} recentCard={false} onClickTransaction={handleTransactionDetails}/>
                         </div>
                     ))}
                 </div>

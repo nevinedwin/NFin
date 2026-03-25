@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { memo } from 'react';
 
 type ChipProps = {
@@ -14,8 +15,15 @@ type ChipProps = {
 
 const Chip = memo(
     ({ children, className = '', href = '', hover = true, selected = false, disabled = false }: ChipProps) => {
+
+        const router = useRouter();
+
+        const handleChipNavigation = () => {
+            router.replace(href);
+        };
+        
         return (
-            <Link href={href}
+            <button onClick={handleChipNavigation}
                 className={`
                     inline-flex items-center justify-center
                     rounded-lg px-3 py-1
@@ -28,7 +36,7 @@ const Chip = memo(
                     `}
             >
                 {children}
-            </Link>
+            </button>
         );
     }
 );

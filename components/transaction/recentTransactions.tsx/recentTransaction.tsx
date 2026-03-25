@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useCallback, useEffect, useState, useTransition } from 'react'
 import { ChevronRight } from 'lucide-react'
 import EachTransaction from './eachTransaction'
 import { TransactionDataType } from '@/types/transaction'
@@ -25,6 +25,10 @@ const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
         });
     };
 
+    const handleTransactionDetails = useCallback((id: string) => {
+        router.push(`transaction/${id}`)
+    }, []);
+
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -46,7 +50,7 @@ const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
                 {
                     recentTransaction.length > 0
                         ? recentTransaction.map((eachTransaction) =>
-                            <EachTransaction recentTransaction={eachTransaction} key={eachTransaction.id} recentCard={true} />)
+                            <EachTransaction recentTransaction={eachTransaction} key={eachTransaction.id} recentCard={true} onClickTransaction={handleTransactionDetails} />)
                         : <p className='h-full w-full flex justify-center items-center'>No recent transactions.</p>
                 }
             </div>

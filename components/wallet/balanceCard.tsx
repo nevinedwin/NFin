@@ -7,6 +7,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp';
 import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
+import ShowBalanceComp from '../ui/showBalance';
 
 type BalanceCardProp = {
     totalBalance: number;
@@ -29,7 +30,7 @@ const BalanceCard = ({ totalBalance = 0, label }: BalanceCardProp) => {
                         <h2 className='text-sm font-medium text-slate-200'>{label.toUpperCase()}</h2>
                     </div>
                     <div className='w-full flex justify-between items-center'>
-                        <h2 className='text-3xl  font-extrabold'><span>{RUPEE_SYMBOL}</span> {showBalance ? Math.abs(balance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}</h2>
+                        {showBalance ? <ShowBalanceComp balance={balance} /> : <span className='text-3xl'>{RUPEE_SYMBOL} ----</span>}
                         {
                             showBalance ? <EyeIcon onClick={() => setShowBalance(false)} className='cursor-pointer' /> : <EyeOffIcon onClick={() => setShowBalance(true)} className='cursor-pointer' />
                         }

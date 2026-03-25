@@ -5,6 +5,7 @@ import { X, Check } from "lucide-react";
 import { TransactionFilterType, ActiveFilters } from "@/types/filters";
 import { TransactionType } from "@/generated/prisma/client";
 import AccountLogo from "../wallet/accountLogo";
+import { formatDate } from "@/lib/utils/formats";
 
 type RadioOption = { id: string; label: string; sub?: string };
 
@@ -35,6 +36,16 @@ const SHEET_TITLES: Record<TransactionFilterType, string> = {
     category: "Select Category",
 };
 
+export type DateFilterType = "today" | "week" | "month" | "year" | "custom";
+
+const DATE_OPTIONS: { id: DateFilterType, label: string }[] = [
+    { id: "today", label: "Today" },
+    { id: "week", label: "This Week" },
+    { id: "month", label: "This Month" },
+    { id: "year", label: "This Year" },
+    { id: "custom", label: 'Custom Date Range' }
+]
+
 export default function FilterSheet({
     open, filterType, filters, accounts, categories, onClose, onApply,
 }: Props) {
@@ -43,6 +54,7 @@ export default function FilterSheet({
     const [selectedBank, setSelectedBank] = useState<string | null>(filters.bankId);
     const [selectedType, setSelectedType] = useState<string | null>(filters.type);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(filters.categoryId);
+    const [selectedDateFilter, setSelectedDateFilter] = useState<DateFilterType | null>(filters.dateFilter);
     const [dateFrom, setDateFrom] = useState(filters.date?.from ?? "");
     const [dateTo, setDateTo] = useState(filters.date?.to ?? "");
 
@@ -59,6 +71,45 @@ export default function FilterSheet({
             return () => clearTimeout(t);
         }
     }, [open, filters]);
+
+    useEffect(() => {
+        if (selectedDateFilter === "custom") return;
+
+        const now = new Date();
+        let from = new Date();
+        let to = new Date();
+
+        switch (selectedDateFilter) {
+            case "today":
+                from = new Date(now.setHours(0, 0, 0, 0));
+                to = new Date();
+                break;
+
+            case "week":
+                const day = now.getDay(); // 0 (Sun) - 6 (Sat)
+                const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Monday start
+                from = new Date(now.setDate(diff));
+                from.setHours(0, 0, 0, 0);
+                to = new Date();
+                break;
+
+            case "month":
+                from = new Date(now.getFullYear(), now.getMonth(), 1);
+                from.setHours(0, 0, 0, 0);
+                to = new Date();
+                break;
+
+            case "year":
+                from = new Date(now.getFullYear(), 0, 1);
+                from.setHours(0, 0, 0, 0);
+                to = new Date();
+                break;
+        }
+
+        setDateFrom(formatDate(from));
+        setDateTo(formatDate(to));
+
+    }, [selectedDateFilter]);
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -132,24 +183,36 @@ export default function FilterSheet({
                     )}
                     {filterType === "date" && (
                         <div className="flex flex-col gap-4 py-2">
-                            <label className="flex flex-col gap-1.5">
-                                <span className="text-xs text-slate-400">From</span>
-                                <input
-                                    type="date"
-                                    value={dateFrom}
-                                    onChange={(e) => setDateFrom(e.target.value)}
-                                    className="bg-border border border-border rounded-lg px-3 py-2 text-md text-slate-200 focus:outline-none focus:ring-1 focus:ring-green-500"
-                                />
-                            </label>
-                            <label className="flex flex-col gap-1.5">
-                                <span className="text-xs text-slate-400">To</span>
-                                <input
-                                    type="date"
-                                    value={dateTo}
-                                    onChange={(e) => setDateTo(e.target.value)}
-                                    className="bg-border border border-border rounded-lg px-3 py-2 text-md text-slate-200 focus:outline-none focus:ring-1 focus:ring-green-500"
-                                />
-                            </label>
+                            <RadioList
+                                options={DATE_OPTIONS}
+                                selected={selectedDateFilter}
+                                onSelect={setSelectedDateFilter as any}
+                                type="date"
+                            />
+                            {/* Custom Inputs */}
+                            {selectedDateFilter === "custom" && (
+                                <>
+                                    <label className="flex flex-col gap-1.5">
+                                        <span className="text-xs text-slate-400">From</span>
+                                        <input
+                                            type="date"
+                                            value={dateFrom}
+                                            onChange={(e) => setDateFrom(e.target.value)}
+                                            className="bg-border border border-border rounded-lg px-3 py-2 text-md text-slate-200 focus:outline-none focus:ring-1 focus:ring-green-500"
+                                        />
+                                    </label>
+
+                                    <label className="flex flex-col gap-1.5">
+                                        <span className="text-xs text-slate-400">To</span>
+                                        <input
+                                            type="date"
+                                            value={dateTo}
+                                            onChange={(e) => setDateTo(e.target.value)}
+                                            className="bg-border border border-border rounded-lg px-3 py-2 text-md text-slate-200 focus:outline-none focus:ring-1 focus:ring-green-500"
+                                        />
+                                    </label>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>

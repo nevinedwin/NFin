@@ -7,6 +7,7 @@ import { RUPEE_SYMBOL } from '@/lib/constants/constants'
 import useCountUp from '@/hooks/useCountUp'
 import { formatDateTime } from '@/lib/utils/formats';
 import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
+import ShowBalanceComp from '../ui/showBalance';
 
 type AccountCardProps = {
     balance: number;
@@ -19,7 +20,7 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated, name = 
 
     const { showBalance } = useMainShellContext();
 
-    const accountBalance = useCountUp(balance);
+    const accountBalance = useCountUp(balance, 100);
 
 
     return (
@@ -36,9 +37,8 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated, name = 
                         </div>
                     </div>
                     <div className='w-full flex justify-center items-end flex-col'>
-                        <h3 className='text-sm flex items-center justify-center gap-1 font-medium '>
-                            <span className="text-center">{RUPEE_SYMBOL}</span>
-                            {showBalance ? Math.abs(accountBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}
+                        <h3 className='!text-sm flex items-center justify-center gap-1 font-normal '>
+                            {showBalance ? <ShowBalanceComp balance={accountBalance} mainClass="!text-sm !font-normal" subClass='!text-[11px]' /> : <span className='text-sm'>{RUPEE_SYMBOL} ----</span>}
                         </h3>
 
                         <h3 className='text-[10px] text-slate-300 truncate'>{formatDateTime(lastUpdated)}</h3>

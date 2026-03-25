@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type BackArrowButtonProps = {
@@ -9,15 +9,18 @@ type BackArrowButtonProps = {
     className?: string;
     onBack?: () => void;
     size?: number;
+    href?: string;
 }
 
-export const BackArrowButton = ({ className, fallBackHref = '/dashboard', label, onBack, size = 15 }: BackArrowButtonProps) => {
+export const BackArrowButton = ({ className, href, fallBackHref = '/dashboard', label, onBack, size = 15 }: BackArrowButtonProps) => {
 
     const router = useRouter();
 
     const handleBack = () => {
         if (onBack) {
             onBack();
+        } else if (href) {
+            router.replace(href);
         } else if (window.history.length > 1) {
             router.back();
         } else {
@@ -30,7 +33,7 @@ export const BackArrowButton = ({ className, fallBackHref = '/dashboard', label,
             onClick={handleBack}
             className={`flex items-center gap-2 ${className}`}
         >
-            <ArrowLeft size={size} />
+            <ChevronLeft size={size} />
             {label && <span>{label}</span>}
         </button>
     );

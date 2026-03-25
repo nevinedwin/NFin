@@ -11,10 +11,11 @@ import CategoryIcon from "@/components/ui/caetgoryIcon";
 type EachTransactionProp = {
     recentTransaction: TransactionDataType;
     recentCard: boolean;
+    onClickTransaction: (id: string) => void;
 }
 
 
-const EachTransaction = ({ recentTransaction, recentCard = false }: EachTransactionProp) => {
+const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransaction }: EachTransactionProp) => {
 
     const { account, category, date, description, id, updateAt, amount, type, balance, transferGroupId, transferType } = recentTransaction;
 
@@ -22,8 +23,12 @@ const EachTransaction = ({ recentTransaction, recentCard = false }: EachTransact
     const isCashOut = type === TransactionType.TRANSFER && transferType === TransferType.TRANSFER_OUT;
     const isTransfer = type === TransactionType.TRANSFER;
 
+    const handleClick = (id: string) => {
+        onClickTransaction(id);
+    }
+
     return (
-        <div className="w-full flex items-center justify-between border-b border-border py-4">
+        <div className="w-full flex items-center justify-between border-b border-border py-4" onClick={() => handleClick(id)}>
 
             {/* LEFT SECTION */}
             <div className="flex items-start gap-3">

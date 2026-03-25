@@ -10,6 +10,7 @@ import { redirect, useRouter } from 'next/navigation';
 import { changeShowBalance } from '@/actions/userAction';
 import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
 import LoaderButton from '../ui/loaderButton';
+import ShowBalanceComp from '../ui/showBalance';
 
 type HeaderCardProp = {
     balance: number;
@@ -25,9 +26,9 @@ const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0 }: Hea
 
     const [isPending, startTransition] = useTransition();
 
-    const balance = useCountUp(bal);
-    const income = useCountUp(inc);
-    const expense = useCountUp(exp);
+    const balance = useCountUp(bal, 100);
+    const income = useCountUp(inc, 100);
+    const expense = useCountUp(exp, 100);
 
     const handleWalletClick = () => {
         startTransition(() => {
@@ -44,7 +45,7 @@ const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0 }: Hea
                     <div>
                         <h2 className="text-sm font-light text-slate-500">Total Balance</h2>
                         <div className='flex justify-center items-center gap-4'>
-                            <h1 className="text-3xl  font-extrabold"><span>{RUPEE_SYMBOL}</span>{showBalance ? Math.abs(balance).toLocaleString("en-IN", { minimumFractionDigits: 2 }) : '-----'}</h1>
+                            {showBalance ? <ShowBalanceComp balance={balance} /> : <span className='text-3xl'>{RUPEE_SYMBOL} ----</span>}
                             {
                                 showBalance ? <EyeIcon onClick={() => setShowBalance(false)} /> : <EyeOffIcon onClick={() => setShowBalance(true)} />
                             }
