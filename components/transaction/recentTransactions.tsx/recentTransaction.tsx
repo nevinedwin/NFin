@@ -46,12 +46,12 @@ const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
                     <ChevronRight size={15} />
                 </button>
             </div>
-            <div className='w-full h-fit bg-surface rounded-xl'>
+            <div className='w-full h-fit min-h-[150px] bg-surface rounded-xl'>
                 {
                     recentTransaction.length > 0
                         ? recentTransaction.map((eachTransaction) =>
                             <EachTransaction recentTransaction={eachTransaction} key={eachTransaction.id} recentCard={true} onClickTransaction={handleTransactionDetails} />)
-                        : <p className='h-full w-full flex justify-center items-center'>No recent transactions.</p>
+                        : <p className='h-full w-full flex justify-center items-center pt-[25px]'>No recent transactions.</p>
                 }
             </div>
         </div>

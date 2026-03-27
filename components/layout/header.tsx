@@ -5,11 +5,14 @@ import LoaderButton from "../ui/loaderButton";
 import { useState } from "react";
 import TopLoader from "../ui/topLoader";
 import { useMainShellContext } from "@/app/(main)/context/mainShellContext";
+import { useRouter } from "next/navigation";
 
 const Header = ({ loading: pageLoading }: { loading: boolean }) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const { userData } = useMainShellContext();
+
+  const router = useRouter();
 
 
   const handleLogOutClick = async () => {
@@ -29,7 +32,7 @@ const Header = ({ loading: pageLoading }: { loading: boolean }) => {
       <header className="h-full px-4 flex items-center justify-between bg-bar">
 
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold cursor-pointer hover:scale-105 transition">
+          <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold cursor-pointer hover:scale-105 transition" onClick={() => router.replace('/dashboard')}>
             {userData?.name?.slice(0, 2).toUpperCase()}
           </div>
           {/* <h1 className="text-lg font-semibold">NFin</h1> */}

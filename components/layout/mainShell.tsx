@@ -23,7 +23,7 @@ type MainShellProp = {
     recentTransaction: TransactionDataType[]
 };
 
-const footerVisiblePath = ['/dashboard', '/category', '/budget', '/report'];
+const footerVisiblePath = ['/dashboard', '/category', '/budget', '/contact'];
 
 const MainShell = ({ children, accounts, category, userData, recentTransaction }: MainShellProp) => {
     const pathname = usePathname();

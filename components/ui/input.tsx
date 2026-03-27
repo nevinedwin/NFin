@@ -1,4 +1,4 @@
-import { Eye, EyeClosed, EyeClosedIcon, EyeOff, LucideEyeClosed } from 'lucide-react';
+import { Eye, EyeClosed, EyeClosedIcon, EyeOff, LucideEyeClosed, Search } from 'lucide-react';
 import React, { forwardRef, useState } from 'react'
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
@@ -7,9 +7,10 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
     error?: string;
     containerClassName?: string;
     isPassword?: boolean;
+    showIcon?: boolean;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, requiredLabel = false, error, containerClassName = '', className = '', ...props }, ref) => {
+const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, requiredLabel = false, error, containerClassName = '', className = '', showIcon = false, ...props }, ref) => {
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -50,6 +51,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
                     transition-all duration-200
                     disabled:opacity-50
                     disabled:cursor-not-allowed
+                    ${showIcon ? 'relative !pl-12' : ''}
                 ${className}
                 `}
                     {...props}
@@ -63,6 +65,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
                     </button>
                 )}
             </div>
+            {showIcon && <div className='absolute left-3 pt-3'>
+                <Search />
+            </div>}
             {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}
         </div>
     )

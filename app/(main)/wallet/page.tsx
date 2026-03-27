@@ -98,7 +98,7 @@ const Wallet = async ({ params }: WalletProp) => {
   return (
     <div className='flex flex-col justify-center items-center py-4 gap-6'>
       <div className='w-full pl-4 flex justify-start items-center'>
-        <BackArrowButton size={20} href="/dashboard"/>
+        <BackArrowButton size={30} href="/dashboard"/>
       </div>
       <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide px-4'>
         <WalletChip

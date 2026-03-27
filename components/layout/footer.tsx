@@ -16,10 +16,10 @@ const NAV_ITEMS = [
     { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
     { href: "/wallet", label: "Wallet", icon: <Wallet size={20} /> },
     { href: "/category", label: "Category", icon: <Layers2 size={20} /> },
-    { href: "/report", label: "Report", icon: <ClipboardMinus size={20} /> },
+    { href: "/contact", label: "Contact", icon: <ClipboardMinus size={20} /> },
 ] as const;
 
-const PREFETCH_PATHS = ["/dashboard", "/wallet", "/category", "/budget", "/report"] as const;
+const PREFETCH_PATHS = ["/dashboard", "/wallet", "/category", "/budget", "/contact"] as const;
 
 const vibrate = () => navigator?.vibrate?.(10);
 

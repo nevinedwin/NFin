@@ -113,6 +113,7 @@ model User {
   goals               Goal[]
   investments         Investment[]
   insurancePolicies   InsurancePolicy[]
+  groups              Group[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -160,10 +161,14 @@ model Contact {
   participants TransactionParticipant[]
   balance      ContactBalance?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  groupMembers GroupMember[]
 
+  @@unique([userId, name, id])
   @@index([userId])
+  @@index([name])
+  @@index([userId, name(sort: Asc), id(sort: Asc)])
 }
 
 model ContactBalance {
@@ -487,4 +492,32 @@ model InsurancePolicy {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Group {
+  id String @id @default(uuid())
+
+  name String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  members GroupMember[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model GroupMember {
+  id String @id @default(uuid())
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  contactId String
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, contactId])
 }
