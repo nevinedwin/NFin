@@ -6,10 +6,11 @@ import { prisma } from '@/lib/prisma';
 import { TransactionType, TransferType } from '@/generated/prisma/client';
 import BackArrowButton from '@/components/ui/backArrowbutton';
 import ShowBalanceComp from '@/components/ui/showBalance';
-import { formatDateTime } from '@/lib/utils/formats';
+import { formatDateTime, formatUnderScoredStringCut } from '@/lib/utils/formats';
 import CategoryIcon from '@/components/ui/caetgoryIcon';
 import { ArrowDownLeft, ArrowUpRight, CircleArrowOutDownLeft, CircleArrowOutUpRight } from 'lucide-react';
 import AccountLogo from '@/components/wallet/accountLogo';
+import HorizontalLine from '@/components/ui/horizontalLine';
 
 type TransactionDetailedPageProps = {
     params: Promise<{ transactionId: string }>
@@ -31,7 +32,7 @@ const TransactionDetailedPage = async ({ params }: TransactionDetailedPageProps)
                 select: { name: true, icon: true }
             },
             account: {
-                select: { name: true }
+                select: { name: true, accountNumber: true, type: true }
             }
         }
     });
@@ -49,7 +50,16 @@ const TransactionDetailedPage = async ({ params }: TransactionDetailedPageProps)
             },
             select: {
                 id: true,
-                account: { select: { name: true } }
+                amount: true,
+                balance: true,
+                account: {
+                    select: {
+                        name: true,
+                        accountNumber: true,
+                        type: true,
+                        balance: true
+                    }
+                }
             }
         });
     }
@@ -60,17 +70,26 @@ const TransactionDetailedPage = async ({ params }: TransactionDetailedPageProps)
         amount: transaction.amount.toString(),
     };
 
+    if (pairedTransaction) {
+
+        pairedTransaction = {
+            ...pairedTransaction,
+            balance: pairedTransaction.balance.toString(),
+            amount: pairedTransaction.amount.toString()
+        }
+    }
+
     const { amount, updatedAt, type, transferType, category, account } = safeTransaction;
 
     const isExpense = type === TransactionType.EXPENSE || transferType === TransferType.TRANSFER_OUT
 
 
     return (
-        <div className='w-full h-full p-4'>
-            <div className='w-full flex justify-start items-center mb-8'>
+        <div className='w-full h-full p-4 !pb-0 space-y-2'>
+            <div className='w-full flex justify-start items-center mb-4'>
                 <BackArrowButton size={30} href="/transaction" />
             </div>
-            <div className='w-full h-[300px] space-y-1'>
+            <div className='w-full h-fit space-y-1'>
                 <div className='flex w-full relative'>
                     <div className={`w-12 h-12 rounded-full flex justify-center items-center ${isExpense ? 'bg-red-500' : 'bg-green-500'}`}>
                         {isExpense ? <ArrowUpRight size={40} /> : <ArrowDownLeft size={40} />}
@@ -90,10 +109,73 @@ const TransactionDetailedPage = async ({ params }: TransactionDetailedPageProps)
                             containerClassName="flex item-center justify-start"
                         />
                     </span>
-                    {category?.name ?? ''}
+                    {category?.name ?? 'Transfer'}
                 </div>
             </div>
 
+            <div className="flex items-center gap-3 w-full">
+
+                <div className="flex-1 h-px bg-border" />
+
+                <span className="text-sm text-slate-400 whitespace-nowrap">
+                    Transaction Details
+                </span>
+
+                <div className="flex-1 h-px bg-border" />
+
+            </div>
+            <div className='flex flex-col gap-2'>
+                <p className='text-sm text-text-dull'>{isExpense ? 'Paid from' : 'Paid To'}</p>
+                <div className='flex justify-start items-center gap-2'>
+                    <div className='w-5 h-5'><AccountLogo className='w-full h-full !text-[10px]' name={account.name} /></div>
+                    <p className='text-sm font-semibold'>{account.name}</p>
+                    <p className='text-sm font-semibold'>X{account.accountNumber?.slice(-4)}</p>
+                </div>
+            </div>
+            {
+                safeTransaction.type === TransactionType.TRANSFER && pairedTransaction &&
+                <>
+                    <HorizontalLine />
+                    <div className='flex flex-col gap-2'>
+                        <p className='text-sm text-text-dull'>{safeTransaction.transferType === TransferType.TRANSFER_IN ? 'Paid From' : 'Paid To'}</p>
+                        <div className='flex justify-start items-center gap-2'>
+                            <div className='w-5 h-5'><AccountLogo className='w-full h-full !text-[10px]' name={pairedTransaction.account.name} /></div>
+                            <p className='text-sm font-semibold'>{pairedTransaction.account.name}</p>
+                            <p className='text-sm font-semibold'>X{pairedTransaction.account.accountNumber?.slice(-4)}</p>
+                        </div>
+                    </div>
+                </>
+            }
+            <HorizontalLine />
+            <div className='flex flex-col gap-2'>
+                <p className='text-sm text-text-dull'>Balance After Transaction</p>
+                <ShowBalanceComp balance={Number(safeTransaction.balance)} subClass='!text-[10px]' mainClass='!text-sm' />
+            </div>
+            <HorizontalLine />
+            <div className='flex flex-col gap-2'>
+                <p className='text-sm text-text-dull'>Transaction Type</p>
+                <div className='flex justify-start items-center gap-2'>
+                    <p className='text-sm font-semibold'>{formatUnderScoredStringCut(safeTransaction.type)}</p>
+                </div>
+            </div>
+            <HorizontalLine />
+            <div className={`flex flex-col gap-2 ${safeTransaction.description ? '' : ' pb-16'}`}>
+                <p className='text-sm text-text-dull'>Transaction Mode</p>
+                <div className='flex justify-start items-center gap-2'>
+                    <p className='text-sm font-semibold'>{formatUnderScoredStringCut(account.type)}</p>
+                </div>
+            </div>
+            {safeTransaction.description &&
+                <>
+                    <HorizontalLine />
+                    <div className='flex flex-col gap-2 pb-16'>
+                        <p className='text-sm text-text-dull'>Note</p>
+                        <div className='flex justify-start items-center gap-2'>
+                            <p className='text-sm font-light'>{safeTransaction.description}</p>
+                        </div>
+                    </div>
+                </>
+            }
         </div>
     )
 }

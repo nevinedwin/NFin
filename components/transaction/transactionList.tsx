@@ -132,7 +132,7 @@ export default function TransactionList({
     return (
         <div className="py-4 flex flex-col gap-3">
             <div className='w-full pl-4 flex justify-start items-center'>
-                <BackArrowButton size={20} href="/dashboard" />
+                <BackArrowButton size={30} href="/dashboard" />
             </div>
             <div className="w-full px-4">
                 <SearchInput
@@ -173,7 +173,7 @@ export default function TransactionList({
                         }}
                     />
                     {group.transactions.map((tx: any) => (
-                        <div key={tx.id} className="w-full px-4">
+                        <div key={tx.id} className="w-full">
                             <EachTransaction recentTransaction={tx} recentCard={false} onClickTransaction={handleTransactionDetails}/>
                         </div>
                     ))}

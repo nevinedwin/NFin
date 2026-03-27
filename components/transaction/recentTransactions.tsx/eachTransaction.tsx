@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AccountLogo from "@/components/wallet/accountLogo";
 import { TransactionType, TransferType } from "@/generated/prisma/client";
 import { formatTimeDate, formatUnderScoredStringCut } from "@/lib/utils/formats";
@@ -17,6 +17,8 @@ type EachTransactionProp = {
 
 const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransaction }: EachTransactionProp) => {
 
+    const [selected,setSelected] = useState<string | null>(null);
+
     const { account, category, date, description, id, updateAt, amount, type, balance, transferGroupId, transferType } = recentTransaction;
 
     const isExpense = type === TransactionType.EXPENSE;
@@ -24,11 +26,16 @@ const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransac
     const isTransfer = type === TransactionType.TRANSFER;
 
     const handleClick = (id: string) => {
+        setSelected(id);
         onClickTransaction(id);
     }
 
+    useEffect(() => {
+        setSelected(null);
+    }, []);
+
     return (
-        <div className="w-full flex items-center justify-between border-b border-border py-4" onClick={() => handleClick(id)}>
+        <div className={`w-full flex items-center justify-between border-b border-border py-4 px-4 ${selected === id ? 'bg-surface' : 'bg-inherit'}`} onClick={() => handleClick(id)}>
 
             {/* LEFT SECTION */}
             <div className="flex items-start gap-3">

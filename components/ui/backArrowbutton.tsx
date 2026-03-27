@@ -24,7 +24,7 @@ export const BackArrowButton = ({ className, href, fallBackHref = '/dashboard', 
         } else if (window.history.length > 1) {
             router.back();
         } else {
-            router.push(fallBackHref!);
+            router.replace(fallBackHref!);
         }
     }
 
