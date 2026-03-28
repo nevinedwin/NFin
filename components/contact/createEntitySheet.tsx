@@ -14,6 +14,7 @@ import Input from "../ui/input";
 import AccountLogo from "../wallet/accountLogo";
 import HorizontalLine from "../ui/horizontalLine";
 import useDebounceValue from "@/hooks/useDebounceValue";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
 
 type Props = {
     open: boolean;
@@ -30,94 +31,49 @@ type Contact = {
 type Cursor = { name: string; id: string } | null;
 
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 const CreateEntitySheet = ({ open, type, onClose }: Props) => {
+
     const [isPending, startTransition] = useTransition();
 
     const [visible, setVisible] = useState(false);
-    const [contacts, setContacts] = useState<Contact[]>([]);
-    const [hasMore, setHasMore] = useState(true);
-    const [loading, setLoading] = useState(false);
-
-    const [query, setQuery] = useState("");
-    const debouncedSearch = useDebounceValue(query, 400);
-
     const [selected, setSelected] = useState<string[]>([]);
     const [groupName, setGroupName] = useState("");
-
+    const [query, setQuery] = useState("");
+    const debouncedSearch = useDebounceValue(query, 400);
     const [contactForm, setContactForm] = useState({
         name: "",
         phone: "",
         email: "",
     });
 
-    const cursorRef = useRef<Cursor | undefined>(undefined);
+
+    // infinite scroll
+    const {
+        error,
+        loading,
+        data: contacts,
+        hasMore,
+        scrollElementRef
+    } = useInfiniteScroll<Cursor, Contact>({
+        query: debouncedSearch,
+        action: getContacts,
+        size: PAGE_SIZE,
+        format: (prev, incoming) => {
+            const ids = new Set(prev.map(c => c.id));
+            return [...prev, ...incoming.filter(c => !ids.has(c.id))]
+        }
+    });
+
+
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value);
+    };
+
     const loaderRef = useRef<HTMLDivElement | null>(null);
 
-    /* ---------------- FETCH ---------------- */
-
-    const fetchContacts = useCallback(async () => {
-        if (loading || !hasMore) return;
-
-        setLoading(true);
-
-        try {
-
-            const res = await getContacts({
-                cursor: cursorRef.current,
-                search: debouncedSearch || undefined,
-                take: PAGE_SIZE,
-            });
-
-            setContacts((prev) => {
-                const map = new Map(prev.map((c) => [c.id, c]));
-                res.data.forEach((c: Contact) => map.set(c.id, c));
-                return Array.from(map.values());
-            });
-
-            cursorRef.current = res.nextCursor ?? undefined;
-            setHasMore(!!res.nextCursor);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    }, [debouncedSearch, hasMore, loading]);
-
-    /* ---------------- RESET ON SEARCH ---------------- */
-
-    useEffect(() => {
-        cursorRef.current = undefined;
-        setContacts([]);
-        setHasMore(true);
-    }, [debouncedSearch]);
-
-    useEffect(() => {
-        if (open && type === "group") {
-            fetchContacts();
-        }
-    }, [open, debouncedSearch, type]);
-
-    /* ---------------- INTERSECTION OBSERVER ---------------- */
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting) {
-                    fetchContacts();
-                }
-            },
-            { rootMargin: "500px" }
-        );
-
-        const el = loaderRef.current;
-        if (el) observer.observe(el);
-
-        return () => {
-            if (el) observer.unobserve(el);
-        };
-    }, [fetchContacts]);
 
     const reset = () => {
         setSelected([]);
@@ -235,7 +191,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
                             placeholder="Search contacts..."
                             value={query}
                             showIcon
-                            onChange={(e) => setQuery(e.target.value)}
+                            onChange={handleSearch}
                             className='!bg-transparent !text-white placeholder:!text-slate-400 border-none'
                         />
 
@@ -260,19 +216,40 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
 
                         {/* LIST */}
                         <div className="flex-1 overflow-y-auto py-2 space-y-2 min-h-0 pb-16">
-                            {contacts.map((c) => (
-                                <button
-                                    key={c.id}
-                                    onClick={() => toggle(c.id)}
-                                    className="w-full flex items-center gap-3 px-4 py-3 active:bg-surface"
-                                >
-                                    <AccountLogo name={c.name.slice(0, 2)} className="w-10 h-10" />
-                                    <div className="flex flex-col items-start">
-                                        <span className="text-sm text-white">{c.name}</span>
-                                        <span className="text-xs text-slate-400">{c.phone}</span>
-                                    </div>
-                                </button>
-                            ))}
+                            {contacts.map((c, index) => {
+
+                                if (contacts.length - 3 === index + 1) {
+                                    return (
+                                        <button
+                                            key={c.id}
+                                            ref={scrollElementRef}
+                                            onClick={() => toggle(c.id)}
+                                            className="w-full flex items-center gap-3 px-4 py-3 active:bg-surface"
+                                        >
+                                            <AccountLogo name={c.name.slice(0, 2)} className="w-10 h-10" />
+                                            <div className="flex flex-col items-start">
+                                                <span className="text-sm text-white">{c.name}</span>
+                                                <span className="text-xs text-slate-400">{c.phone}</span>
+                                            </div>
+                                        </button>
+                                    )
+                                } else {
+                                    return (
+                                        <button
+                                            key={c.id}
+                                            onClick={() => toggle(c.id)}
+                                            className="w-full flex items-center gap-3 px-4 py-3 active:bg-surface"
+                                        >
+                                            <AccountLogo name={c.name.slice(0, 2)} className="w-10 h-10" />
+                                            <div className="flex flex-col items-start">
+                                                <span className="text-sm text-white">{c.name}</span>
+                                                <span className="text-xs text-slate-400">{c.phone}</span>
+                                            </div>
+                                        </button>
+                                    )
+                                }
+                            }
+                            )}
 
                             {loading && (
                                 <div className="flex justify-center py-4">
