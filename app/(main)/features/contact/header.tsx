@@ -2,17 +2,22 @@
 
 import BackArrowButton from '@/components/ui/backArrowbutton';
 import React from 'react'
+import { tabLabel, TabsType } from './contactPage';
 
-const Header = () => {
+type Headertype = {
+    tab: TabsType
+}
+
+const Header = ({ tab }: Headertype) => {
     return (
         <div className='flex items-center gap-3'>
             <BackArrowButton href='/dashboard' size={26} />
             <div className='flex flex-col'>
                 <h3 className='text-lg font-semibold text-white'>
-                    Contacts
+                    {tabLabel[tab]}
                 </h3>
                 <p className='text-xs text-slate-400'>
-                    Manage your contacts & groups
+                    Manage your {tab}s
                 </p>
             </div>
         </div>

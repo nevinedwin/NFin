@@ -7,8 +7,14 @@ import React, { useState } from 'react';
 import Header from './header';
 import CreateContactSheet from '@/components/contact/createEntitySheet';
 import CreateEntitySheet from '@/components/contact/createEntitySheet';
+import ContactList from './contactList';
 
-type TabsType = "contact" | "group";
+export type TabsType = "contact" | "group";
+
+export const tabLabel = {
+    contact: "Contacts",
+    group: "Groups"
+}
 
 const TAB_ITEMS: TabItem<TabsType>[] = [
     { id: "contact", label: "Contacts" },
@@ -23,8 +29,8 @@ const ContactPage = () => {
     return (
         <div className='w-full h-full flex flex-col bg-background'>
 
-            <div className='px-4 pt-4 pb-6 flex items-center justify-between'>
-                <Header />
+            <div className='flex-shrink-0 px-4 pt-4 pb-6 flex items-center justify-between'>
+                <Header tab={tab} />
 
                 <button
                     onClick={() => setOpenSheet(true)}
@@ -44,7 +50,7 @@ const ContactPage = () => {
             </div>
 
             {/* TABS */}
-            <div className='px-4'>
+            <div className='flex-shrink-0 px-4'>
                 <div className='bg-surface rounded-xl p-1 shadow-inner'>
                     <Tabs
                         tabs={TAB_ITEMS}
@@ -56,27 +62,23 @@ const ContactPage = () => {
             </div>
 
             {/* CONTENT AREA */}
-            <div className='flex-1 px-4 py-6'>
+            <div className='flex-1 min-h-0 px-4 py-6'>
                 <div className='
                     w-full h-full
-                    rounded-2xl
-                    bg-surface
-                    border border-border
-                    flex items-center justify-center
                     text-slate-400
                     text-sm
                 '>
                     {tab === "contact"
-                        ? "No contacts yet 👤"
+                        ? <ContactList reRender={openSheet} />
                         : "No groups yet 👥"}
                 </div>
             </div>
 
-            <CreateEntitySheet
+            {openSheet && <CreateEntitySheet
                 open={openSheet}
                 type={tab}
                 onClose={() => setOpenSheet(false)}
-            />
+            />}
 
         </div>
     );

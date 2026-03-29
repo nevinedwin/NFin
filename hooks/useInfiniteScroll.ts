@@ -40,6 +40,7 @@ const useInfiniteScroll = <T, D>({
     const [error, setError] = useState(false);
     const [data, setData] = useState<D[]>([]);
     const [hasMore, setHasMore] = useState(true);
+    const [trigger, setTrigger] = useState(0);
 
     /**
      * Use refs for cursor and loading to avoid adding them to
@@ -109,7 +110,18 @@ const useInfiniteScroll = <T, D>({
                 setLoading(false);
             }
         }
-    }, [query]);
+    }, [query, trigger]);
+
+    const refetch = useCallback(() => {
+        cursorRef.current = null;
+        hasMoreRef.current = true;
+        loadingRef.current = false;
+        setData([]);
+        setHasMore(true);
+        setLoading(false);
+        setError(false);
+        setTrigger(t => t + 1);
+    }, []);
 
 
     useEffect(() => {
@@ -162,6 +174,7 @@ const useInfiniteScroll = <T, D>({
         error,
         hasMore,
         scrollElementRef,
+        refetch
     } as const;
 };
 

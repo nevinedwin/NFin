@@ -8,9 +8,10 @@ type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
     containerClassName?: string;
     isPassword?: boolean;
     showIcon?: boolean;
+    iconClass?: string;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, requiredLabel = false, error, containerClassName = '', className = '', showIcon = false, ...props }, ref) => {
+const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, requiredLabel = false, error, containerClassName = '', className = '', showIcon = false, iconClass, ...props }, ref) => {
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -65,7 +66,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
                     </button>
                 )}
             </div>
-            {showIcon && <div className='absolute left-3 pt-3'>
+            {showIcon && <div className={`absolute left-3 pt-3 ${iconClass}`}>
                 <Search />
             </div>}
             {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}

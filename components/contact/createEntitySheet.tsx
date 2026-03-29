@@ -38,7 +38,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
     const [isPending, startTransition] = useTransition();
 
     const [visible, setVisible] = useState(false);
-    const [selected, setSelected] = useState<string[]>([]);
+    const [selected, setSelected] = useState<Contact[]>([]);
     const [groupName, setGroupName] = useState("");
     const [query, setQuery] = useState("");
     const debouncedSearch = useDebounceValue(query, 400);
@@ -92,10 +92,18 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
 
     /* ---------------- HELPERS ---------------- */
 
-    const toggle = (id: string) => {
+    const selectedIds = useMemo(
+        () => new Set(selected.map(c => c.id)),
+        [selected]
+    );
+
+    const toggle = (contact: Contact) => {
         setSelected((prev) =>
-            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+            prev.some(c => c.id === contact.id)
+                ? prev.filter(c => c.id !== contact.id)
+                : [...prev, contact]
         );
+        setQuery('');
     };
 
     const contactMap = useMemo(() => {
@@ -118,7 +126,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
 
                 await createGroup({
                     name: groupName,
-                    memberIds: selected,
+                    memberIds: selected.map(c => c.id),
                 });
 
                 setGroupName("");
@@ -185,7 +193,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
 
                 {/* GROUP */}
                 {type === "group" && (
-                    <div className="py-3 min-h-[80vh] flex flex-col">
+                    <div className="py-3 flex flex-col min-h-0 flex-1">
 
                         <Input
                             placeholder="Search contacts..."
@@ -197,15 +205,12 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
 
                         {/* SELECTED */}
                         {selected.length > 0 && (
-                            <div className="flex flex-wrap gap-2 px-4 pb-2 max-h-[100px] overflow-y-auto">
-                                {selected.map((id) => {
-                                    const c = contactMap.get(id);
-                                    if (!c) return null;
-
+                            <div className="flex-shrink-0 flex flex-wrap gap-2 px-4 pb-2 h-full max-h-[100px] overflow-y-auto">
+                                {selected.map((contact) => {
                                     return (
-                                        <span key={id} className="bg-surface px-3 py-1 rounded-lg flex gap-2">
-                                            {c.name}
-                                            <X size={16} onClick={() => toggle(id)} />
+                                        <span key={contact.id} className="bg-surface px-3 py-1 rounded-lg flex gap-2">
+                                            {contact.name}
+                                            <X size={16} onClick={() => toggle(contact)} />
                                         </span>
                                     );
                                 })}
@@ -223,7 +228,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
                                         <button
                                             key={c.id}
                                             ref={scrollElementRef}
-                                            onClick={() => toggle(c.id)}
+                                            onClick={() => toggle(c)}
                                             className="w-full flex items-center gap-3 px-4 py-3 active:bg-surface"
                                         >
                                             <AccountLogo name={c.name.slice(0, 2)} className="w-10 h-10" />
@@ -237,7 +242,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
                                     return (
                                         <button
                                             key={c.id}
-                                            onClick={() => toggle(c.id)}
+                                            onClick={() => toggle(c)}
                                             className="w-full flex items-center gap-3 px-4 py-3 active:bg-surface"
                                         >
                                             <AccountLogo name={c.name.slice(0, 2)} className="w-10 h-10" />

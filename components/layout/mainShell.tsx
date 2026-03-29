@@ -23,7 +23,7 @@ type MainShellProp = {
     recentTransaction: TransactionDataType[]
 };
 
-const footerVisiblePath = ['/dashboard', '/category', '/budget', '/contact'];
+const footerVisiblePath = ['/dashboard', '/category', '/budget'];
 
 const MainShell = ({ children, accounts, category, userData, recentTransaction }: MainShellProp) => {
     const pathname = usePathname();
@@ -151,7 +151,7 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
                 <main
                     ref={mainRef}
                     className="flex-1 overflow-y-auto overscroll-none"
-                    style={{ paddingBottom: FOOTER_HEIGHT }}
+                    style={{ paddingBottom: footerVisiblePath.includes(pathname) ? FOOTER_HEIGHT : '' }}
                     onClick={() => openTransactionCard && closeTransactionCard()}
                 >
                     {children}
