@@ -1,0 +1,1 @@
+export type Cursor = { date: Date; id: string } | null;

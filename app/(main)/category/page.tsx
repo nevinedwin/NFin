@@ -9,21 +9,22 @@ export default async function CategoryPage() {
   if (!user) return redirect('/sign-up')
 
   const categories = await prisma.category.findMany({
-    where: { userId: user.id, isDeleted: false },
-    include: { children: true },
-    orderBy: { createdAt: "desc" }
+    where: { userId: user.id, isDeleted: false, type: "MAIN" },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true
+    }
   });
 
-  const rootCategories = categories.filter(c => !c.parentId);
-
-  const parentCategories = rootCategories.map(c => ({
+  const parentCategories = categories.map(c => ({
     id: c.id,
     name: c.name
   }));
 
   return (
     <CategoryPageClient
-      categories={rootCategories}
+      // categories={rootCategories}
       parentCategories={parentCategories}
     />
   );

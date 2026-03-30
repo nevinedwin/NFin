@@ -8,20 +8,20 @@ import DynamicIcon from "@/components/iconPicker/dynamicIcon";
 import CategoryIcon from "@/components/ui/caetgoryIcon";
 import { formatUnderScoredStringCut } from "@/lib/utils/formats";
 
-export default function CategoryItem({ category, onEdit, onDelete, loading, hasBorder = true }: any) {
+export default function CategoryItem({ category, ref = null, onEdit, onDelete, loading, hasBorder = true }: any) {
 
     const [open, setOpen] = useState(false);
     const [openAction, setOpenAction] = useState(false);
 
     return (
-        <div>
+        <div ref={ref}>
 
             <div className={`flex justify-between items-center  px-4 py-3 ${hasBorder ? 'border-b border-border' : ''}`}>
 
                 <div
                     className="w-full flex items-center justify-between gap-2 cursor-pointer"
                 >
-                    <div className="w-full flex gap-2" onClick={() => setOpen(!open)}>
+                    <div className="w-full flex gap-4 items-center" onClick={() => setOpen(!open)}>
 
                         <div className="w-6 h-6 flex justify-center items-center font-bold" >
                             <CategoryIcon name={category.icon} className="w-full h-full" containerClassName="w-full h-full flex item-center justify-center" />
@@ -31,7 +31,7 @@ export default function CategoryItem({ category, onEdit, onDelete, loading, hasB
                                 <div>{category.name}</div>
                                 {category.children?.length > 0 && (
                                     <div className="text-xs w-5 h-5 flex justify-center items-center">
-                                        {open ? <ChevronUp size={15}/> : <ChevronDown size={15}/>}
+                                        {open ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                                     </div>
                                 )}
                             </div>

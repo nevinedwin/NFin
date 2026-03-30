@@ -1,50 +1,59 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { getMonthlyTotals, getTransactions, MonthSummary } from "@/actions/transactions";
 import { useState, useRef, useEffect, useCallback, useMemo, useTransition } from "react";
 import EachTransaction from "./recentTransactions.tsx/eachTransaction";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import SearchInput from "../ui/searchInput";
 import { ActiveFilters, EMPTY_FILTERS, TransactionFilterType } from "@/types/filters";
-import FilterBars from "./filterBars";
-import { FILTER_BUTTONS } from "./FilteKeys";
-import FilterSheet from "./filterSheet";
+import FilterBars from "../ui/FilterBars/filterBars";
+import { FILTER_BUTTONS, getTransactionPanel } from "./filterKeys";
 import MonthHeader from "./monthHeader";
 import BackArrowButton from "../ui/backArrowbutton";
-import { useRouter } from "next/navigation";
+import FilterSheet from "../ui/FilterBars/filterSheet";
+import { Cursor } from "@/types/general";
+import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import { TransactionDataSafeType, TransactionDataType } from "@/types/transaction";
+import { Loader2 } from "lucide-react";
 
-type Cursor = { date: Date; id: string } | null;
+const PAGE_SIZE = 10;
 
 export default function TransactionList({
-    initialTransaction,
-    initialCursor,
     initialMonthlyTotals,
     accounts,
-    categories,
 }: {
-    initialTransaction: any[];
-    initialCursor: Cursor;
     initialMonthlyTotals: MonthSummary[];
     accounts: { id: string; label: string; sub?: string }[];
-    categories: { id: string; label: string }[];
 }) {
 
     const router = useRouter();
 
-    const [transactions, setTransactions] = useState(initialTransaction);
     const [monthlyTotals, setMonthlyTotals] = useState<MonthSummary[]>(initialMonthlyTotals);
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(initialCursor !== null);
-    const [query, setQuery] = useState('');
     const [filters, setFilters] = useState<ActiveFilters>(EMPTY_FILTERS);
     const [openSheet, setOpenSheet] = useState<TransactionFilterType | null>(null);
     const [, startTotalsTransition] = useTransition();
 
-    const debounceQuery = useDebounceValue(query, 400);
-    const cursorRef = useRef<Cursor>(initialCursor);
-    const loadingRef = useRef(false);
     const loaderRef = useRef<HTMLDivElement | null>(null);
-    const isFirstRender = useRef(true);
+
+    const [query, setQuery] = useState('');
+    const debouncedQuery = useDebounceValue(query, 400);
+
+    const {
+        loading,
+        data: transactions,
+        scrollElementRef,
+        refetch
+    } = useInfiniteScroll<Cursor, TransactionDataSafeType>({
+        query: debouncedQuery,
+        action: getTransactions,
+        size: PAGE_SIZE,
+        format: (prev, incoming) => {
+            const ids = new Set(prev.map(c => c.id));
+            return [...prev, ...incoming.filter(c => !ids.has(c.id))]
+        },
+        extraParams: { filters }
+    });
 
     const totalsMap = useMemo(
         () => new Map(monthlyTotals.map((s) => [s.key, s])),
@@ -69,36 +78,6 @@ export default function TransactionList({
         });
     }, []);
 
-    const fetchTransactions = useCallback(
-        async (cursor: Cursor, search: string, activeFilters: ActiveFilters, replace: boolean) => {
-            if (loadingRef.current) return;
-            loadingRef.current = true;
-            setLoading(true);
-            try {
-                const res = await getTransactions(cursor ?? undefined, search, activeFilters);
-                setTransactions((prev) => {
-                    if (replace) return res.data;
-                    const existingIds = new Set(prev.map((t: any) => t.id));
-                    return [...prev, ...res.data.filter((t: any) => !existingIds.has(t.id))];
-                });
-                cursorRef.current = res.nextCursor;
-                setHasMore(res.nextCursor !== null);
-            } finally {
-                loadingRef.current = false;
-                setLoading(false);
-            }
-        },
-        []
-    );
-
-    const loadMore = useCallback(() => {
-        fetchTransactions(cursorRef.current, debounceQuery, filters, false);
-    }, [debounceQuery, filters, fetchTransactions]);
-
-    const handleApplyFilter = useCallback((partial: Partial<ActiveFilters>) => {
-        setFilters((prev) => ({ ...prev, ...partial }));
-    }, []);
-
     const handleClearAll = useCallback(() => {
         setFilters(EMPTY_FILTERS);
     }, []);
@@ -107,27 +86,13 @@ export default function TransactionList({
         router.push(`transaction/${id}`)
     }, []);
 
-    useEffect(() => {
-        if (isFirstRender.current) { isFirstRender.current = false; return; }
-        fetchTransactions(null, debounceQuery, filters, true);
-        refreshTotals(debounceQuery, filters);
-    }, [debounceQuery, filters, fetchTransactions, refreshTotals]);
+    const clearFilter = (key: TransactionFilterType) => {
+        setFilters(prev => ({ ...prev, [key]: null }));
+    };
 
     useEffect(() => {
-        if (!loaderRef.current || !cursorRef.current) return;
-        const rect = loaderRef.current.getBoundingClientRect();
-        if (rect.top < window.innerHeight) loadMore();
-    }, [transactions, loadMore]);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => { if (entries[0].isIntersecting) loadMore(); },
-            { rootMargin: "200px" }
-        );
-        const current = loaderRef.current;
-        if (current) observer.observe(current);
-        return () => { if (current) observer.unobserve(current); };
-    }, [loadMore]);
+        refetch();
+    }, [filters])
 
     return (
         <div className="py-4 flex flex-col gap-3">
@@ -145,21 +110,15 @@ export default function TransactionList({
             <div className="w-full px-4">
                 <FilterBars
                     filters={filters}
-                    onFilterClick={(type) => setOpenSheet(type)}
-                    onClearAll={handleClearAll}
                     filterButtons={FILTER_BUTTONS}
+                    isActive={(key, f) => !!f[key]}
+                    onFilterClick={(type) => setOpenSheet(type)}
+                    onClearFilter={(key) => clearFilter(key)}
+                    onClearAll={handleClearAll}
                 />
             </div>
 
-            {!loading && transactions.length === 0 && (
-                <div className="w-full px-4">
-                    <p className="text-center text-slate-400 text-sm py-10">
-                        {debounceQuery ? `No transactions found for "${debounceQuery}"` : "No transactions yet"}
-                    </p>
-                </div>
-            )}
-
-            {monthGroups.map((group) => (
+            {monthGroups.map((group, bigIndex) => (
                 <div key={group.key}>
                     <MonthHeader
                         group={{
@@ -172,29 +131,42 @@ export default function TransactionList({
                             },
                         }}
                     />
-                    {group.transactions.map((tx: any) => (
-                        <div key={tx.id} className="w-full">
-                            <EachTransaction recentTransaction={tx} recentCard={false} onClickTransaction={handleTransactionDetails}/>
-                        </div>
-                    ))}
+                    {group.transactions.map((tx: any, index) => {
+                        if ((monthGroups.length - (bigIndex + 1) === 0) && group.transactions.length - 3 === index + 1) {
+                            return (
+                                <div key={tx.id} className="w-full" ref={scrollElementRef}>
+                                    <EachTransaction recentTransaction={tx} recentCard={false} onClickTransaction={handleTransactionDetails} />
+                                </div>
+                            )
+                        } else {
+                            return (
+                                <div key={tx.id} className="w-full">
+                                    <EachTransaction recentTransaction={tx} recentCard={false} onClickTransaction={handleTransactionDetails} />
+                                </div>
+                            )
+                        }
+                    })}
                 </div>
             ))}
 
-            <div ref={loaderRef} className="h-16 w-full px-4 flex justify-center items-center">
-                {loading && <span className="text-slate-400 text-sm">Loading...</span>}
-                {!hasMore && !loading && transactions.length > 0 && (
-                    <span className="text-gray-400 text-sm">No more transactions</span>
-                )}
-            </div>
+            {loading && (
+                <div className="flex justify-center py-4">
+                    <Loader2 className="animate-spin" />
+                </div>
+            )}
+            {!loading && transactions.length === 0 && (
+                <div className="text-center text-slate-500 py-10">
+                    No Transaction found
+                </div>
+            )}
 
             <FilterSheet
-                open={openSheet !== null}
-                filterType={openSheet}
+                open={!!openSheet}
+                activeKey={openSheet}
                 filters={filters}
-                accounts={accounts}
-                categories={categories}
+                panels={getTransactionPanel({ account: accounts })}
                 onClose={() => setOpenSheet(null)}
-                onApply={handleApplyFilter}
+                onApply={(patch) => setFilters(prev => ({ ...prev, ...patch }))}
             />
         </div>
     );

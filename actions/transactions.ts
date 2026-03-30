@@ -5,6 +5,7 @@ import { Prisma, Transaction, TransactionType, TransferType } from "@/generated/
 import { prisma } from "@/lib/prisma";
 import { createTransactionSchema } from "@/schemas/transaction.schema";
 import { ActiveFilters } from "@/types/filters";
+import { Cursor } from "@/types/general";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidV4 } from 'uuid';
 
@@ -170,8 +171,17 @@ export async function createTransaction(prevState: any, formData: FormData) {
     }
 }
 
-const PAGE_SIZE = 10;
-export async function getTransactions(cursor?: { date: Date; id: string }, search?: string, filters?: ActiveFilters) {
+export async function getTransactions({
+    cursor = null,
+    search = "",
+    take = 10,
+    filters
+}: {
+    cursor: Cursor,
+    search: string,
+    take: number,
+    filters?: ActiveFilters
+}) {
 
     const user = await getCurrentUser();
     if (!user) return { data: [], nextCursor: null };
@@ -182,22 +192,22 @@ export async function getTransactions(cursor?: { date: Date; id: string }, searc
         where.description = { contains: search.trim(), mode: "insensitive" };
     }
 
-    if (filters?.bankId) {
-        where.accountId = filters.bankId;
+    if (filters?.bank) {
+        where.accountId = filters.bank;
     }
 
     if (filters?.type) {
         where.type = filters.type;
     }
 
-    if (filters?.categoryId) {
-        where.categoryId = filters.categoryId;
+    if (filters?.category) {
+        where.categoryId = filters.category;
     }
 
-    if (filters?.date?.from && filters?.date?.to) {
+    if (filters?.dateFilter?.from && filters?.dateFilter?.to) {
         where.date = {
-            gte: new Date(filters.date.from),
-            lte: new Date(filters.date.to + "T23:59:59.999Z"),
+            gte: new Date(filters.dateFilter.from),
+            lte: new Date(filters.dateFilter.to + "T23:59:59.999Z"),
         };
     }
 
@@ -207,7 +217,7 @@ export async function getTransactions(cursor?: { date: Date; id: string }, searc
             { date: "desc" },
             { id: "desc" }
         ],
-        take: PAGE_SIZE + 1,
+        take: take + 1,
         ...(cursor && {
             cursor: {
                 date: cursor.date,
@@ -222,15 +232,16 @@ export async function getTransactions(cursor?: { date: Date; id: string }, searc
             date: true,
             balance: true,
             description: true,
-            category: { select: { name: true, icon: true } },
-            account: { select: { accountNumber: true, name: true } },
+            category: { select: { id: true, name: true, icon: true } },
+            account: { select: { id: true, accountNumber: true, name: true } },
             transferGroupId: true,
-            transferType: true
+            transferType: true,
+            updatedAt: true
         }
     });
 
     let nextCursor = null;
-    if (transactions.length > PAGE_SIZE) {
+    if (transactions.length > take) {
         transactions.pop();
         const last = transactions[transactions.length - 1];
         nextCursor = { date: last.date, id: last.id };
@@ -266,13 +277,13 @@ export async function getMonthlyTotals(
     if (search?.trim()) {
         where.description = { contains: search.trim(), mode: "insensitive" };
     }
-    if (filters?.bankId) where.accountId = filters.bankId;
+    if (filters?.bank) where.accountId = filters.bank;
     if (filters?.type) where.type = filters.type;
-    if (filters?.categoryId) where.categoryId = filters.categoryId;
-    if (filters?.date?.from && filters?.date?.to) {
+    if (filters?.category) where.categoryId = filters.category;
+    if (filters?.dateFilter?.from && filters?.dateFilter?.to) {
         where.date = {
-            gte: new Date(filters.date.from),
-            lte: new Date(filters.date.to + "T23:59:59.999Z"),
+            gte: new Date(filters.dateFilter.from),
+            lte: new Date(filters.dateFilter.to + "T23:59:59.999Z"),
         };
     }
 

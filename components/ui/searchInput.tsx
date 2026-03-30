@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import React, { useState } from 'react'
 
 type SearchInputProp = {
@@ -46,6 +46,17 @@ const SearchInput = ({ name, label, onChange, placeholder, value, disabled, clas
                         ${className}
                     `}
                 />
+                {value && <div
+                    className='z-50 absolute right-3 top-1/2 -translate-y-1/2'
+                    onClick={() => {
+                        onChange?.('')
+                    }}
+                >
+                    <X
+                        size={25}
+                        className=' text-slate-400 pointer-events-none'
+                    />
+                </div>}
             </div>
         </div >
     );

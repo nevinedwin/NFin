@@ -15,6 +15,7 @@ import AccountLogo from "../wallet/accountLogo";
 import HorizontalLine from "../ui/horizontalLine";
 import useDebounceValue from "@/hooks/useDebounceValue";
 import useInfiniteScroll from "@/hooks/useInfiniteScroll";
+import SearchInput from "../ui/searchInput";
 
 type Props = {
     open: boolean;
@@ -49,12 +50,9 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
     });
 
 
-    // infinite scroll
     const {
-        error,
         loading,
         data: contacts,
-        hasMore,
         scrollElementRef
     } = useInfiniteScroll<Cursor, Contact>({
         query: debouncedSearch,
@@ -103,7 +101,6 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
                 ? prev.filter(c => c.id !== contact.id)
                 : [...prev, contact]
         );
-        setQuery('');
     };
 
     const contactMap = useMemo(() => {
@@ -148,7 +145,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
             <div
                 className={`w-full bg-black rounded-t-3xl flex flex-col transition-transform duration-300 ${open ? "translate-y-0" : "translate-y-full"
                     }`}
-                style={{ maxHeight: "85vh" }}
+                style={{ height: "85vh"}}
             >
                 {/* HEADER */}
                 <div className="flex items-center justify-between px-4 py-4 pb-8">
@@ -195,20 +192,20 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
                 {type === "group" && (
                     <div className="py-3 flex flex-col min-h-0 flex-1">
 
-                        <Input
-                            placeholder="Search contacts..."
+                        <SearchInput
+                            name="contact-search"
+                            placeholder="Search Contacts"
                             value={query}
-                            showIcon
-                            onChange={handleSearch}
-                            className='!bg-transparent !text-white placeholder:!text-slate-400 border-none'
+                            onChange={setQuery}
+                            className='!bg-transparent !text-white placeholder:!text-slate-400 border-none focus:!ring-0'
                         />
 
                         {/* SELECTED */}
                         {selected.length > 0 && (
-                            <div className="flex-shrink-0 flex flex-wrap gap-2 px-4 pb-2 h-full max-h-[100px] overflow-y-auto">
+                            <div className="flex-shrink-0 flex flex-wrap gap-2 px-4 pb-2 max-h-[100px] overflow-y-auto">
                                 {selected.map((contact) => {
                                     return (
-                                        <span key={contact.id} className="bg-surface px-3 py-1 rounded-lg flex gap-2">
+                                        <span key={contact.id} className="h-[30px] bg-surface px-3 py-1 rounded-lg flex gap-2">
                                             {contact.name}
                                             <X size={16} onClick={() => toggle(contact)} />
                                         </span>

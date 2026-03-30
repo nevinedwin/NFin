@@ -261,7 +261,9 @@ model Category {
   updatedAt        DateTime         @updatedAt
   budgetCategories BudgetCategory[]
 
+  @@unique([userId, name, id])
   @@index([userId])
+  @@index([userId, name(sort: Asc), id(sort: Asc)])
 }
 
 model Transaction {

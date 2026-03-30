@@ -15,7 +15,7 @@ export async function createCategory(data: FormData) {
 
     await prisma.category.create({
         data: {
-            name,
+            name: name.toLowerCase(),
             type,
             forType,
             parentId: parentId || null,
@@ -25,15 +25,72 @@ export async function createCategory(data: FormData) {
 }
 
 
-export const getCategories = async () => {
+export const getCategories = async ({
+    cursor = null,
+    search,
+    take = 20,
+    filters
+}: {
+    cursor?: { name: string; id: string } | null;
+    search?: string;
+    take?: number;
+    filters?: Record<string, unknown>
+}) => {
 
     const user = await getCurrentUser();
-    if (!user) throw new Error('unAuthorized');
+    if (!user) return { data: [], nextCursor: null };
+
+    const where: any = {
+        userId: user.id,
+        isDeleted: { not: true }
+    };
+
+    if (search?.trim()) {
+        where.name = { contains: search.trim(), mode: "insensitive" };
+    };
+
+    if (filters?.onlyParent) {
+        where.type = CategoryType.MAIN
+    };
+
+    if (filters?.type) {
+        where.forType = filters.type
+    };
+
+    if (filters?.parent) {
+        where.parentId = filters.parent
+    };
 
     const categories = await prisma.category.findMany({
-        where: { userId: user.id },
-        select: { id: true, name: true },
+        where,
+        orderBy: [
+            { name: "asc" },
+            { id: 'asc' }
+        ],
+        take: take + 1,
+        ...(cursor && {
+            cursor: {
+                userId: user.id,
+                name: cursor.name,
+                id: cursor.id
+            }
+        }),
+        select: {
+            id: true,
+            name: true,
+            type: true,
+            forType: true,
+            icon: true
+        },
     });
 
-    return categories;
+    let nextCursor = null;
+
+    if (categories.length > take) {
+        categories.pop();
+        const last = categories[categories.length - 1];
+        nextCursor = last ? { name: last.name, id: last.id } : null;
+    }
+
+    return { data: categories, nextCursor };
 };

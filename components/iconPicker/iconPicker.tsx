@@ -57,8 +57,6 @@ export default function IconPicker({ onSelect, name }: iconPickerProp) {
           type="text"
           name="icons"
           label="Category Icon"
-          required
-          requiredLabel
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search.."

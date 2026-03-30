@@ -39,13 +39,27 @@ export type TransactionCategoryType = {
 export type TransactionDataType = {
     id: string;
     amount: number;
+    type: TransactionType;
+    date: Date;
+    balance: number;
     description: string | undefined;
     category: Category;
-    date: Date;
-    updateAt?: Date;
     account: Account;
-    type: TransactionType;
-    balance: number;
     transferType?: TransferType,
     transferGroupId?: string;
+    updateAt?: Date;
+}
+
+export type TransactionDataSafeType = {
+    id: string;
+    amount: number;
+    type: TransactionType;
+    date: Date;
+    balance: number;
+    description: string | null;
+    category: { id: string; name: string; icon: string | null } | null;
+    account: { id: string, name: string, accountNumber: string | null };
+    transferType: TransferType | null;
+    transferGroupId: string | null;
+    updatedAt: Date;
 }

@@ -6,6 +6,7 @@ type ActionParams<T> = {
     search: string;
     cursor: T | null;
     take: number;
+    [key: string]: unknown;
 };
 
 type InfiniteResponse<T, D> = {
@@ -18,6 +19,7 @@ type InfiniteScrollProps<T, D> = {
     action: (params: ActionParams<T>) => Promise<InfiniteResponse<T, D>>;
     size?: number;
     format?: (prev: D[], incoming: D[]) => D[];
+    extraParams?: Record<string, unknown>;
 };
 
 /**
@@ -35,6 +37,7 @@ const useInfiniteScroll = <T, D>({
     action,
     size = 10,
     format,
+    extraParams
 }: InfiniteScrollProps<T, D>) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -59,6 +62,7 @@ const useInfiniteScroll = <T, D>({
     const actionRef = useLatest(action);
     const formatRef = useLatest(format);
     const sizeRef = useLatest(size);
+    const extraParamsRef = useLatest(extraParams);
 
     // ─── Core fetch ───────────────────────────────────────────────────────────
 
@@ -80,9 +84,10 @@ const useInfiniteScroll = <T, D>({
         try {
 
             const resp = await actionRef.current({
-                search: query,          // captured at call-site, not via closure dep
+                search: query,
                 cursor: cursorRef.current,
                 take: sizeRef.current,
+                ...extraParamsRef.current
             });
 
             // Discard results from a superseded query (e.g. user typed quickly)

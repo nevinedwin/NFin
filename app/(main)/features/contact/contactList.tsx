@@ -7,6 +7,7 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { getContacts } from '@/actions/contacts';
 import AccountLogo from '@/components/wallet/accountLogo';
 import { Loader2 } from 'lucide-react';
+import SearchInput from '@/components/ui/searchInput';
 
 const PAGE_SIZE = 10;
 
@@ -28,15 +29,9 @@ const ContactList = ({ reRender }: ContactListProps) => {
     const [query, setQuery] = useState('');
     const debouncedQuery = useDebounceValue(query, 400);
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuery(e.target.value);
-    };
-
     const {
-        error,
         loading,
         data: contacts,
-        hasMore,
         scrollElementRef,
         refetch
     } = useInfiniteScroll<Cursor, Contact>({
@@ -58,13 +53,11 @@ const ContactList = ({ reRender }: ContactListProps) => {
     return (
         <div className='w-full h-full flex flex-col'>
             <div className='flex-shrink-0'>
-                <Input
-                    placeholder="Search contacts..."
+                <SearchInput
+                    name="transaction-search"
+                    placeholder="Search Transactions"
                     value={query}
-                    showIcon
-                    onChange={handleSearch}
-                    className='!bg-transparent !text-white placeholder:!text-slate-400 !border border-border !shadow-none'
-                    iconClass='!left-6'
+                    onChange={setQuery}
                 />
             </div>
             <div className='flex-1 min-h-0 overflow-y-auto mt-[20px]'>

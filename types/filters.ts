@@ -1,31 +1,33 @@
-import { DateFilterType } from "@/components/transaction/filterSheet";
+import { DateFilterType } from "@/components/ui/FilterBars/dateFilterPanel";
 import { TransactionType } from "@/generated/prisma/client";
 
 export type TransactionFilterType = 'bank' | 'date' | 'type' | 'category';
+export type CategoryFilterType = 'type' | 'parent';
 
 export type DateRange = { from: string, to: string } | null;
 
 export type ActiveFilters = {
-    bankId: string | null;
-    categoryId: string | null;
-    date: DateRange;
+    bank: string | null;
+    category: string | null;
+    date: DateFilterType | null;
     type: TransactionType | null;
-    dateFilter: DateFilterType | null; 
+    dateFilter: DateRange;
 };
 
 export const EMPTY_FILTERS: ActiveFilters = {
-    bankId: null,
-    categoryId: null,
+    bank: null,
+    category: null,
     date: null,
     type: null,
     dateFilter: null
 };
 
-export const hasActiveFilter = (filters: ActiveFilters): boolean => {
-    return (
-        filters.bankId !== null ||
-        filters.categoryId !== null ||
-        filters.date !== null ||
-        filters.type !== null
-    );
+export type CategoryActiveFilters = {
+    type: TransactionType | null;
+    parent: String | null;
+};
+
+export const EMPTY_CATEGORY_FILTERS: CategoryActiveFilters = {
+    type: null,
+    parent: null
 };

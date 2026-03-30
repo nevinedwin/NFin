@@ -24,6 +24,7 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
     const router = useRouter();
 
     const isEdit = !!categoryFormState?.id;
+    const [error, setError] = useState('');
 
     const { state, setField, reset } = useForm(categoryFormState ?? categoryFormInitalState);
     const { name, forType, type, parentId, icon } = state;
@@ -32,9 +33,16 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (error) {
+            setError('');
+        }
+
+        if (!state.icon) {
+            setError('Icon is Required');
+            return;
+        };
 
         setLoading(true);
-
 
         await fetch(
             isEdit ? `/api/category/${categoryFormState.id}` : "/api/category/",
@@ -136,13 +144,17 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
                     </SelectField>
                 </div>
 
-                <div className="w-full">
+                <div className="w-full pb-24">
                     <IconPicker onSelect={(name) => setField('icon', String(name))} name='icon' />
                 </div>
 
                 {/* actions */}
 
-                <div className=" bg-black border-t border-border flex justify-end items-center gap-3 px-4  pb-[env(safe-area-inset-bottom)] py-3">
+                <div className="fixed flex-shrink-0 bottom-0 right-0 left-0 bg-black border-t border-border flex justify-end items-center gap-3 px-4  pb-[env(safe-area-inset-bottom)] py-3">
+
+                    <div>
+                        {error && <span className="text-red-500">{error}</span>}
+                    </div>
 
                     <button
                         type="button"
