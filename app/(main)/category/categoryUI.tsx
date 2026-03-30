@@ -107,7 +107,7 @@ export default function CategoryPageClient({ parentCategories }: any) {
         if (!open) {
             refetch();
         }
-    }, [open]);
+    }, [open, filters]);
 
     return (
         <div className="w-full h-full flex flex-col mx-auto px-4 py-6 gap-6">
