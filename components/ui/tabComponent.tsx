@@ -4,7 +4,7 @@ import React, { memo, useCallback } from "react";
 
 export type TabItem<T extends string> = {
     id: T;
-    label: string;
+    label: React.ReactNode;
 };
 
 type TabsProps<T extends string> = {
@@ -37,6 +37,7 @@ function TabsComponent<T extends string>({
                     <button
                         key={tab.id}
                         role="tab"
+                        type="button"
                         aria-selected={isActive}
                         onClick={() => handleClick(tab.id)}
                         className={`

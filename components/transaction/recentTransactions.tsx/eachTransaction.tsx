@@ -15,13 +15,15 @@ type EachTransactionProp = {
 }
 
 
+
 const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransaction }: EachTransactionProp) => {
 
-    const [selected,setSelected] = useState<string | null>(null);
+    const [selected, setSelected] = useState<string | null>(null);
+    const [iconColors, setIconColors] = useState<string>('text-white');
 
     const { account, category, date, description, id, updateAt, amount, type, balance, transferGroupId, transferType } = recentTransaction;
 
-    const isExpense = type === TransactionType.EXPENSE;
+    const isExpense = type === TransactionType.EXPENSE || type === TransactionType.LEND || type === TransactionType.GROUP_SPLIT;
     const isCashOut = type === TransactionType.TRANSFER && transferType === TransferType.TRANSFER_OUT;
     const isTransfer = type === TransactionType.TRANSFER;
 
@@ -29,6 +31,37 @@ const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransac
         setSelected(id);
         onClickTransaction(id);
     }
+
+
+    useEffect(() => {
+        let iconColor = 'white';
+        switch (type) {
+            case TransactionType.BORROW:
+                iconColor = 'text-orange-800';
+                break;
+            case TransactionType.EXPENSE:
+                iconColor = 'text-red-800';
+                break;
+            case TransactionType.INCOME:
+                iconColor = 'text-green-800';
+                break;
+            case TransactionType.GROUP_SPLIT:
+                iconColor = 'text-purple-800';
+                break;
+            case TransactionType.LEND:
+                iconColor = 'text-yellow-800';
+                break;
+            case TransactionType.TRANSFER:
+                iconColor = 'text-blue-800';
+                break;
+            default:
+                iconColor = 'text-white';
+                break;
+        };
+        setIconColors(iconColor);
+
+    }, [type]);
+
 
     useEffect(() => {
         setSelected(null);
@@ -42,7 +75,7 @@ const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransac
 
                 {/* ICON */}
                 <div className="w-6 h-6 flex justify-center items-center font-bold" >
-                    <CategoryIcon name={category?.icon ?? 'ArrowRightLeft'} className="w-full h-full" containerClassName="w-full h-full flex item-center justify-center" />
+                    <CategoryIcon name={category?.icon ?? 'ArrowRightLeft'} className={`w-full h-full ${iconColors}`} containerClassName="w-full h-full flex item-center justify-center" />
                 </div>
 
                 {/* TEXT */}

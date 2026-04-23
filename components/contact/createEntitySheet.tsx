@@ -145,7 +145,7 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
             <div
                 className={`w-full bg-black rounded-t-3xl flex flex-col transition-transform duration-300 ${open ? "translate-y-0" : "translate-y-full"
                     }`}
-                style={{ height: "85vh"}}
+                style={{ height: "85vh" }}
             >
                 {/* HEADER */}
                 <div className="flex items-center justify-between px-4 py-4 pb-8">
@@ -191,6 +191,16 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
                 {/* GROUP */}
                 {type === "group" && (
                     <div className="py-3 flex flex-col min-h-0 flex-1">
+                        <div className="pb-4 px-4">
+                            <Input
+                                placeholder="Group Name"
+                                value={groupName}
+                                onChange={(e) =>
+                                    setGroupName(e.target.value)
+                                }
+                                className='!bg-transparent !text-white placeholder:!text-slate-400'
+                            />
+                        </div>
 
                         <SearchInput
                             name="contact-search"

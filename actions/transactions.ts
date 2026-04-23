@@ -1,7 +1,8 @@
 'use server';
 
+import { FormBody } from "@/app/(main)/features/transaction/transaction.types";
 import { getCurrentUser } from "@/auth/currentUser";
-import { Prisma, Transaction, TransactionType, TransferType } from "@/generated/prisma/client";
+import { ObligationStatus, Prisma, TransactionType, TransferType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createTransactionSchema } from "@/schemas/transaction.schema";
 import { ActiveFilters } from "@/types/filters";
@@ -9,49 +10,110 @@ import { Cursor } from "@/types/general";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidV4 } from 'uuid';
 
-export async function createTransaction(prevState: any, formData: FormData) {
 
+async function updateContactBalance(
+    tx: Prisma.TransactionClient,
+    userId: string,
+    contactId: string,
+    delta: Prisma.Decimal
+) {
+    await tx.contactBalance.upsert({
+        where: {
+            userId_contactId: {
+                userId,
+                contactId
+            }
+        },
+        update: {
+            netAmount: { increment: delta }
+        },
+        create: {
+            userId,
+            contactId,
+            netAmount: delta
+        }
+    });
+}
+
+// ─────────────────────────────────────────────
+// MAIN ACTION
+// ─────────────────────────────────────────────
+export async function createTransaction(prevState: any, formData: FormData) {
     const user = await getCurrentUser();
 
-    if (!user) return {
-        success: false,
-        errors: "Unauthorized User"
-    };;
-
-    const body = Object.fromEntries(formData) as Record<string, string>;
-
-    const parsed = createTransactionSchema.safeParse({
-        ...body,
-        repeat: body.repeat === 'true',
-        date: body.date ? new Date(body.date as string) : new Date()
-    });
-
-
-    if (!parsed.success) {
-        const message = Object.values(parsed.error.flatten().fieldErrors)
-            .flat()
-            .join(", ");
-
-        return {
-            success: false,
-            errors: message
-        };
-    }
-
-    const { accountId, amount, categoryId, date, repeat, type, description, toAccountId } = parsed.data;
-
-    if (amount.lte(0)) {
-        return {
-            success: false,
-            errors: "Amount must be greater than 0"
-        };
+    if (!user) {
+        return { success: false, errors: "Unauthorized User" };
     }
 
     try {
+        // ─── Extract base fields ─────────────────────────────
+        const raw = Object.fromEntries(formData.entries()) as FormBody;
 
+        const body = {
+            ...raw,
+        };
+
+        let normalizedContacts: any = [];
+
+        if (raw.type === TransactionType.GROUP_SPLIT) {
+            let contacts
+            if (raw.contacts) {
+                body.contacts = raw.contacts ? JSON.parse(raw.contacts as string) : undefined
+                contacts = raw.contacts ? JSON.parse(raw.contacts as string) : undefined
+            }
+
+            normalizedContacts = contacts.map((c: any) => ({
+                id: c.id,
+                obligationAmount: Number(c.obligationAmount ?? 0),
+                shareAmount: Number(c.shareAmount ?? 0),
+                splitType: c.split_type
+            }));
+        } else {
+            body.contacts = raw.contactId;
+        };
+
+
+        // ─── Validate ───────────────────────────────────────
+        const parsed = createTransactionSchema.safeParse({
+            ...body,
+            contacts: normalizedContacts,
+            accountId: body.accountId || undefined,
+            categoryId: body.categoryId || undefined,
+            groupId: body.groupId || undefined,
+            toAccountId: body.toAccountId || undefined,
+            contactId: body.contactId || undefined,
+        });
+
+
+        if (!parsed.success) {
+            const message = Object.values(parsed.error.flatten().fieldErrors)
+                .flat()
+                .join(", ");
+            return { success: false, errors: message };
+        }
+
+        const {
+            accountId,
+            amount,
+            categoryId,
+            date,
+            repeat,
+            type,
+            description,
+            toAccountId,
+            contacts: parsedContacts,
+            contactId,
+            groupId
+        } = parsed.data;
+
+        if (amount.lte(0)) {
+            return { success: false, errors: "Amount must be greater than 0" };
+        }
+
+        // ─────────────────────────────────────────────
+        // DB TRANSACTION
+        // ─────────────────────────────────────────────
         await prisma.$transaction(async (tx) => {
-
-            const updates: Promise<any>[] = [];
 
             const account = await tx.account.findUnique({
                 where: { id: accountId, userId: user.id },
@@ -61,112 +123,246 @@ export async function createTransaction(prevState: any, formData: FormData) {
             if (!account) throw new Error("Account not found");
 
             let newBalance = account.balance;
-            let toAccountBalance;
-            let tranferGroupId;
 
-            if (type === TransactionType.TRANSFER) {
+            const basePayload: Prisma.TransactionCreateInput = {
+                amount,
+                description,
+                type,
+                date,
+                repeat,
+                account: { connect: { id: accountId } },
+                user: { connect: { id: user.id } },
+                ...(categoryId && {
+                    category: { connect: { id: categoryId } }
+                })
+            };
+
+            // ─────────────────────────────
+            // EXPENSE
+            // ─────────────────────────────
+            if (type === TransactionType.EXPENSE) {
+                newBalance = newBalance.minus(amount);
+
+                await tx.transaction.create({ data: basePayload });
+
+                await tx.account.update({
+                    where: { id: accountId },
+                    data: { balance: newBalance }
+                });
+            }
+
+            // ─────────────────────────────
+            // INCOME
+            // ─────────────────────────────
+            else if (type === TransactionType.INCOME) {
+                newBalance = newBalance.plus(amount);
+
+                await tx.transaction.create({ data: basePayload });
+
+                await tx.account.update({
+                    where: { id: accountId },
+                    data: { balance: newBalance }
+                });
+            }
+
+            // ─────────────────────────────
+            // TRANSFER
+            // ─────────────────────────────
+            else if (type === TransactionType.TRANSFER) {
+
+
                 const toAccount = await tx.account.findUnique({
-                    where: { id: toAccountId, userId: user.id },
+                    where: { id: toAccountId!, userId: user.id },
                     select: { balance: true }
                 });
 
+                newBalance = newBalance.minus(amount);
+                const newToBalance = toAccount?.balance.plus(amount);
+
                 if (!toAccount) throw new Error("To account not found");
 
-                toAccountBalance = toAccount?.balance;
-            }
+                const transferGroupId = uuidV4();
 
-            const txPayload: Prisma.TransactionCreateInput = {
-                amount,
-                description: description as string,
-                type,
-                date: date as Date,
-                repeat,
-                account: { connect: { id: accountId } },
-                user: { connect: { id: user!.id } },
-                ...(categoryId && {
-                    category: { connect: { id: categoryId } }
-                }),
-            }
+                // OUT
+                await tx.transaction.create({
+                    data: {
+                        ...basePayload,
+                        transferType: TransferType.TRANSFER_OUT,
+                        transferGroupId,
+                        balance: newBalance
+                    }
+                });
 
+                // IN
+                await tx.transaction.create({
+                    data: {
+                        ...basePayload,
+                        account: { connect: { id: toAccountId! } },
+                        transferType: TransferType.TRANSFER_IN,
+                        transferGroupId,
+                        balance: newToBalance
+                    }
+                });
 
-            switch (type) {
-                case TransactionType.EXPENSE:
-                    newBalance = newBalance.minus(amount);
-                    break;
-
-                case TransactionType.TRANSFER:
-                    newBalance = newBalance.minus(amount);
-                    toAccountBalance = toAccountBalance?.plus(amount);
-                    tranferGroupId = uuidV4();
-                    txPayload.transferType = TransferType.TRANSFER_OUT;
-                    txPayload.transferGroupId = tranferGroupId;
-                    txPayload.balance = newBalance;
-                    break;
-
-                case TransactionType.INCOME:
-                    newBalance = newBalance.plus(amount);
-                    break;
-            };
-
-
-
-            await tx.transaction.create({
-                data: txPayload
-            });
-
-            updates.push(
-                tx.account.update({
+                await tx.account.update({
                     where: { id: accountId },
-                    data: { balance: newBalance }
-                })
-            );
+                    data: { balance: { decrement: amount } }
+                });
 
-            switch (type) {
+                await tx.account.update({
+                    where: { id: toAccountId! },
+                    data: { balance: { increment: amount } }
+                });
+            }
 
-                case TransactionType.TRANSFER:
+            // ─────────────────────────────
+            // LEND / BORROW
+            // ─────────────────────────────
+            else if (type === TransactionType.LEND || type === TransactionType.BORROW) {
 
-                    await tx.transaction.create({
-                        data: {
-                            amount,
-                            description,
-                            type,
-                            date,
-                            repeat,
-                            balance: toAccountBalance,
-                            account: { connect: { id: toAccountId } },
-                            user: { connect: { id: user!.id } },
-                            transferType: TransferType.TRANSFER_IN,
-                            transferGroupId: tranferGroupId
-                        }
-                    });
 
-                    updates.push(
-                        tx.account.update({
-                            where: { id: toAccountId! },
-                            data: { balance: { increment: amount } }
-                        })
+                if (!contactId) {
+                    throw new Error("Contact is required");
+                }
+
+                if (type === TransactionType.LEND) {
+                    newBalance = newBalance.minus(amount);
+
+                    // contact owes you (+)
+                    await updateContactBalance(
+                        tx,
+                        user.id,
+                        contactId,
+                        amount
                     );
 
-                    break;
+                } else {
+                    newBalance = newBalance.plus(amount);
+
+                    // you owe contact (-)
+                    await updateContactBalance(
+                        tx,
+                        user.id,
+                        contactId,
+                        amount.neg()
+                    );
+                }
+
+                await tx.transaction.create({
+                    data: {
+                        ...basePayload,
+                        balance: newBalance,
+                        participants: {
+                            create: {
+                                contact: { connect: { id: contactId } },
+                                shareAmount: amount,
+                                obligationAmount: amount,
+                                paidAmount:
+                                    type === TransactionType.LEND
+                                        ? amount
+                                        : new Prisma.Decimal(0),
+                                status: ObligationStatus.PENDING,
+                                transactionDate: date,
+                                transactionRefId: uuidV4()
+                            }
+                        }
+                    }
+                });
+
+                await tx.account.update({
+                    where: { id: accountId },
+                    data: { balance: newBalance }
+                });
             }
 
-            await Promise.all(updates);
+            // ─────────────────────────────
+            // GROUP SPLIT
+            // ─────────────────────────────
+            else if (type === TransactionType.GROUP_SPLIT) {
+                if (!parsedContacts || parsedContacts.length === 0) {
+                    throw new Error("No participants provided");
+                }
 
+                const groupTxnId = uuidV4();
+                newBalance = newBalance.minus(amount);
+
+                // Create transaction + participants (single query)
+                await tx.transaction.create({
+                    data: {
+                        ...basePayload,
+                        balance: newBalance,
+                        transferGroupId: groupTxnId,
+
+                        ...(groupId && {
+                            group: { connect: { id: groupId } }
+                        }),
+
+
+                        participants: {
+                            createMany: {
+                                data: parsedContacts.map((c: any) => ({
+                                    contactId: c.id,
+                                    shareAmount: new Prisma.Decimal(c.shareAmount || 0),
+                                    obligationAmount: new Prisma.Decimal(c.obligationAmount),
+                                    paidAmount: new Prisma.Decimal(0),
+                                    status: ObligationStatus.PENDING,
+                                    transactionDate: date,
+                                    transactionRefId: uuidV4()
+                                }))
+                            }
+                        }
+                    }
+                });
+
+                // Ensure rows exist (bulk insert)
+                // Ensure rows exist (bulk insert)
+                await tx.contactBalance.createMany({
+                    data: parsedContacts.map((c: any) => ({
+                        userId: user.id,
+                        contactId: c.id,
+                        netAmount: new Prisma.Decimal(0)
+                    })),
+                    skipDuplicates: true
+                });
+
+                // Increment netAmount for each contact (atomic, parallel)
+                await Promise.all(
+                    parsedContacts.map((c: any) =>
+                        tx.contactBalance.update({
+                            where: {
+                                userId_contactId: {
+                                    userId: user.id,
+                                    contactId: c.id
+                                }
+                            },
+                            data: {
+                                netAmount: {
+                                    increment: Number(c.obligationAmount)
+                                }
+                            }
+                        })
+                    )
+                );
+
+                // Update account
+                await tx.account.update({
+                    where: { id: accountId },
+                    data: { balance: newBalance }
+                });
+            }
+        }, {
+            timeout: 15000
         });
 
-        revalidatePath('/dashboard');
+        revalidatePath("/dashboard");
 
-        return {
-            success: true
-        };
+        return { success: true };
 
     } catch (error) {
-
-        console.log(error);
-
+        console.error(error);
         return {
             success: false,
-            errors: "Transaction failed"
+            errors: error instanceof Error ? error.message : "Transaction failed"
         };
     }
 }

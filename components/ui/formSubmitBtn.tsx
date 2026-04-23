@@ -7,15 +7,17 @@ type FormSubmitBtnProp = {
     className?: string;
     label: string;
     type: "button" | "submit" | "reset";
+    onClick: () => void;
 }
 
-const FormSubmitBtn = ({ className, label, type = 'button' }: FormSubmitBtnProp) => {
+const FormSubmitBtn = ({ className, label, type = 'button', onClick }: FormSubmitBtnProp) => {
 
     const { pending } = useFormStatus();
 
     return (
         <button
             type={type}
+            onClick={onClick}
             disabled={pending}
             className={clsx(
                 "rounded-xl bg-slate-300 text-black",

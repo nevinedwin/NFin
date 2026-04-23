@@ -8,5 +8,15 @@ export const transactionFormInitalState: TransactionFormType = {
     amount: '',
     accountId: '',
     description: '',
-    categoryId: ''
+    categoryId: '',
+    contactId: '',
+    groupId: '',
+    toAccountId: '',
+    account: '',
+    category: '',
+    contact: '',
+    group: '',
+    toAccount: ''
 };
+
+

@@ -53,7 +53,7 @@ export const getCategories = async ({
         where.type = CategoryType.MAIN
     };
 
-    if (filters?.type) {
+    if (filters?.type && (filters?.type === TransactionType.EXPENSE || filters?.type === TransactionType.INCOME)) {
         where.forType = filters.type
     };
 

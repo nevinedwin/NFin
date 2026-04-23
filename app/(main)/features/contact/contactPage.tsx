@@ -8,6 +8,7 @@ import Header from './header';
 import CreateContactSheet from '@/components/contact/createEntitySheet';
 import CreateEntitySheet from '@/components/contact/createEntitySheet';
 import ContactList from './contactList';
+import GroupList from './groupList';
 
 export type TabsType = "contact" | "group";
 
@@ -70,7 +71,8 @@ const ContactPage = () => {
                 '>
                     {tab === "contact"
                         ? <ContactList reRender={openSheet} />
-                        : "No groups yet 👥"}
+                        : <GroupList reRender={openSheet} />
+                    }
                 </div>
             </div>
 

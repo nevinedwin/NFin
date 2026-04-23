@@ -186,6 +186,7 @@ model ContactBalance {
 
   updatedAt DateTime @updatedAt
 
+  @@unique([userId, contactId])
   @@index([userId])
 }
 
@@ -230,7 +231,9 @@ model Account {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([createdAt, id])
   @@index([userId])
+  @@index([userId, createdAt(sort: Desc), id(sort: Desc)])
 }
 
 model Category {
@@ -276,7 +279,7 @@ model Transaction {
   date   DateTime @default(now())
   repeat Boolean  @default(false)
 
-  balance Decimal @default(0)
+  balance Decimal @default(0)  @db.Decimal(12, 2)
 
   transferType TransferType?
 
@@ -291,6 +294,9 @@ model Transaction {
 
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])
+
+  groupId String?
+  group   Group?  @relation(fields: [groupId], references: [id])
 
   participants TransactionParticipant[]
 
@@ -320,6 +326,9 @@ model TransactionParticipant {
   settlements Settlement[]
   reminders   Reminder[]
 
+  transactionDate  DateTime
+  transactionRefId String
+
   transactionId String
   transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 
@@ -329,8 +338,10 @@ model TransactionParticipant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([transactionDate, transactionRefId])
   @@index([transactionId])
   @@index([contactId])
+  @@index([contactId, transactionDate(sort: Desc), transactionRefId(sort: Desc)])
 }
 
 // immutable
@@ -506,10 +517,14 @@ model Group {
 
   members GroupMember[]
 
+  transactions Transaction[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([userId, name, id])
   @@index([userId])
+  @@index([userId, name(sort: Asc), id(sort: Asc)])
 }
 
 model GroupMember {

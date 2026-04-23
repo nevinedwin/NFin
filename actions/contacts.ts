@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/auth/currentUser';
+import { Prisma } from '@/generated/prisma/client';
 
 export async function createContact(data: {
     name: string;
@@ -21,7 +22,6 @@ export async function createContact(data: {
 
     return { success: true };
 }
-
 export async function createGroup(data: {
     name: string;
     memberIds: string[];
@@ -29,12 +29,14 @@ export async function createGroup(data: {
     const user = await getCurrentUser();
     if (!user) return { success: false };
 
+    const uniqueIds = [...new Set(data.memberIds)];
+
     await prisma.group.create({
         data: {
             name: data.name,
             userId: user.id,
             members: {
-                create: data.memberIds.map(id => ({
+                create: uniqueIds.map(id => ({
                     contactId: id
                 }))
             }
@@ -101,7 +103,7 @@ export async function getContacts({
 
     if (contacts.length > take) {
         contacts.pop();
-        const last =  contacts[contacts.length - 1];
+        const last = contacts[contacts.length - 1];
         nextCursor = last
             ? { name: last.name, id: last.id }
             : null;
@@ -109,3 +111,53 @@ export async function getContacts({
 
     return { data: contacts, nextCursor };
 }
+
+export async function getData({ id, type }: { id: string; type: 'group' | 'contact' }) {
+    const user = await getCurrentUser();
+    if (!user) return { success: false };
+
+    let result;
+
+    if (type === 'contact') {
+        result = await prisma.contact.findFirst({
+            where: {
+                id,
+                userId: user.id
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                updatedAt: true
+            }
+        });
+    } else if (type === 'group') {
+        result = await prisma.group.findFirst({
+            where: {
+                id,
+                userId: user.id
+            },
+            select: {
+                id: true,
+                name: true,
+                members: {
+                    select: {
+                        id: true,
+                        contact: {
+                            select: {
+                                id: true,
+                                name: true,
+                                phone: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        result = []
+    };
+
+    return { data: result };
+} 

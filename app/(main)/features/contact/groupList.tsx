@@ -1,31 +1,29 @@
 'use client';
 
-import React, { useEffect, useState } from 'react'
-import Input from '@/components/ui/input'
 import useDebounceValue from '@/hooks/useDebounceValue';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-import { getContacts } from '@/actions/contacts';
+import React, { useEffect, useState } from 'react';
+import SearchInput from '@/components/ui/searchInput';
 import AccountLogo from '@/components/wallet/accountLogo';
 import { Loader2 } from 'lucide-react';
-import SearchInput from '@/components/ui/searchInput';
 import { useRouter } from 'next/navigation';
+import { getGroupsWithMembers } from '@/actions/groups';
+
 
 const PAGE_SIZE = 10;
 
-type Contact = {
+type Group = {
     id: string;
     name: string;
-    phone: string;
 };
 
 type Cursor = { name: string; id: string } | null;
 
-type ContactListProps = {
+type GroupListProps = {
     reRender: boolean;
 };
 
-
-const ContactList = ({ reRender }: ContactListProps) => {
+const GroupList = ({ reRender }: GroupListProps) => {
 
     const router = useRouter();
 
@@ -34,12 +32,12 @@ const ContactList = ({ reRender }: ContactListProps) => {
 
     const {
         loading,
-        data: contacts,
+        data: groups,
         scrollElementRef,
         refetch
-    } = useInfiniteScroll<Cursor, Contact>({
+    } = useInfiniteScroll<Cursor, Group>({
         query: debouncedQuery,
-        action: getContacts,
+        action: getGroupsWithMembers,
         size: PAGE_SIZE,
         format: (prev, incoming) => {
             const ids = new Set(prev.map(c => c.id));
@@ -48,7 +46,7 @@ const ContactList = ({ reRender }: ContactListProps) => {
     });
 
     const toggle = (id: string) => {
-        router.push(`/contact/contact/${id}`);
+        router.push(`/contact/group/${id}`);
     };
 
     useEffect(() => {
@@ -68,9 +66,9 @@ const ContactList = ({ reRender }: ContactListProps) => {
                 />
             </div>
             <div className='flex-1 min-h-0 overflow-y-auto mt-[20px]'>
-                {contacts.map((c, index) => {
+                {groups.map((c, index) => {
 
-                    if (contacts.length - 3 === index + 1) {
+                    if (groups.length - 3 === index + 1) {
                         return (
                             <button
                                 key={c.id}
@@ -81,7 +79,7 @@ const ContactList = ({ reRender }: ContactListProps) => {
                                 <AccountLogo name={c.name.slice(0, 2)} className="w-10 h-10" />
                                 <div className="flex flex-col items-start">
                                     <span className="text-sm text-white">{c.name}</span>
-                                    <span className="text-xs text-slate-400">{c.phone}</span>
+                                    {/* <span className="text-xs text-slate-400">{c.phone}</span> */}
                                 </div>
                             </button>
                         )
@@ -95,7 +93,7 @@ const ContactList = ({ reRender }: ContactListProps) => {
                                 <AccountLogo name={c.name.slice(0, 2)} className="w-10 h-10" />
                                 <div className="flex flex-col items-start">
                                     <span className="text-sm text-white">{c.name}</span>
-                                    <span className="text-xs text-slate-400">{c.phone}</span>
+                                    {/* <span className="text-xs text-slate-400">{c.phone}</span> */}
                                 </div>
                             </button>
                         )
@@ -107,9 +105,9 @@ const ContactList = ({ reRender }: ContactListProps) => {
                         <Loader2 className="animate-spin" />
                     </div>
                 )}
-                {!loading && contacts.length === 0 && (
+                {!loading && groups.length === 0 && (
                     <div className="text-center text-slate-500 py-10">
-                        No contacts found
+                        No Groups found
                     </div>
                 )}
             </div>
@@ -117,4 +115,4 @@ const ContactList = ({ reRender }: ContactListProps) => {
     )
 }
 
-export default ContactList
+export default GroupList;

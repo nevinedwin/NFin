@@ -3,6 +3,7 @@
 import { getCurrentUser } from "@/auth/currentUser";
 import { prisma } from "@/lib/prisma";
 import { createAccountSchema, updateAccountSchema } from "@/schemas/account.schema";
+import { Cursor } from "@/types/general";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -78,3 +79,56 @@ export const getAccounts = async () => {
 
     return account;
 };
+
+
+export const paginatedAccount = async ({
+    cursor = null,
+    search = '',
+    take = 10
+}: {
+    cursor: Cursor;
+    search: string;
+    take: number;
+}
+
+) => {
+    const user = await getCurrentUser();
+    if (!user) throw new Error('UnAuthorized');
+
+    const where: any = { userId: user.id };
+
+    if (search.trim()) {
+        where.name = { contains: search.trim(), mode: 'insensitive' };
+    }
+
+    const accounts = await prisma.account.findMany({
+        where,
+        orderBy: [
+            { createdAt: 'desc' },
+            { id: 'desc' }
+        ],
+        take: take + 1,
+        ...(cursor && {
+            cursor: {
+                createdAt: cursor.date,
+                id: cursor.id
+            },
+            skip: 1
+        }),
+        select: {
+            id: true,
+            name: true,
+            type: true,
+            createdAt: true
+        }
+    });
+
+    let nextCursor = null;
+    if (accounts.length > take) {
+        accounts.pop();
+        const last = accounts[accounts.length - 1];
+        nextCursor = { date: last.createdAt, id: last.id };
+    };
+
+    return { data: accounts, nextCursor };
+}
