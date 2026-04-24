@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { AccountSafeType, TransactionCategoryType } from "@/types/transaction";
 import LoaderButton from "../ui/loaderButton";
+import { useMainShellContext } from "@/app/(main)/context/mainShellContext";
 
 const NAV_ITEMS = [
     { href: "/budget", label: "Budget", icon: <HandCoins size={20} /> },
@@ -33,6 +34,9 @@ type FooterProps = {
 const Footer = memo(({ toggle, open }: FooterProps) => {
     const pathname = usePathname();
     const router = useRouter();
+
+    const { startLoading } = useMainShellContext();
+
     const [isPending, startTransition] = useTransition();
     const [loadingPath, setLoadingPath] = useState<string | null>(null);
     const [hydrated, setHydrated] = useState(false);
@@ -53,8 +57,9 @@ const Footer = memo(({ toggle, open }: FooterProps) => {
 
     const handleLinkClick = (href: string) => {
         if (href === pathname || href === loadingPath) return;
-        vibrate();
+        startLoading();
         setLoadingPath(href);
+        vibrate();
         if (open) toggle();
         startTransition(() => {
             router.push(href);
@@ -69,7 +74,6 @@ const Footer = memo(({ toggle, open }: FooterProps) => {
             <nav className="footer-nav">
                 {NAV_ITEMS.map((item, index) => {
                     const isActive = pathname === item.href;
-                    const isLoading = isPending && loadingPath === item.href;
                     return (
                         <button
                             key={item.href}
@@ -83,10 +87,7 @@ const Footer = memo(({ toggle, open }: FooterProps) => {
                             ].join(" ")}
                         >
                             <span className="icon">
-                                {isLoading
-                                    ? <LoaderButton className="w-5 h-5" />
-                                    : item.icon
-                                }
+                                {item.icon}
                             </span>
                             <span className="label">{item.label}</span>
                         </button>

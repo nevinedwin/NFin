@@ -2,12 +2,13 @@
 
 import useDebounceValue from '@/hooks/useDebounceValue';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import SearchInput from '@/components/ui/searchInput';
 import AccountLogo from '@/components/wallet/accountLogo';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { getGroupsWithMembers } from '@/actions/groups';
+import { useMainShellContext } from '../../context/mainShellContext';
 
 
 const PAGE_SIZE = 10;
@@ -26,6 +27,9 @@ type GroupListProps = {
 const GroupList = ({ reRender }: GroupListProps) => {
 
     const router = useRouter();
+    const { startLoading } = useMainShellContext();
+    const [isPending, startTransition] = useTransition();
+
 
     const [query, setQuery] = useState('');
     const debouncedQuery = useDebounceValue(query, 400);
@@ -46,9 +50,12 @@ const GroupList = ({ reRender }: GroupListProps) => {
     });
 
     const toggle = (id: string) => {
-        router.push(`/contact/group/${id}`);
+        startLoading();
+        startTransition(() => {
+            router.push(`/contact/group/${id}`);
+        });
     };
-
+    
     useEffect(() => {
         if (!reRender) {
             refetch();

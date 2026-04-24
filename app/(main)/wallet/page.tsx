@@ -1,21 +1,13 @@
 'use server';
 
-import React from 'react'
-import AccountCard from '@/components/wallet/accountCard'
-import BalanceCard from '@/components/wallet/balanceCard'
-import { PlusCircle } from 'lucide-react'
-import WalletChip from '@/components/wallet/walletChip';
-import { prisma } from '@/lib/prisma'
-import Link from 'next/link'
+import React from 'react';
+import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/auth/currentUser';
 import { AccountSafeType } from '@/types/transaction';
-import { formatType, ORDER_MAP } from '@/lib/utils/formats';
+import { ORDER_MAP } from '@/lib/utils/formats';
 import { AccountType } from '@/generated/prisma/client';
-import { RUPEE_SYMBOL } from '@/lib/constants/constants';
-import BalanceTotalGroup from '@/components/wallet/balanceTotalGroup';
-import BackButton from '@/components/ui/backButton';
-import BackArrowButton from '@/components/ui/backArrowbutton';
+import WalletUi from '@/components/wallet/walletUi';
 
 type WalletProp = {
   params: {
@@ -48,11 +40,6 @@ const Wallet = async ({ params }: WalletProp) => {
     ...acc,
     balance: acc.balance.toString()
   }));
-
-  const filteredAccounts =
-    selectedAccount === "all"
-      ? accounts
-      : accounts.filter(acc => acc.id === selectedAccount);
 
   const groupTotals: Partial<Record<AccountType, number>> = {};
 
@@ -96,56 +83,13 @@ const Wallet = async ({ params }: WalletProp) => {
   }, 0)
 
   return (
-    <div className='flex flex-col justify-center items-center py-4 gap-6'>
-      <div className='w-full pl-4 flex justify-start items-center'>
-        <BackArrowButton size={30} href="/dashboard"/>
-      </div>
-      <div className='w-full flex justify-start items-center gap-3 overflow-x-scroll scrollbar-hide px-4'>
-        <WalletChip
-          text="All"
-          isAll
-          selected={selectedAccount === "all"}
-          href="/wallet"
-        />
-        {
-          accounts.map(acc => (
-            <WalletChip
-              key={acc.id}
-              href={`/wallet/${acc.id}`}
-              text={acc.accountNumber?.slice(-4) || acc.name.slice(0, 4)}
-              logo={acc.name.slice(0, 2).toUpperCase()}
-              selected={selectedAccount === acc.id}
-            />
-          ))
-        }
-      </div>
-      <div className='w-full px-4'>
-        <BalanceCard totalBalance={totalBalance} label='Total Balance' />
-      </div>
-      <div className='w-full flex flex-col gap-3'>
-        {
-          sortedGroups.map(([type, group]) => (
-            <div key={type} className='flex flex-col pb-8'>
-              <BalanceTotalGroup type={type} groupTotal={groupTotals[type] ?? 0} />
-              {group.map(acc => (
-                <Link href={`/wallet/${acc.id}`} key={acc.id} className="active:scale-[0.98] transition-transform cursor-pointer">
-                  <AccountCard
-                    name={acc.name}
-                    accountNumber={acc.accountNumber ?? "—"}
-                    balance={parseFloat(acc.balance)}
-                    lastUpdated={acc.updatedAt!}
-                  />
-                </Link>
-              ))}
-            </div>
-          ))
-        }
-      </div>
-      <Link className='flex justify-center items-center gap-2 cursor-pointer' href={'/account'}>
-        <div ><PlusCircle size={20} className='text-green-400' /></div>
-        <h3 className='text-sm font-bold text-green-400'>Add another Account</h3>
-      </Link>
-    </div>
+    <WalletUi
+      selectedAccount={selectedAccount}
+      accounts={accounts}
+      totalBalance={totalBalance}
+      sortedGroups={sortedGroups}
+      groupTotals={groupTotals}
+    />
   )
 }
 

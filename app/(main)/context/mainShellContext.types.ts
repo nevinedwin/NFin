@@ -18,4 +18,5 @@ export type MainShellContextType = {
 
     showBalance: boolean;
     setShowBalance: React.Dispatch<React.SetStateAction<boolean>>;
+
 };

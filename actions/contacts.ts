@@ -4,6 +4,11 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/auth/currentUser';
 import { Prisma } from '@/generated/prisma/client';
 
+export type Cursor = {
+    transactionDate: Date;
+    id: string;
+};
+
 export async function createContact(data: {
     name: string;
     phone: string;
@@ -159,5 +164,67 @@ export async function getData({ id, type }: { id: string; type: 'group' | 'conta
         result = []
     };
 
-    return { data: result };
-} 
+    return { data: result, success: true };
+}
+
+export const getContactTransactions = async (
+    {
+        cursor = null,
+        take = 10,
+        id
+    }: {
+        id: string;
+        take: number;
+        cursor: Cursor | null;
+        [key: string]: unknown;
+    }) => {
+
+
+    const user = await getCurrentUser();
+    if (!user) return { success: false };
+
+    const transactions = await prisma.transactionParticipant.findMany({
+        where: {
+            contactId: id
+        },
+        orderBy: [
+            { transactionDate: "desc" },
+            { transactionRefId: "asc" }
+        ],
+        take: take + 1,
+        ...(cursor && {
+            cursor: {
+                transactionDate_transactionRefId: {
+                    transactionDate: cursor.transactionDate,
+                    transactionRefId: cursor.id,
+                },
+            },
+            skip: 1
+        }),
+        select: {
+            id: true,
+            obligationAmount: true,
+            shareAmount: true,
+            transactionDate: true,
+            paidAmount: true,
+            status: true,
+            transactionRefId: true
+        }
+    });
+
+    let nextCursor = null;
+    if (transactions.length > take) {
+        transactions.pop();
+        const last = transactions[transactions.length - 1];
+        nextCursor = { transactionDate: last.transactionDate, transactionRefId: last.transactionRefId };
+    }
+
+    const safeTransactions = transactions.map((t) => ({
+        ...t,
+        obligationAmount: t.obligationAmount.toNumber(),
+        shareAmount: t.shareAmount.toNumber(),
+        paidAmount: t.paidAmount.toNumber()
+    }));
+
+    return { data: safeTransactions, nextCursor, success: true };
+}

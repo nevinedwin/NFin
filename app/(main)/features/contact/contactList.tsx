@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import Input from '@/components/ui/input'
 import useDebounceValue from '@/hooks/useDebounceValue';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
@@ -9,6 +9,7 @@ import AccountLogo from '@/components/wallet/accountLogo';
 import { Loader2 } from 'lucide-react';
 import SearchInput from '@/components/ui/searchInput';
 import { useRouter } from 'next/navigation';
+import { useMainShellContext } from '../../context/mainShellContext';
 
 const PAGE_SIZE = 10;
 
@@ -29,6 +30,9 @@ const ContactList = ({ reRender }: ContactListProps) => {
 
     const router = useRouter();
 
+    const { startLoading } = useMainShellContext();
+    const [isPending, startTransition] = useTransition();
+
     const [query, setQuery] = useState('');
     const debouncedQuery = useDebounceValue(query, 400);
 
@@ -48,7 +52,10 @@ const ContactList = ({ reRender }: ContactListProps) => {
     });
 
     const toggle = (id: string) => {
-        router.push(`/contact/contact/${id}`);
+        startLoading();
+        startTransition(() => {
+            router.push(`/contact/contact/${id}`);
+        });
     };
 
     useEffect(() => {

@@ -24,7 +24,7 @@ const AccountCard = ({ accountNumber = '0000', balance = 0, lastUpdated, name = 
 
 
     return (
-        <Card className=" w-full border-none h-[60px] p-0 py-2
+        <Card className=" w-full border-none bg-surface h-[60px] p-0 py-2
                  transition-all duration-300 ease-out 
                  hover:shadow-md hover:scale-[1.01]">
             <CardContent className="h-full animate-fade-in">

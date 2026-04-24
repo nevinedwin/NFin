@@ -1,9 +1,37 @@
 
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import BackArrowButton from '@/components/ui/backArrowbutton';
 import HorizontalLine from '@/components/ui/horizontalLine';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import { Cursor, getContactTransactions } from '@/actions/contacts';
+import useDebounceValue from '@/hooks/useDebounceValue';
+import { useTransactions } from '@/hooks/useTransactions';
+import TransactionList from '@/components/contact/transactionList';
+
+export type ContactTransactions = {
+    id: string;
+    obligationAmount: number;
+    sharedAmount: number;
+    paidAmount: number;
+    transactionDate: Date;
+    status: string;
+    transactionRefId: string;
+};
+
+const PAGE_SIZE = 10;
 
 const ContactDetails = ({ data }: any) => {
+
+    const [query, setQuery] = useState('');
+
+    const { loading, transactions, scrollElementRef, refetch } = useTransactions({
+        action: getContactTransactions,
+        id: data?.id,
+        query,
+        size: PAGE_SIZE
+    });
 
     return (
         <div className='w-full h-full flex flex-col'>
@@ -15,6 +43,7 @@ const ContactDetails = ({ data }: any) => {
                 </div>
             </div>
             <HorizontalLine />
+            <TransactionList loading={loading} transactions={transactions} scrollElementRef={scrollElementRef}/>
         </div>
     )
 }

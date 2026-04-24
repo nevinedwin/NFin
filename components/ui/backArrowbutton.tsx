@@ -1,8 +1,9 @@
 "use client"
 
-import { ArrowLeft, ChevronLeft, Loader2 } from "lucide-react";
+import { useMainShellContext } from "@/app/(main)/context/mainShellContext";
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useTransition } from "react";
 
 type BackArrowButtonProps = {
     fallBackHref?: string;
@@ -17,20 +18,22 @@ export const BackArrowButton = ({ className, href, fallBackHref = '/dashboard', 
 
     const router = useRouter();
 
-    const [loading, setLoading] = useState(false);
+    const [isPending, startTransition] = useTransition();
+    const { startLoading } = useMainShellContext();
 
     const handleBack = () => {
-        setLoading(true);
-        if (onBack) {
-            onBack();
-        } else if (href) {
-            router.replace(href);
-        } else if (window.history.length > 1) {
-            router.back();
-        } else {
-            router.replace(fallBackHref!);
-        }
-        setLoading(false);
+        startLoading();
+        startTransition(() => {
+            if (onBack) {
+                onBack();
+            } else if (href) {
+                router.replace(href);
+            } else if (window.history.length > 1) {
+                router.back();
+            } else {
+                router.replace(fallBackHref!);
+            }
+        })
     }
 
     return (
@@ -38,7 +41,7 @@ export const BackArrowButton = ({ className, href, fallBackHref = '/dashboard', 
             onClick={handleBack}
             className={`flex items-center gap-2 ${className}`}
         >
-            {loading ? <Loader2 size={size} /> : <ChevronLeft size={size} className="active:text-black"/>}
+            <ChevronLeft size={size} className="active:text-black" />
             {label && <span>{label}</span>}
         </button>
     );

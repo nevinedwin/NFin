@@ -9,6 +9,7 @@ import CreateContactSheet from '@/components/contact/createEntitySheet';
 import CreateEntitySheet from '@/components/contact/createEntitySheet';
 import ContactList from './contactList';
 import GroupList from './groupList';
+import Addbutton from '@/components/ui/addbutton';
 
 export type TabsType = "contact" | "group";
 
@@ -27,27 +28,16 @@ const ContactPage = () => {
     const [tab, setTab] = useState<TabsType>('contact');
     const [openSheet, setOpenSheet] = useState(false);
 
+    const handleOpenSheet = () => {
+        setOpenSheet(true);
+    };
+
     return (
         <div className='w-full h-full flex flex-col bg-background'>
 
             <div className='flex-shrink-0 px-4 pt-4 pb-6 flex items-center justify-between'>
                 <Header tab={tab} />
-
-                <button
-                    onClick={() => setOpenSheet(true)}
-                    className="
-                        flex items-center gap-2
-                        bg-white text-black font-semibold
-                        px-3 py-2 rounded-md
-                        shadow-md transition-all duration-200
-                        active:scale-95
-                    "
-                >
-                    <Plus size={18} />
-                    <span className='text-sm'>
-                        {tab === "contact" ? "Contact" : "Group"}
-                    </span>
-                </button>
+                <Addbutton onClick={handleOpenSheet} label={tab === "contact" ? "Contact" : "Group"} />
             </div>
 
             {/* TABS */}

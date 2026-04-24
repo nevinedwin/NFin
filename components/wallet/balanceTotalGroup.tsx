@@ -15,8 +15,8 @@ const BalanceTotalGroup = ({ type, groupTotal }: { type: AccountType, groupTotal
     const accountBalance = useCountUp(groupTotal, 100);
 
     return (
-        <div className='flex justify-between bg-surface p-4'>
-            <h2 className='text-lg font-medium'>{formatType(type)}</h2>
+        <div className='flex justify-between'>
+            <h2 className='text-md font-light tracking-wide'>{formatType(type)}</h2>
             <h2 className='text-lg font-light flex '>
                  {showBalance ? <ShowBalanceComp balance={accountBalance} mainClass="!text-lg !font-light" subClass='!text-[11px]' /> : <span className='text-lg font-light !text-white'>{RUPEE_SYMBOL} ----</span>}
             </h2>

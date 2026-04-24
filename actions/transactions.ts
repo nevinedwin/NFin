@@ -255,6 +255,7 @@ export async function createTransaction(prevState: any, formData: FormData) {
                         participants: {
                             create: {
                                 contact: { connect: { id: contactId } },
+                                user: { connect: { id: user.id } },
                                 shareAmount: amount,
                                 obligationAmount: amount,
                                 paidAmount:
@@ -302,6 +303,7 @@ export async function createTransaction(prevState: any, formData: FormData) {
                             createMany: {
                                 data: parsedContacts.map((c: any) => ({
                                     contactId: c.id,
+                                    userId: user.id,
                                     shareAmount: new Prisma.Decimal(c.shareAmount || 0),
                                     obligationAmount: new Prisma.Decimal(c.obligationAmount),
                                     paidAmount: new Prisma.Decimal(0),
@@ -449,7 +451,7 @@ export async function getTransactions({
         balance: t.balance.toNumber()
     }));
 
-    return { data: safeTransactions, nextCursor };
+    return { data: safeTransactions, nextCursor , success: true};
 }
 
 

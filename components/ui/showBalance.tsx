@@ -16,7 +16,7 @@ const ShowBalanceComp = ({ balance, mainClass, subClass }: ShowBalanceProp) => {
 
     return (
         <span className="flex items-end gap-[2px]">
-            <span className={`text-3xl font-bold ${mainClass}`}>
+            <span className={`text-2xl font-bold tracking-wide ${mainClass}`}>
                 {RUPEE_SYMBOL} {balanceValue[0]}
             </span>
             <span className={`text-sm text-slate-400 ${subClass}`}>

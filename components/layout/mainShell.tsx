@@ -60,6 +60,7 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
     const stopLoading = () => {
         setLoading(false);
     };
+    
 
 
     useEffect(() => {
@@ -203,8 +204,6 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
                                     </div>
 
                                     <TransactionCard
-                                        accounts={accounts}
-                                        category={category}
                                         closeFn={toggleTransactionCard}
                                     />
                                 </div>

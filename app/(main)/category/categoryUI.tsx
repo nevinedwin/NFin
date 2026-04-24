@@ -16,6 +16,7 @@ import FilterBars from "@/components/ui/FilterBars/filterBars";
 import { CategoryActiveFilters, CategoryFilterType, EMPTY_CATEGORY_FILTERS } from "@/types/filters";
 import { CATEGORY_FILTER_BUTTONS, getCategoryPanel } from "@/components/category/filterKeys";
 import FilterSheet from "@/components/ui/FilterBars/filterSheet";
+import Addbutton from "@/components/ui/addbutton";
 
 const PAGE_SIZE = 10;
 
@@ -117,15 +118,13 @@ export default function CategoryPageClient({ parentCategories }: any) {
                     <div>
                         <BackArrowButton href="/dashboard" size={30} />
                     </div>
-                    <h1 className="text-xl font-semibold">Categories</h1>
+                    <div className='flex flex-col justify-center items-start'>
+                        <p className='font-semibold tracking-wide'>Category</p>
+                        <p className='text-text-secondary text-xs'>Organize Expenses</p>
+                    </div>
                 </div>
 
-                <button
-                    onClick={handleCreate}
-                    className="px-3 py-2 bg-white text-black rounded-lg font-medium flex justify-center items-center"
-                >
-                    <Plus size={15} className="font-bold" /> New
-                </button>
+                <Addbutton onClick={handleCreate} label="Add Category" />
             </div>
 
             <div className="flex-shrink-0">
@@ -167,7 +166,8 @@ export default function CategoryPageClient({ parentCategories }: any) {
                     )}
                     {!loadingQuery && categories.length === 0 && (
                         <div className="text-center text-slate-500 py-10">
-                            No category found
+                            <p>No category found</p>
+                            <p>Add your first category</p>
                         </div>
                     )}
                 </div>

@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from 'react'
-import { Card } from '../ui/card/card'
-import CardContent from '../ui/card/cardContent'
+import { useTransition } from 'react';
+import { Card } from '../ui/card/card';
+import CardContent from '../ui/card/cardContent';
 import { ArrowDown, ArrowUp, EyeIcon, EyeOffIcon, Wallet2 } from 'lucide-react'
-import { RUPEE_SYMBOL } from '@/lib/constants/constants'
+import { RUPEE_SYMBOL } from '@/lib/constants/constants';
 import useCountUp from '@/hooks/useCountUp';
-import { redirect, useRouter } from 'next/navigation';
-import { changeShowBalance } from '@/actions/userAction';
+import { useRouter } from 'next/navigation';
 import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
-import LoaderButton from '../ui/loaderButton';
 import ShowBalanceComp from '../ui/showBalance';
 
 type HeaderCardProp = {
@@ -22,19 +20,23 @@ const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0 }: Hea
 
     const router = useRouter();
 
-    const { showBalance, setShowBalance } = useMainShellContext();
-
+    const { showBalance, setShowBalance, startLoading } = useMainShellContext();
     const [isPending, startTransition] = useTransition();
+
 
     const balance = useCountUp(bal, 100);
     const income = useCountUp(inc, 100);
     const expense = useCountUp(exp, 100);
 
     const handleWalletClick = () => {
+        startLoading();
         startTransition(() => {
             router.push('/wallet');
         })
     };
+
+
+
 
     return (
         <Card className="rounded-none rounded-b-3xl w-full border-none h-[160px] bg-bar p-0 
@@ -43,20 +45,16 @@ const HeaderCard = ({ balance: bal = 0, income: inc = 0, expense: exp = 0 }: Hea
             <CardContent className="bg-bar h-[110px] animate-fade-in">
                 <div className="h-full flex justify-between items-center">
                     <div>
-                        <h2 className="text-sm font-light text-slate-500">Total Balance</h2>
+                        <h2 className="font-normal text-md text-slate-300 tracking-wider">Total Balance</h2>
                         <div className='flex justify-center items-center gap-4'>
-                            {showBalance ? <ShowBalanceComp balance={balance} /> : <span className='text-3xl'>{RUPEE_SYMBOL} ----</span>}
+                            {showBalance ? <ShowBalanceComp balance={balance} /> : <span className='text-2xl'>{RUPEE_SYMBOL} ----</span>}
                             {
                                 showBalance ? <EyeIcon onClick={() => setShowBalance(false)} /> : <EyeOffIcon onClick={() => setShowBalance(true)} />
                             }
                         </div>
                     </div>
                     <div className='h-full flex flex-col justify-center items-center group pr-3'>
-                        {
-                            isPending
-                                ? <LoaderButton className='w-10 h-10' />
-                                : <Wallet2 width={40} height={40} className="text-text-dull transition-transform duration-300 group-hover:rotate-6" onClick={handleWalletClick} />
-                        }
+                        <Wallet2 width={40} height={40} className="text-text-dull" onClick={handleWalletClick} />
                         <p className='text-[10px] text-text-dull'>Wallet</p>
                     </div>
                 </div>

@@ -7,7 +7,7 @@ type FormSubmitBtnProp = {
     className?: string;
     label: string;
     type: "button" | "submit" | "reset";
-    onClick: () => void;
+    onClick?: () => void;
 }
 
 const FormSubmitBtn = ({ className, label, type = 'button', onClick }: FormSubmitBtnProp) => {

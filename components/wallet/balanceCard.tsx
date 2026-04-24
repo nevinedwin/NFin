@@ -27,7 +27,7 @@ const BalanceCard = ({ totalBalance = 0, label }: BalanceCardProp) => {
             <CardContent className="h-full animate-fade-in py-8 px-8">
                 <div className='w-full h-full flex justify-between items-center flex-col'>
                     <div className='w-full flex justify-start items-center'>
-                        <h2 className='text-sm font-medium text-slate-200'>{label.toUpperCase()}</h2>
+                        <h2 className='text-sm font-medium text-slate-200'>{label}</h2>
                     </div>
                     <div className='w-full flex justify-between items-center'>
                         {showBalance ? <ShowBalanceComp balance={balance} /> : <span className='text-3xl'>{RUPEE_SYMBOL} ----</span>}
