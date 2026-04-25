@@ -2,12 +2,19 @@
 
 import React from 'react';
 
-const HorizontalLine = () => {
-    return (
-        <div className='w-full flex'>
-            <div className="flex-1 h-px bg-border" />
-        </div>
-    )
-}
+type HorizontalLineProps = {
+    isBlueLine?: boolean;
+};
 
-export default HorizontalLine
+const HorizontalLine = ({ isBlueLine = false }: HorizontalLineProps) => {
+    return (
+        <div className='w-full relative h-[6px] flex items-center'>
+            <div className="w-full h-px bg-border" />
+            {isBlueLine && (
+                <div className='absolute left-4 bg-blue-700 h-[4px] w-20 rounded-t-lg' />
+            )}
+        </div>
+    );
+};
+
+export default HorizontalLine;

@@ -5,18 +5,18 @@ import AccountLogo from "@/components/wallet/accountLogo";
 import { TransactionType, TransferType } from "@/generated/prisma/client";
 import { formatTimeDate, formatUnderScoredStringCut } from "@/lib/utils/formats";
 import { TransactionDataType } from "@/types/transaction";
-import { ArrowDownUp, ArrowRight, ArrowRightLeft, BanknoteArrowUp, HandCoins } from "lucide-react";
 import CategoryIcon from "@/components/ui/caetgoryIcon";
 
 type EachTransactionProp = {
     recentTransaction: TransactionDataType;
     recentCard: boolean;
     onClickTransaction: (id: string) => void;
+    isBorder?: boolean;
 }
 
 
 
-const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransaction }: EachTransactionProp) => {
+const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransaction, isBorder = true }: EachTransactionProp) => {
 
     const [selected, setSelected] = useState<string | null>(null);
     const [iconColors, setIconColors] = useState<string>('text-white');
@@ -68,7 +68,7 @@ const EachTransaction = ({ recentTransaction, recentCard = false, onClickTransac
     }, []);
 
     return (
-        <div className={`w-full flex items-center justify-between border-b border-border py-4 px-4 ${selected === id ? 'bg-surface' : 'bg-inherit'}`} onClick={() => handleClick(id)}>
+        <div className={`w-full flex items-center justify-between py-4 px-4 ${isBorder ? 'border-b border-border' : ''}  ${selected === id ? 'bg-surface' : 'bg-inherit'}`} onClick={() => handleClick(id)}>
 
             {/* LEFT SECTION */}
             <div className="flex items-start gap-3">

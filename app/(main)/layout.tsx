@@ -36,7 +36,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
         prisma.transaction.findMany({
             where: { userId: user.id },
             orderBy: { date: 'desc' },
-            take: 3,
+            take: 5,
             select: {
                 id: true,
                 amount: true,
