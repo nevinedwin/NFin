@@ -9,7 +9,7 @@ import RecentTransaction from "@/components/transaction/recentTransactions.tsx/r
 import WalletCard from "@/components/dashboard/walletCard";
 
 
-const Dashboard = ({ overview }: { overview: React.ReactNode }) => {
+const Dashboard = ({ overview, categoryOverView }: { overview: React.ReactNode, categoryOverView: React.ReactNode }) => {
 
     const { accounts, recentTransaction } = useMainShellContext();
 
@@ -29,6 +29,7 @@ const Dashboard = ({ overview }: { overview: React.ReactNode }) => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 w-full p-4 gap-4">
                 {overview}
+                {categoryOverView}
                 <RecentTransaction recentTransaction={recentTransaction} />
                 <WalletCard />
                 <CardSkeleton className="w-full" />
@@ -36,10 +37,9 @@ const Dashboard = ({ overview }: { overview: React.ReactNode }) => {
                 <CardSkeleton className="w-full" />
                 <CardSkeleton className="w-full" />
                 <CardSkeleton className="w-full" />
-                <CardSkeleton className="w-full" />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Dashboard;
