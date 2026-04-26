@@ -7,7 +7,6 @@ import CategoryOverview from './categoryOverview';
 const CategoryOverviewServer = async () => {
 
     const { data }: any = await getCategoryOverview();
-    console.log(data);
 
     return <CategoryOverview category={data} />
 }
