@@ -17,6 +17,7 @@ export type Transaction = {
     transactionRefId: string;
     transaction: {
         type: TransactionContactTypes;
+        id: string;
     };
     contact: {
         name: string;
@@ -34,6 +35,8 @@ type useTransactionsParams = {
     id: string;
     query?: string;
     size?: number;
+    initialData?: Transaction[];
+    initialCursor?: Cursor | null;
 };
 
 function getDateLabel(dateStr: string): string {
@@ -68,7 +71,9 @@ export function useTransactions({
     action,
     id,
     query = '',
-    size = 10
+    size = 10,
+    initialData = [],
+    initialCursor = null
 }: useTransactionsParams) {
 
     const debouncedQuery = useDebounceValue(query, 400);
@@ -76,6 +81,8 @@ export function useTransactions({
     const { loading, data, scrollElementRef, refetch } = useInfiniteScroll<Cursor, Transaction>({
         query: debouncedQuery,
         action,
+        initialCursor: initialCursor,
+        initialData: initialData,
         extraParams: { id },
         size,
         format: (prev, incoming) => {

@@ -87,7 +87,7 @@ const TransactionDetailedPage = async ({ params }: TransactionDetailedPageProps)
     return (
         <div className='w-full h-full p-4 !pb-0 space-y-2'>
             <div className='w-full flex justify-start items-center mb-4'>
-                <BackArrowButton size={30} href="/transaction" />
+                <BackArrowButton size={30}/>
             </div>
             <div className='w-full h-fit space-y-1'>
                 <div className='flex w-full relative'>

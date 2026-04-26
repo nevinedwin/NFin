@@ -12,17 +12,18 @@ import AccountLogo from "@/components/wallet/accountLogo";
 const PAGE_SIZE = 10;
 const SCROLL_THRESHOLD = 10;
 
-const ContactDetails = ({ data }: any) => {
+const ContactDetails = ({ data, initalTransactions, initialCursor }: any) => {
     const [query, setQuery] = useState('');
     const [showSettlement, setShowSettlement] = useState(true);
 
-    const mainRef = useRef<HTMLDivElement | null>(null);
     const lastScrollY = useRef(0);
     const ticking = useRef(false);
     const hideHeaderRef = useRef(false);
 
     const { loading, transactions, scrollElementRef, refetch } = useTransactions({
         action: getContactTransactions,
+        initialData: initalTransactions,
+        initialCursor: initialCursor,
         id: data?.id,
         query,
         size: PAGE_SIZE

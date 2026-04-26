@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useTransition } from 'react';
 import { ObligationStatus, TransactionType } from '@/generated/prisma/client';
 import { Transaction } from '@/hooks/useTransactions';
 import { CENETER_DOT } from '@/lib/constants/constants';
-import { CircleCheck } from 'lucide-react';
+import { ChevronRight, CircleCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
 
 export type TransactionContactTypes = Exclude<TransactionType, 'EXPENSE' | 'INCOME' | 'TRANSFER'>;
 
@@ -35,22 +37,43 @@ function StatusBadge({ status }: { status: ObligationStatus }) {
     );
 };
 
+
 const TransactionRow = ({ transaction, ref }: { transaction: Transaction, ref: React.Ref<HTMLDivElement> | undefined }) => {
+
+    const router = useRouter();
+    const { startLoading } = useMainShellContext();
+    const [isPending, startTransition] = useTransition();
 
     const amount = transaction.obligationAmount - transaction.paidAmount;
     const time = new Date(transaction.transactionDate).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
     const isBorrow = transaction.transaction.type === TransactionType.BORROW;
 
+
+    const handleClick = () => {
+        startLoading();
+        startTransition(() => {
+            router.push(`/transaction/${transaction.transaction.id}`);
+        });
+    };
+
     return (
         <div ref={ref} className={`w-full h-full flex ${isBorrow ? 'justify-start' : 'justify-end'}`}>
             <div className={`min-w-[60%] min-h-[120px] flex flex-col bg-surface p-4 rounded-2xl gap-2`}>
-                <div className="!text-[15px] text-white truncate capitalize font-normal">{heading(transaction.contact.name, transaction.transaction.type)}</div>
+                <div className='flex items-center justify-center gap-2'>
+                    <div className="!text-[15px] text-white truncate capitalize font-normal">{heading(transaction.contact.name, transaction.transaction.type)}</div>
+                    <p className='text-slate-400 text-xs font-light capitalize tracking-widest bg-border w-fit px-2 rounded-2xl'>{transaction.transaction.type.toLowerCase()}</p>
+                </div>
                 <p className={`text-2xl font-light text-white`}>
                     ₹ {Math.abs(amount).toFixed(2)}
                 </p>
-                <div className='flex justify-start items-center gap-2'>
-                    <CircleCheck className='text-green-500' size={15} />
-                    <p className="!text-xs text-white mt-0.5 font-normal">Paid {CENETER_DOT} {time}</p>
+                <div className='flex justify-between items-center' onClick={handleClick}>
+                    <div className='flex justify-start items-center gap-2'>
+                        <CircleCheck className='text-green-500' size={15} />
+                        <p className="!text-xs text-white mt-0.5 font-normal">Paid {CENETER_DOT} {time}</p>
+                    </div>
+                    <div>
+                        <ChevronRight size={15} />
+                    </div>
                 </div>
                 {/* <div className="flex-1 mx-w-[50%] h-full flex flex-col justify-center items-start">
             </div> */}

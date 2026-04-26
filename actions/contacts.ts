@@ -218,7 +218,7 @@ export const getContactTransactions = async (
             paidAmount: true,
             status: true,
             transactionRefId: true,
-            transaction: { select: { type: true } },
+            transaction: { select: { type: true, id: true } },
             contact: { select: { name: true } }
         }
     });

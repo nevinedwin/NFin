@@ -217,4 +217,4 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
     );
 }
 
-export default MainShell
+export default MainShell;

@@ -23,6 +23,7 @@ const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
     const { startLoading } = useMainShellContext();
 
     const handleViewAll = () => {
+        startLoading();
         startTransition(() => {
             router.push('/transaction');
         });
@@ -48,7 +49,7 @@ const RecentTransaction = ({ recentTransaction }: RecentTransactionProp) => {
                     disabled={!mounted || isPending}
                     className='flex justify-center font-semibold text-sm items-center text-blue-500'
                 >
-                    {isPending ? <LoaderButton className='w-5 h-5' /> : 'View all'}
+                    View all
                     <ChevronRight size={15} />
                 </button>
             </div>
