@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import Header from './header';
 import CreateContactSheet from '@/components/contact/createEntitySheet';
 import CreateEntitySheet from '@/components/contact/createEntitySheet';
-import ContactList from './contactList';
+import ContactList, { Contact, Cursor } from './contactList';
 import GroupList from './groupList';
 import Addbutton from '@/components/ui/addbutton';
 
@@ -23,7 +23,12 @@ const TAB_ITEMS: TabItem<TabsType>[] = [
     { id: "group", label: "Groups" },
 ];
 
-const ContactPage = () => {
+type ContactPageProp = {
+    initialContacts: Contact[];
+    initialCursor: Cursor
+}
+
+const ContactPage = ({ initialContacts, initialCursor }: ContactPageProp) => {
 
     const [tab, setTab] = useState<TabsType>('contact');
     const [openSheet, setOpenSheet] = useState(false);
@@ -60,7 +65,7 @@ const ContactPage = () => {
                     text-sm
                 '>
                     {tab === "contact"
-                        ? <ContactList reRender={openSheet} />
+                        ? <ContactList reRender={openSheet} initialContacts={initialContacts} initialCursor={initialCursor} />
                         : <GroupList reRender={openSheet} />
                     }
                 </div>

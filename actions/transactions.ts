@@ -257,11 +257,8 @@ export async function createTransaction(prevState: any, formData: FormData) {
                                 contact: { connect: { id: contactId } },
                                 user: { connect: { id: user.id } },
                                 shareAmount: amount,
-                                obligationAmount: amount,
-                                paidAmount:
-                                    type === TransactionType.LEND
-                                        ? amount
-                                        : new Prisma.Decimal(0),
+                                obligationAmount: type === TransactionType.BORROW ? amount.neg() : amount,
+                                paidAmount: new Prisma.Decimal(0),
                                 status: ObligationStatus.PENDING,
                                 transactionDate: date,
                                 transactionRefId: uuidV4()
@@ -451,7 +448,7 @@ export async function getTransactions({
         balance: t.balance.toNumber()
     }));
 
-    return { data: safeTransactions, nextCursor , success: true};
+    return { data: safeTransactions, nextCursor, success: true };
 }
 
 

@@ -1,10 +1,11 @@
 'use client';
 
 import { ObligationStatus } from "@/generated/prisma/client";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import useDebounceValue from "./useDebounceValue";
 import useInfiniteScroll from "./useInfiniteScroll";
 import { Cursor } from "@/actions/contacts";
+import { TransactionContactTypes } from "@/components/contact/transactionRow";
 
 export type Transaction = {
     id: string;
@@ -14,6 +15,12 @@ export type Transaction = {
     paidAmount: number;
     status: ObligationStatus;
     transactionRefId: string;
+    transaction: {
+        type: TransactionContactTypes;
+    };
+    contact: {
+        name: string;
+    };
 };
 
 export type TransactionGroup = {

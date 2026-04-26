@@ -134,9 +134,18 @@ export async function getData({ id, type }: { id: string; type: 'group' | 'conta
                 name: true,
                 email: true,
                 phone: true,
-                updatedAt: true
+                updatedAt: true,
+                balance: { select: { netAmount: true } }
             }
         });
+
+        result = {
+            ...result,
+            balance: {
+                netAmount: result?.balance?.netAmount.toNumber()
+            }
+        }
+
     } else if (type === 'group') {
         result = await prisma.group.findFirst({
             where: {
@@ -161,7 +170,7 @@ export async function getData({ id, type }: { id: string; type: 'group' | 'conta
             }
         });
     } else {
-        result = []
+        result = {}
     };
 
     return { data: result, success: true };
@@ -208,7 +217,9 @@ export const getContactTransactions = async (
             transactionDate: true,
             paidAmount: true,
             status: true,
-            transactionRefId: true
+            transactionRefId: true,
+            transaction: { select: { type: true } },
+            contact: { select: { name: true } }
         }
     });
 

@@ -20,6 +20,8 @@ type InfiniteScrollProps<T, D> = {
     size?: number;
     format?: (prev: D[], incoming: D[]) => D[];
     extraParams?: Record<string, unknown>;
+    initialData?: any,
+    initialCursor?: T | null
 };
 
 /**
@@ -37,11 +39,13 @@ const useInfiniteScroll = <T, D>({
     action,
     size = 10,
     format,
-    extraParams
+    extraParams,
+    initialData,
+    initialCursor
 }: InfiniteScrollProps<T, D>) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
-    const [data, setData] = useState<D[]>([]);
+    const [data, setData] = useState<D[]>(initialData ?? []);
     const [hasMore, setHasMore] = useState(true);
     const [trigger, setTrigger] = useState(0);
 
@@ -54,6 +58,7 @@ const useInfiniteScroll = <T, D>({
     const cursorRef = useRef<T | null>(null);
     const loadingRef = useRef(false);
     const hasMoreRef = useRef(true);
+    const initialMountRef = useRef(true);
 
     /** Incremented on every query change so in-flight requests are ignored. */
     const requestIdRef = useRef(0);
@@ -130,7 +135,6 @@ const useInfiniteScroll = <T, D>({
 
 
     useEffect(() => {
-        // Cancel any in-flight request for the previous query
         requestIdRef.current++;
 
         // Reset all state/refs synchronously before the first fetch
@@ -138,10 +142,23 @@ const useInfiniteScroll = <T, D>({
         hasMoreRef.current = true;
         loadingRef.current = false;
 
-        setData([]);
         setHasMore(true);
         setLoading(false);
         setError(false);
+
+        if (initialMountRef.current && initialData) {
+            initialMountRef.current = false;
+            setData(initialData);
+            if (initialCursor) {
+                cursorRef.current = initialCursor;
+            }
+            return;
+        };
+
+        initialMountRef.current = false;
+        // Cancel any in-flight request for the previous query
+
+        setData([]);
 
         // Kick off the first page immediately
         fetchData();

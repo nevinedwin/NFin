@@ -13,20 +13,22 @@ import { useMainShellContext } from '../../context/mainShellContext';
 
 const PAGE_SIZE = 10;
 
-type Contact = {
+export type Contact = {
     id: string;
     name: string;
     phone: string;
 };
 
-type Cursor = { name: string; id: string } | null;
+export type Cursor = { name: string; id: string } | null;
 
 type ContactListProps = {
-    reRender: boolean;
+    reRender?: boolean;
+    initialContacts: Contact[];
+    initialCursor: Cursor
 };
 
 
-const ContactList = ({ reRender }: ContactListProps) => {
+const ContactList = ({ reRender = false, initialContacts, initialCursor }: ContactListProps) => {
 
     const router = useRouter();
 
@@ -44,6 +46,8 @@ const ContactList = ({ reRender }: ContactListProps) => {
     } = useInfiniteScroll<Cursor, Contact>({
         query: debouncedQuery,
         action: getContacts,
+        initialData: initialContacts,
+        initialCursor: initialCursor,
         size: PAGE_SIZE,
         format: (prev, incoming) => {
             const ids = new Set(prev.map(c => c.id));

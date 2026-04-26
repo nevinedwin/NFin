@@ -4,3 +4,5 @@ export const SIGNUP_DATA = {
 }
 
 export const RUPEE_SYMBOL = "₹"; 
+
+export const CENETER_DOT = '·';
