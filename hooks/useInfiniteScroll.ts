@@ -43,9 +43,12 @@ const useInfiniteScroll = <T, D>({
     initialData,
     initialCursor
 }: InfiniteScrollProps<T, D>) => {
-    const [loading, setLoading] = useState(false);
+
+    const hasSSRData = Boolean(initialData?.length);
+
+    const [loading, setLoading] = useState(!!hasSSRData);
     const [error, setError] = useState(false);
-    const [data, setData] = useState<D[]>(initialData ?? []);
+    const [data, setData] = useState<D[]>(() => initialData ?? []);
     const [hasMore, setHasMore] = useState(true);
     const [trigger, setTrigger] = useState(0);
 
@@ -55,19 +58,22 @@ const useInfiniteScroll = <T, D>({
      * stale-closure bugs).  The actual state values drive the UI; the refs
      * give us the latest value inside async callbacks without re-subscribing.
      */
-    const cursorRef = useRef<T | null>(null);
+    const cursorRef = useRef<T | null>(initialCursor ?? null);
     const loadingRef = useRef(false);
     const hasMoreRef = useRef(true);
     const initialMountRef = useRef(true);
 
     /** Incremented on every query change so in-flight requests are ignored. */
     const requestIdRef = useRef(0);
+    const skipNextFetchRef = useRef(hasSSRData);
+
 
     /** Stable refs for action / format so we never need them in dep arrays. */
     const actionRef = useLatest(action);
     const formatRef = useLatest(format);
     const sizeRef = useLatest(size);
     const extraParamsRef = useLatest(extraParams);
+    const queryRef = useLatest(query);
 
     // ─── Core fetch ───────────────────────────────────────────────────────────
 
@@ -89,7 +95,7 @@ const useInfiniteScroll = <T, D>({
         try {
 
             const resp = await actionRef.current({
-                search: query,
+                search: queryRef.current,
                 cursor: cursorRef.current,
                 take: sizeRef.current,
                 ...extraParamsRef.current
@@ -120,7 +126,7 @@ const useInfiniteScroll = <T, D>({
                 setLoading(false);
             }
         }
-    }, [query, trigger]);
+    }, []);
 
     const refetch = useCallback(() => {
         cursorRef.current = null;
@@ -135,6 +141,12 @@ const useInfiniteScroll = <T, D>({
 
 
     useEffect(() => {
+
+        if (skipNextFetchRef.current) {
+            skipNextFetchRef.current = false;
+            return;
+        }
+
         requestIdRef.current++;
 
         // Reset all state/refs synchronously before the first fetch
@@ -162,7 +174,7 @@ const useInfiniteScroll = <T, D>({
 
         // Kick off the first page immediately
         fetchData();
-    }, [fetchData]);
+    }, [query, trigger]);
 
     const observerRef = useRef<IntersectionObserver | null>(null);
 

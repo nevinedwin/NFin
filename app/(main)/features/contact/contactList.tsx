@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useEffect, useRef, useState, useTransition } from 'react'
 import Input from '@/components/ui/input'
 import useDebounceValue from '@/hooks/useDebounceValue';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
@@ -38,6 +38,8 @@ const ContactList = ({ reRender = false, initialContacts, initialCursor }: Conta
     const [query, setQuery] = useState('');
     const debouncedQuery = useDebounceValue(query, 400);
 
+    const prevReRenderRef = useRef(reRender);
+
     const {
         loading,
         data: contacts,
@@ -63,9 +65,10 @@ const ContactList = ({ reRender = false, initialContacts, initialCursor }: Conta
     };
 
     useEffect(() => {
-        if (!reRender) {
+        if (prevReRenderRef.current === true && reRender === false) {
             refetch();
         }
+        prevReRenderRef.current = reRender;
     }, [reRender])
 
     return (
