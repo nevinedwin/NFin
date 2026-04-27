@@ -27,11 +27,13 @@ import { TransactionsContactItem } from "@/app/(main)/features/transaction/trans
 import { useSplitAllocations } from "@/hooks/useSplitAllocation";
 import SplitContactRow from "./groupSplit/splitContactRow";
 import LoaderButton from "../ui/loaderButton";
+import ScanWrapper from "../camera/scanWrapper";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type TransactionCardProp = {
     closeFn: () => void;
+    stopCameraRef: { current: boolean };
 };
 
 type TabsType = "byEvenly" | "byAmount" | "byShares" | "byPercentages";
@@ -96,7 +98,7 @@ const NO_REPEAT_TYPES = new Set<TransactionType>([
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function TransactionCard({ closeFn }: TransactionCardProp) {
+export default function TransactionCard({ closeFn, stopCameraRef }: TransactionCardProp) {
     const router = useRouter();
 
     const [openGroup, setOpenGroup] = useState(false);
@@ -104,6 +106,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
     const [error, setError] = useState<string>("");
     const [contacts, setContacts] = useState<TransactionsContactItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [isManual, setIsManual] = useState<boolean>(false);
 
     const { state: formState, setField, reset, resetKeep } = useForm(transactionFormInitalState);
 
@@ -254,6 +257,10 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
         (params: any) => getGroupMembers({ ...params, groupId }),
         [groupId]
     );
+
+    const handleManual = () => {
+        setIsManual(true);
+    };
 
     // ── Shared field helpers ─────────────────────────────────────────────────
 
@@ -593,26 +600,29 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
     // ── JSX ──────────────────────────────────────────────────────────────────
 
     return (
-        <form
-            className="flex flex-col h-full w-full max-w-md mx-auto bg-black rounded-3xl shadow-xl"
-        >
-            <input type="hidden" name="type" value={type} />
-            <input type="hidden" name="repeat" value={String(repeat)} />
+        isManual
+            ? <form
+                className="flex flex-col h-full w-full max-w-md mx-auto bg-black rounded-3xl shadow-xl"
+            >
+                <input type="hidden" name="type" value={type} />
+                <input type="hidden" name="repeat" value={String(repeat)} />
 
-            {/* Scrollable body */}
-            <div className="flex-1 overflow-y-auto pt-4 space-y-6 pb-24">
-                {openGroup ? renderGroupSplitPanel() : renderMainForm()}
-            </div>
+                {/* Scrollable body */}
+                <div className="flex-1 overflow-y-auto pt-4 space-y-6 pb-24">
+                    {openGroup ? renderGroupSplitPanel() : renderMainForm()}
+                </div>
 
-            {/* Sticky footer */}
-            <div className="border-t border-border p-4 flex flex-col justify-end gap-4 bg-black sticky bottom-0">
-                {errorMessage && (
-                    <div className="flex justify-center">
-                        <p className="text-red-500">{errorMessage}</p>
-                    </div>
-                )}
-                <div className="flex justify-end gap-4">{renderFooterActions()}</div>
-            </div>
-        </form>
+                {/* Sticky footer */}
+                <div className="border-t border-border p-4 flex flex-col justify-end gap-4 bg-black sticky bottom-0">
+                    {errorMessage && (
+                        <div className="flex justify-center">
+                            <p className="text-red-500">{errorMessage}</p>
+                        </div>
+                    )}
+                    <div className="flex justify-end gap-4">{renderFooterActions()}</div>
+                </div>
+            </form>
+            : <ScanWrapper setManual={handleManual} />
+
     );
 }

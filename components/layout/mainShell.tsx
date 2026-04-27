@@ -38,6 +38,8 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
     const [loading, setLoading] = useState<boolean>(false);
     const [showBalance, setShowBalance] = useState<boolean>(userData?.showBalance ?? true);
 
+    const stopCameraRef = useRef<boolean>(false);
+
     const vibrate = useCallback(() => {
         if (typeof navigator !== "undefined" && navigator.vibrate) {
             navigator.vibrate(10);
@@ -46,10 +48,18 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
 
     const toggleTransactionCard = useCallback(() => {
         vibrate();
+        if (openTransactionCard) {
+            // closing → stop camera
+            stopCameraRef.current = true;
+        } else {
+            // opening → reset camera state
+            stopCameraRef.current = false;
+        }
         setOpenTransactionCard(prev => !prev);
     }, [vibrate]);
 
     const closeTransactionCard = useCallback(() => {
+        stopCameraRef.current = true;
         setOpenTransactionCard(false);
     }, []);
 
@@ -60,7 +70,7 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
     const stopLoading = () => {
         setLoading(false);
     };
-    
+
 
 
     useEffect(() => {
@@ -205,6 +215,7 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
 
                                     <TransactionCard
                                         closeFn={toggleTransactionCard}
+                                        stopCameraRef={stopCameraRef}
                                     />
                                 </div>
                             </div>
