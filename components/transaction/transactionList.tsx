@@ -22,22 +22,28 @@ const PAGE_SIZE = 10;
 export default function TransactionList({
     initialMonthlyTotals,
     accounts,
+    initialFilters,
+    initialTransaction,
+    initialCursor
 }: {
     initialMonthlyTotals: MonthSummary[];
     accounts: { id: string; label: string; sub?: string }[];
+    initialFilters?: Partial<ActiveFilters>;
+    initialTransaction: TransactionDataSafeType[];
+    initialCursor: Cursor;
 }) {
 
     const router = useRouter();
 
     const [monthlyTotals, setMonthlyTotals] = useState<MonthSummary[]>(initialMonthlyTotals);
-    const [filters, setFilters] = useState<ActiveFilters>(EMPTY_FILTERS);
+    const [filters, setFilters] = useState<ActiveFilters>({ ...EMPTY_FILTERS, ...initialFilters });
     const [openSheet, setOpenSheet] = useState<TransactionFilterType | null>(null);
     const [, startTotalsTransition] = useTransition();
 
-    const loaderRef = useRef<HTMLDivElement | null>(null);
-
     const [query, setQuery] = useState('');
     const debouncedQuery = useDebounceValue(query, 400);
+
+    const mountCountRef = useRef(0);
 
     const {
         loading,
@@ -52,7 +58,9 @@ export default function TransactionList({
             const ids = new Set(prev.map(c => c.id));
             return [...prev, ...incoming.filter(c => !ids.has(c.id))]
         },
-        extraParams: { filters }
+        extraParams: { filters },
+        initialCursor,
+        initialData: initialTransaction
     });
 
     const totalsMap = useMemo(
@@ -91,13 +99,21 @@ export default function TransactionList({
     };
 
     useEffect(() => {
+        mountCountRef.current += 1;
+        if (mountCountRef.current <= 2) return;
         refetch();
-    }, [filters])
+    }, [filters]);
 
     return (
         <div className="py-4 flex flex-col gap-3">
-            <div className='w-full pl-4 flex justify-start items-center'>
-                <BackArrowButton size={30} href="/dashboard" />
+            <div className="flex pl-4 gap-2 justify-start items-center">
+                <div>
+                    <BackArrowButton href="/dashboard" size={30} />
+                </div>
+                <div className='flex flex-col justify-center items-start'>
+                    <p className='font-semibold tracking-wide'>Transaction History</p>
+                    <p className='text-text-secondary text-xs'>Every move, tracked</p>
+                </div>
             </div>
             <div className="w-full px-4">
                 <SearchInput

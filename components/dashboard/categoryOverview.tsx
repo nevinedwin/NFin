@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useTransition } from 'react';
 import { TopCategory } from '@/actions/overview';
 import DashboardCard from './dashboardCard';
 import { Progress } from '../ui/progress';
@@ -8,8 +8,23 @@ import { Field, FieldLabel } from '../ui/field';
 import CategoryIcon from '../ui/caetgoryIcon';
 import HorizontalLine from '../ui/horizontalLine';
 import ShowBalanceComp from '../ui/showBalance';
+import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
+import { useRouter } from 'next/navigation';
 
 const CategoryOverview = ({ category }: { category: TopCategory[] }) => {
+
+    const router = useRouter();
+
+    const [isPending, startTransition] = useTransition();
+    const { startLoading } = useMainShellContext();
+
+    const handleClick = (id: string) => {
+        startLoading();
+        startTransition(() => {
+            router.push(`/transaction?category=${id}`);
+        });
+    }
+
     return <DashboardCard
         headerContent={
             <div className='w-full h-fit px-4 py-2'>
@@ -25,7 +40,7 @@ const CategoryOverview = ({ category }: { category: TopCategory[] }) => {
                 }
                 {
                     category.length > 0 && category.map((c, i) => (
-                        <div className='space-y-4' key={c.categoryId}>
+                        <div className='space-y-4' key={c.categoryId} onClick={() => handleClick(c.categoryId)}>
                             <div className='w-full flex justify-start items-center gap-4'>
                                 <CategoryIcon name={c.icon ?? 'ArrowRightLeft'} className={`w-5 h-5`} containerClassName="w-6 h-6 flex item-center justify-center" />
                                 <Field className="w-full flex-1 max-w-sm" >
@@ -37,7 +52,7 @@ const CategoryOverview = ({ category }: { category: TopCategory[] }) => {
                                         className="h-[4px] bg-border [&>div]:bg-blue-500" />
                                 </Field>
                                 <div className='w-[30%] flex items-center justify-end text-[16px] font-semibold tracking-wider'>
-                                    <ShowBalanceComp balance={c.amount} mainClass='text-[16px]' subClass='text-[10px] pb-[5px]'/>
+                                    <ShowBalanceComp balance={c.amount} mainClass='text-[16px]' subClass='text-[10px] pb-[5px]' />
                                 </div>
                             </div>
                             {i !== category.length - 1 && <HorizontalLine isBlueLine={false} />}

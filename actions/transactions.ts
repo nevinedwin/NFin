@@ -399,10 +399,10 @@ export async function getTransactions({
         where.categoryId = filters.category;
     }
 
-    if (filters?.dateFilter?.from && filters?.dateFilter?.to) {
+    if (filters?.date?.from && filters?.date?.to) {
         where.date = {
-            gte: new Date(filters.dateFilter.from),
-            lte: new Date(filters.dateFilter.to + "T23:59:59.999Z"),
+            gte: new Date(filters.date.from),
+            lte: new Date(filters.date.to + "T23:59:59.999Z"),
         };
     }
 
@@ -475,10 +475,10 @@ export async function getMonthlyTotals(
     if (filters?.bank) where.accountId = filters.bank;
     if (filters?.type) where.type = filters.type;
     if (filters?.category) where.categoryId = filters.category;
-    if (filters?.dateFilter?.from && filters?.dateFilter?.to) {
+    if (filters?.date?.from && filters?.date?.to) {
         where.date = {
-            gte: new Date(filters.dateFilter.from),
-            lte: new Date(filters.dateFilter.to + "T23:59:59.999Z"),
+            gte: new Date(filters.date.from),
+            lte: new Date(filters.date.to + "T23:59:59.999Z"),
         };
     }
 

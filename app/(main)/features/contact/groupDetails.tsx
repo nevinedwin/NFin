@@ -1,8 +1,11 @@
 import React from 'react'
+import UnderProgress from '@/components/layout/underProgress'
 
 const GroupDetails = () => {
   return (
-    <div>GroupDetails</div>
+    <div>
+      <UnderProgress title='GroupDetails' />
+    </div>
   )
 }
 

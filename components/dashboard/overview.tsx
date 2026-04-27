@@ -1,9 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useTransition } from 'react';
 import DashboardCard from './dashboardCard';
 import { RUPEE_SYMBOL } from '@/lib/constants/constants';
 import { TransactionType } from '@/generated/prisma/client';
+import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
+import { useRouter } from 'next/navigation';
+import { formatDate } from '@/lib/utils/formats';
 
 
 export type OverviewType = {
@@ -19,14 +22,35 @@ type OverViewProps = {
 
 const Overview = ({ overviewData }: OverViewProps) => {
 
+    const router = useRouter();
+
+    const [isPending, startTransition] = useTransition();
+    const { startLoading } = useMainShellContext();
+
     const income = overviewData.find(t => t.id === TransactionType.INCOME.toLowerCase())?.amount || 0;
     const expense = overviewData.find(t => t.id === TransactionType.EXPENSE.toLowerCase())?.amount || 0;
     const isHighExpense = income < expense;
 
+    const handleClick = (overview: OverviewType) => {
+        if (overview.id === "iowe" || overview.id === "owe") return;
+        startLoading();
+        const now = new Date();
+        const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
+        const end = formatDate(now);
+        const dateQuery = `dateFrom=${start}&dateTo=${end}`;
+        let query = `${dateQuery}`;
+
+        if (overview.id === TransactionType.EXPENSE.toLowerCase()) query += `&type=${TransactionType.EXPENSE}`;
+        if (overview.id === TransactionType.INCOME.toLowerCase()) query += `&type=${TransactionType.INCOME}`;
+        startTransition(() => {
+            router.push(`/transaction?${query}`)
+        });
+    };
+
     return (
         <div className='w-full h-full grid grid-cols-2 grid-rows-2 gap-4'>
             {overviewData.map((k: OverviewType, i: number) => (
-                <div key={i} className="bg-surface rounded-xl shadow-sm p-4 flex flex-col justify-center items-start">
+                <div key={i} className="bg-surface rounded-xl shadow-sm p-4 flex flex-col justify-center items-start" onClick={() => handleClick(k)}>
                     <p className='text-[12px] text-slate-400 tracking-wide'>{k.label}</p>
                     <p
                         className={
