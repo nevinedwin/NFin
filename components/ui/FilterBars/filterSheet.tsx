@@ -28,6 +28,7 @@ export type FilterSheetProps<TFilters extends Record<string, unknown>> = {
     panels: FilterPanelConfig<TFilters, any>[];
     onClose: () => void;
     onApply: (patch: Partial<TFilters>) => void;
+    refetch: () => void;
 };
 
 export type DraftAction<TFilters> =
@@ -50,7 +51,8 @@ const FilterSheet = <TFilters extends Record<string, unknown>,>({
     filters,
     panels,
     onClose,
-    onApply
+    onApply,
+    refetch
 }: FilterSheetProps<TFilters>) => {
 
     const [visible, setVisible] = useState(false);
@@ -77,6 +79,7 @@ const FilterSheet = <TFilters extends Record<string, unknown>,>({
 
         onApply({ [activeKey]: draft[activeKey] } as Partial<TFilters>);
         onClose();
+        refetch();
     }, [activeKey, draft, onApply, onClose]);
 
     const handleCancel = useCallback(() => {
@@ -106,7 +109,6 @@ const FilterSheet = <TFilters extends Record<string, unknown>,>({
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
     }, [onClose]);
-
 
     if (!visible || !activePanel) return null;
 

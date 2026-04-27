@@ -40,7 +40,7 @@ export const EMPTY_FILTERS: ActiveFilters = {
     type: null
 };
 
-export default function CategoryPageClient({ parentCategories }: any) {
+export default function CategoryPageClient({ parentCategories, initialCategories, initialCursor }: any) {
 
     const router = useRouter();
 
@@ -66,7 +66,9 @@ export default function CategoryPageClient({ parentCategories }: any) {
             const ids = new Set(prev.map(c => c.id));
             return [...prev, ...incoming.filter(c => !ids.has(c.id))]
         },
-        extraParams: { filters }
+        extraParams: { filters },
+        initialCursor,
+        initialData: initialCategories
     });
 
 
@@ -103,12 +105,6 @@ export default function CategoryPageClient({ parentCategories }: any) {
         setFilters(prev => ({ ...prev, [key]: null }));
     };
 
-
-    useEffect(() => {
-        if (!open) {
-            refetch();
-        }
-    }, [open, filters]);
 
     return (
         <div className="w-full h-full flex flex-col mx-auto px-4 py-6 gap-6">
@@ -209,6 +205,7 @@ export default function CategoryPageClient({ parentCategories }: any) {
                 panels={getCategoryPanel()}
                 onClose={() => setOpenSheet(null)}
                 onApply={(patch) => setFilters(prev => ({ ...prev, ...patch }))}
+                refetch={refetch}
             />
 
         </div>

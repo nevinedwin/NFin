@@ -43,8 +43,6 @@ export default function TransactionList({
     const [query, setQuery] = useState('');
     const debouncedQuery = useDebounceValue(query, 400);
 
-    const mountCountRef = useRef(0);
-
     const {
         loading,
         data: transactions,
@@ -97,12 +95,6 @@ export default function TransactionList({
     const clearFilter = (key: TransactionFilterType) => {
         setFilters(prev => ({ ...prev, [key]: null }));
     };
-
-    useEffect(() => {
-        mountCountRef.current += 1;
-        if (mountCountRef.current <= 2) return;
-        refetch();
-    }, [filters]);
 
     return (
         <div className="py-4 flex flex-col gap-3">
@@ -183,6 +175,7 @@ export default function TransactionList({
                 panels={getTransactionPanel({ account: accounts })}
                 onClose={() => setOpenSheet(null)}
                 onApply={(patch) => setFilters(prev => ({ ...prev, ...patch }))}
+                refetch={refetch}
             />
         </div>
     );

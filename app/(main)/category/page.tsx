@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import CategoryPageClient from "./categoryUI";
 import { getCurrentUser } from "@/auth/currentUser";
 import { redirect } from "next/navigation";
+import { getCategories } from "@/actions/category";
 
 export default async function CategoryPage() {
 
@@ -22,10 +23,14 @@ export default async function CategoryPage() {
     name: c.name
   }));
 
+  const initialCategories = await getCategories({ cursor: null, take: 10 });
+
   return (
     <CategoryPageClient
       // categories={rootCategories}
       parentCategories={parentCategories}
+      initialCategories={initialCategories.data}
+      initialCursor={initialCategories.nextCursor}
     />
   );
 }
