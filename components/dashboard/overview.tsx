@@ -48,7 +48,7 @@ const Overview = ({ overviewData }: OverViewProps) => {
     };
 
     return (
-        <div className='w-full h-full grid grid-cols-2 grid-rows-2 gap-4'>
+        <div className='w-full h-fit grid grid-cols-2 grid-rows-2 gap-4'>
             {overviewData.map((k: OverviewType, i: number) => (
                 <div key={i} className="bg-surface rounded-xl shadow-sm p-4 flex flex-col justify-center items-start" onClick={() => handleClick(k)}>
                     <p className='text-[12px] text-slate-400 tracking-wide'>{k.label}</p>

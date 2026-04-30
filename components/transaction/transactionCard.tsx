@@ -55,7 +55,7 @@ type StepDef = {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const COLOR_BUTTON: Record<TransactionType, ButtonColors> = {
+export const COLOR_BUTTON: Record<TransactionType, ButtonColors> = {
     EXPENSE: "red",
     INCOME: "green",
     TRANSFER: "blue",
@@ -187,6 +187,13 @@ function AutoSizeAmountInput({
                         onEnter?.(); // 👈 call parent handler
                     }
                 }}
+                onBlur={() => {
+                    // 👈 iPhone Done button triggers blur
+                    if (value && Number(value) > 0) {
+                        onEnter?.();
+                    }
+                }}
+                enterKeyHint="done"
                 placeholder="0"
                 inputMode="decimal"
                 required
@@ -612,25 +619,25 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                         requiredFields: ["groupId"],
                         autoAdvance: true,
                         render: () => (
-                            <div className="px-4">
-                                <p className="text-sm text-slate-500 mb-3">Select group</p>
-                                <SearchSelect
-                                    key={`group-${type}`}
-                                    method={getGroups}
-                                    mapOption={accountOption}
-                                    name="groupId"
-                                    label="Group"
-                                    placeholder="Search group..."
-                                    ref={groupRef}
-                                    onSelect={() => groupRef.current?.focus?.()}
-                                    onChange={(val, label) => {
-                                        handleFieldChange("groupId", val);
-                                        handleFieldChange("group", label);
-                                        goNextAuto();
-                                    }}
-                                    value={groupId}
-                                    displayValue={group}
-                                />
+                            <div className="px-4 h-full w-full flex flex-col gap-4 pt-4">
+                                <p className="text-[17px] text-slate-500 self-center">
+                                    Select Group
+                                </p>
+                                <div className="flex-1 min-h-0 w-full">
+                                    <TransactionOptions
+                                        key={`groups-${type}`}
+                                        method={getGroups}
+                                        mapOption={accountOption}
+                                        name="groupId"
+                                        onSelect={() => groupRef.current?.focus?.()}
+                                        onChange={(val, label) => {
+                                            handleFieldChange("groupId", val);
+                                            handleFieldChange("group", label);
+                                            goNextAuto();
+                                        }}
+                                        value={groupId}
+                                    />
+                                </div>
                             </div>
                         ),
                     },
@@ -713,7 +720,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
     );
 
     const currentStep = visibleSteps[stepIndex];
-    const isLastStep = stepIndex === visibleSteps.length - 1;
+    const isLastStep = visibleSteps.length !== 2 && stepIndex === visibleSteps.length - 1;
 
     // ── Step validation ──────────────────────────────────────────────────────
 

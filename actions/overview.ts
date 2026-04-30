@@ -51,27 +51,38 @@ export async function getOverView() {
 
     const result = [];
 
-    cashFlow.forEach((r) => {
-        result.push({
-            id: r.type.toLowerCase(),
-            amount: r._sum.amount?.toNumber(),
-            label: r.type === "EXPENSE" ? 'Monthly Spend' : 'Monthly Income',
-            subHeading: `${MONTH[now.getMonth()]} ${now.getFullYear()}`
-        });
+    const map = new Map(
+        cashFlow.map(c => [c.type.toLowerCase(), c._sum.amount?.toNumber() || 0])
+    );
+
+    const monthLabel = `${MONTH[now.getMonth()]} ${now.getFullYear()}`;
+
+    result.push({
+        id: 'expense',
+        amount: map.get('expense') ?? 0,
+        label: 'Monthly Expense',
+        subHeading: monthLabel
+    });
+
+    result.push({
+        id: 'income',
+        amount: map.get('income') ?? 0,
+        label: 'Monthly Income',
+        subHeading: monthLabel
     });
 
     result.push({
         id: 'iowe',
         amount: iOwe._sum.netAmount?.toNumber() || 0,
         label: 'You Owe',
-        subHeading: `${iOwe._count._all} contacts`
+        subHeading: `${iOwe._count._all || 0} contacts`
     });
 
     result.push({
         id: 'owe',
         amount: owedToMe._sum.netAmount?.toNumber() || 0,
         label: 'You are Owed',
-        subHeading: `${owedToMe._count._all} contacts`
+        subHeading: `${owedToMe._count._all || 0} contacts`
     });
 
     return { data: result, success: true };

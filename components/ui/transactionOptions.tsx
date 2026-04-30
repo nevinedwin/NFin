@@ -6,6 +6,8 @@ import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { Loader2 } from 'lucide-react';
 import SearchInput from '@/components/ui/searchInput';
 import { TransactionType } from '@/generated/prisma/client';
+import { COLOR_BUTTON } from '../transaction/transactionCard';
+import { colorPallet } from './typeButton';
 
 const PAGE_SIZE = 10;
 
@@ -71,7 +73,6 @@ const TransactionOptions = ({
         options = data.map(mapOption);
     };
 
-
     return (
         <div className='w-full h-full flex flex-col'>
             <div className='flex-shrink-0'>
@@ -82,7 +83,7 @@ const TransactionOptions = ({
                     onChange={setQuery}
                 />
             </div>
-            <div className=" flex-1 min-h-0 overflow-y-auto pb-11 pt-6 px-4 grid grid-cols-2 gap-4 place-content-center">
+            <div className=" flex-1 min-h-0 overflow-y-auto pb-11 pt-6 px-4 grid grid-cols-2 gap-4   place-items-center content-start">
                 {options.map((opt, index) => {
                     const isLastOddItem =
                         options.length % 2 === 1 && index === options.length - 1;
@@ -101,7 +102,7 @@ const TransactionOptions = ({
                             className={`
                                 h-20 w-full max-w-[140px]
                                 rounded-xl flex justify-center items-center text-white cursor-pointer
-                                ${id === opt.value ? 'bg-blue-500' : 'bg-border'}
+                                ${id === opt.value ? colorPallet[COLOR_BUTTON[type as TransactionType]] : 'bg-border'}
                                 ${isLastOddItem ? 'col-span-2 justify-self-center' : 'justify-self-center'}
                             `}
                         >
