@@ -46,9 +46,9 @@ const Header = ({ loading: pageLoading }: { loading: boolean }) => {
           {/* <h1 className="text-lg font-semibold">NFin</h1> */}
         </div>
         <div className="flex items-center justify-center gap-3">
-          <button className="p-2 rounded-lg transition" onClick={openScanner} aria-label="Scan Qr">
+          {/* <button className="p-2 rounded-lg transition" onClick={openScanner} aria-label="Scan Qr">
             <ScanQrCode size={20} />
-          </button>
+          </button> */}
           <Tooltip label="Settings">
             <button className="p-2 rounded-lg transition" aria-label="Settings">
               <Settings size={20} />

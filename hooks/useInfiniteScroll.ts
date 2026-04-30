@@ -46,7 +46,7 @@ const useInfiniteScroll = <T, D>({
 
     const hasSSRData = Boolean(initialData?.length);
 
-    const [loading, setLoading] = useState(!!hasSSRData);
+    const [loading, setLoading] = useState(!hasSSRData);
     const [error, setError] = useState(false);
     const [data, setData] = useState<D[]>(() => initialData ?? []);
     const [hasMore, setHasMore] = useState(true);
