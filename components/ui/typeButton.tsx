@@ -24,9 +24,10 @@ const TypeButton = ({ active, onClick, label, color }: TypeButtonProp) => {
             onClick={onClick}
             type="button"
             className={`
-                h-8 w-[78px]
+                h-20 w-32
                 rounded-lg text-sm font-medium
                 transition-all duration-200 ease-out
+                bg-border
                 ${colors[color]}
                 
                 /* depth */

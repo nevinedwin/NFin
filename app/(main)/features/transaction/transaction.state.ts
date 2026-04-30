@@ -3,7 +3,7 @@ import { TransactionFormType } from "./transaction.types";
 
 
 export const transactionFormInitalState: TransactionFormType = {
-    type: TransactionType.EXPENSE,
+    type: '',
     repeat: false,
     amount: '',
     accountId: '',

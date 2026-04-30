@@ -37,7 +37,6 @@ type Props<T, D> = {
   onChange?: (val: string, label: string) => void;
   onSelect?: () => void;
   value?: string;
-  key: string;
   displayValue: string;
 };
 
@@ -54,7 +53,6 @@ const SearchSelect = forwardRef<SearchSelectRef, Props<any, any>>(({
   onChange,
   onSelect,
   value = '',
-  key = ''
 }, ref) => {
   const [open, setOpen] = useState(false);
   const [id, setId] = useState(value);
@@ -113,7 +111,7 @@ const SearchSelect = forwardRef<SearchSelectRef, Props<any, any>>(({
   }, []);
 
   return (
-    <div ref={wrapperRef} className="relative w-full" key={key}>
+    <div ref={wrapperRef} className="relative w-full">
 
       {label && (
         <label className="block text-sm mb-1 text-slate-400">
