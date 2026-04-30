@@ -134,9 +134,11 @@ function StepDots({ total, current }: { total: number; current: number }) {
 function AutoSizeAmountInput({
     value,
     onChange,
+    onEnter
 }: {
     value: string | number;
     onChange: (val: string) => void;
+    onEnter?: () => void;
 }) {
     const mirrorRef = useRef<HTMLSpanElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -180,6 +182,10 @@ function AutoSizeAmountInput({
                     const digits = String(value).replace(/\D/g, "");
                     const isDigit = /^\d$/.test(e.key);
                     if (isDigit && digits.length >= MAX_DIGITS) e.preventDefault();
+                    if (e.key === "Enter" && value && Number(value) > 0) {
+                        e.preventDefault();
+                        onEnter?.(); // 👈 call parent handler
+                    }
                 }}
                 placeholder="0"
                 inputMode="decimal"
@@ -337,6 +343,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                         <AutoSizeAmountInput
                             value={amount}
                             onChange={(val) => handleFieldChange("amount", val)}
+                            onEnter={goNext}
                         />
                     </div>
                 </div>
