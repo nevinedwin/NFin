@@ -18,10 +18,9 @@ export type OverviewType = {
 
 type OverViewProps = {
     overviewData: OverviewType[],
-    now: string | undefined;
 };
 
-const Overview = ({ overviewData, now }: OverViewProps) => {
+const Overview = ({ overviewData }: OverViewProps) => {
 
     const router = useRouter();
 
@@ -32,14 +31,13 @@ const Overview = ({ overviewData, now }: OverViewProps) => {
     const expense = overviewData.find(t => t.id === TransactionType.EXPENSE.toLowerCase())?.amount || 0;
     const isHighExpense = income < expense;
 
+
     const handleClick = (overview: OverviewType) => {
         if (overview.id === "iowe" || overview.id === "owe") return;
         startLoading();
 
-        console.log(now);
-        
         // Use current date on client when server doesn't provide it
-        const nowDate = now ? new Date(now) : new Date();
+        const nowDate = new Date();
         const start = formatDate(new Date(nowDate.getFullYear(), nowDate.getMonth(), 1));
         const end = formatDate(nowDate);
         const dateQuery = `dateFrom=${start}&dateTo=${end}`;

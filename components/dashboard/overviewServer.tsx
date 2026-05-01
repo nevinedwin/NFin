@@ -8,11 +8,7 @@ const OverviewServer = async () => {
 
     const { data }: any = await getOverView();
     
-    // Pass undefined - client will use its own date
-    // This avoids server/client date mismatch
-    const now = undefined;
-
-    return <Overview overviewData={data} now={now} />
+    return <Overview overviewData={data} />
 }
 
 export default OverviewServer;
