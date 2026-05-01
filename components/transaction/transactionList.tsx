@@ -24,13 +24,15 @@ export default function TransactionList({
     accounts,
     initialFilters,
     initialTransaction,
-    initialCursor
+    initialCursor,
+    now
 }: {
     initialMonthlyTotals: MonthSummary[];
     accounts: { id: string; label: string; sub?: string }[];
     initialFilters?: Partial<ActiveFilters>;
     initialTransaction: TransactionDataSafeType[];
     initialCursor: Cursor;
+    now: string;
 }) {
 
     const router = useRouter();
@@ -172,7 +174,7 @@ export default function TransactionList({
                 open={!!openSheet}
                 activeKey={openSheet}
                 filters={filters}
-                panels={getTransactionPanel({ account: accounts })}
+                panels={getTransactionPanel({ account: accounts, now})}
                 onClose={() => setOpenSheet(null)}
                 onApply={(patch) => setFilters(prev => ({ ...prev, ...patch }))}
                 refetch={refetch}

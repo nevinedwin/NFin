@@ -14,6 +14,7 @@ export type FilterButtonType = { key: TransactionFilterType; label: string; icon
 
 type GetPanelProps = {
     account: { id: string; label: string; sub?: string }[]
+    now: string;
 }
 
 export const TYPE_OPTIONS: RadioOption[] = [
@@ -38,7 +39,7 @@ export function filterLabel(key: TransactionFilterType, filters: ActiveFilters):
 };
 
 
-export const getTransactionPanel = ({ account }: GetPanelProps) => {
+export const getTransactionPanel = ({ account, now }: GetPanelProps) => {
     const PANELS: FilterPanelConfig<ActiveFilters>[] = [
         {
             key: "bank",
@@ -83,6 +84,7 @@ export const getTransactionPanel = ({ account }: GetPanelProps) => {
                 <DateFilterPanel
                     value={value as DateFilterValue | null}
                     onChange={onChange as (v: DateFilterValue) => void}
+                    now={now}
                 />
             ),
         },

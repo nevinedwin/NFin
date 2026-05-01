@@ -21,7 +21,7 @@ export type DateFilterValue = {
     to: string;
 };
 
-const DateFilterPanel = ({ value, onChange }: { value: DateFilterValue | null, onChange: (v: DateFilterValue) => void }) => {
+const DateFilterPanel = ({ value, onChange, now }: { value: DateFilterValue | null; now: string; onChange: (v: DateFilterValue) => void }) => {
 
     const [preset, setPreset] = useState<DateFilterType | null>(value?.preset ?? null);
     const [from, setFrom] = useState(value?.from ?? "");
@@ -29,7 +29,7 @@ const DateFilterPanel = ({ value, onChange }: { value: DateFilterValue | null, o
 
     useEffect(() => {
         if (!preset || preset === "custom") return;
-        const now = new Date();
+        const parsedNow = new Date(now);
         let f = new Date();
 
         switch (preset) {
@@ -42,16 +42,16 @@ const DateFilterPanel = ({ value, onChange }: { value: DateFilterValue | null, o
                 f.setHours(0, 0, 0, 0);
                 break;
             case "month":
-                f = new Date(now.getFullYear(), now.getMonth(), 1);
+                f = new Date(parsedNow.getFullYear(), parsedNow.getMonth(), 1);
                 break;
             case "year":
-                f = new Date(now.getFullYear(), 0, 1);
+                f = new Date(parsedNow.getFullYear(), 0, 1);
                 break;
         }
 
         
         const newFrom = formatDateIST(f);
-        const newTo = formatDateIST(now);
+        const newTo = formatDateIST(parsedNow);
         setFrom(newFrom);
         setTo(newTo);
         onChange({ preset, from: newFrom, to: newTo });

@@ -29,6 +29,8 @@ const Transaction = async ({ searchParams }: { searchParams: Record<string, stri
     getTransactions({ cursor: null, filters: initialFilters, take: 10, search: '' })
   ]);
 
+  const now = new Date().toISOString();
+
   return (
     <TransactionList
       initialMonthlyTotals={monthlyTotals}
@@ -40,6 +42,7 @@ const Transaction = async ({ searchParams }: { searchParams: Record<string, stri
       initialFilters={initialFilters}
       initialTransaction={transactions.data}
       initialCursor={transactions.nextCursor}
+      now={now}
     />
   )
 }
