@@ -29,29 +29,46 @@ const DateFilterPanel = ({ value, onChange, now }: { value: DateFilterValue | nu
 
     useEffect(() => {
         if (!preset || preset === "custom") return;
-        const parsedNow = new Date(now);
-        let f = new Date(now);
+
+        const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+
+        // Work entirely in UTC ms, but representing IST wall clock
+        const nowMs = new Date(now).getTime(); // UTC ms
+        const nowIST = new Date(nowMs + IST_OFFSET_MS); // shifted → use UTC getters for IST values
+
+        const istYear = nowIST.getUTCFullYear();
+        const istMonth = nowIST.getUTCMonth();
+        const istDay = nowIST.getUTCDate();
+        const istDayOfWeek = nowIST.getUTCDay();
+
+        let fromMs: number;
 
         switch (preset) {
             case "today":
-                f.setHours(0, 0, 0, 0);
+                // IST midnight today = UTC midnight of shifted date
+                fromMs = Date.UTC(istYear, istMonth, istDay) - IST_OFFSET_MS;
                 break;
             case "week":
-                const day = f.getDay();
-                f.setDate(f.getDate() - day + (day === 0 ? -6 : 1));
-                f.setHours(0, 0, 0, 0);
+                // Monday of current IST week
+                const daysFromMonday = istDayOfWeek === 0 ? 6 : istDayOfWeek - 1;
+                fromMs = Date.UTC(istYear, istMonth, istDay - daysFromMonday) - IST_OFFSET_MS;
                 break;
             case "month":
-                f = new Date(parsedNow.getFullYear(), parsedNow.getMonth(), 1);
+                // 1st of current IST month
+                fromMs = Date.UTC(istYear, istMonth, 1) - IST_OFFSET_MS;
                 break;
             case "year":
-                f = new Date(parsedNow.getFullYear(), 0, 1);
+                // Jan 1 of current IST year
+                fromMs = Date.UTC(istYear, 0, 1) - IST_OFFSET_MS;
                 break;
+            default:
+                return;
         }
 
-        
-        const newFrom = formatDateIST(f);
-        const newTo = formatDateIST(parsedNow);
+        // Format both as IST date strings
+        const newFrom = formatDateIST(new Date(fromMs + IST_OFFSET_MS));
+        const newTo = formatDateIST(nowIST); // nowIST already shifted
+
         setFrom(newFrom);
         setTo(newTo);
         onChange({ preset, from: newFrom, to: newTo });

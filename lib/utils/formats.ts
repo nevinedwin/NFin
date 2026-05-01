@@ -69,12 +69,6 @@ export const balanceFormating = (value: number): [string, string] => {
   return [int, dec];
 };
 
-export const formatDateIST = (date: Date) => {
-  return date.toLocaleDateString("en-CA", {
-    timeZone: "Asia/Kolkata",
-  }); // YYYY-MM-DD
-};
-
 
 export const formatDate = (date: Date) => {
   return date.toDateString().split("T")[0];
@@ -109,3 +103,18 @@ export const getIndianDate = (date: Date) => {
   });
 }
 
+const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+
+// Get an IST "wall clock" date object (use UTC methods on it)
+export function toISTDate(utcMs: number): Date {
+  return new Date(utcMs + IST_OFFSET_MS);
+}
+
+// Format as YYYY-MM-DD using IST wall clock
+export function formatDateIST(date: Date): string {
+  // date here should already be IST-shifted (use UTC getters)
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(date.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}

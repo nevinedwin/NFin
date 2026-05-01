@@ -403,11 +403,13 @@ export async function getTransactions({
 
         const IST_OFFSET = 5.5 * 60 * 60 * 1000;
 
-        const from = new Date(filters.date.from);
-        const to = new Date(filters.date.to);
+        // Parse as IST midnight → convert to UTC
+        const fromUTC = new Date(new Date(filters.date.from).getTime() - IST_OFFSET);
 
-        const fromUTC = from.toISOString();
-        const toUTC = new Date(to.getTime() + (24 * 60 * 60 * 1000) - 1).toISOString();
+        // End of IST day → next IST midnight minus 1ms → convert to UTC  
+        const toUTC = new Date(
+            new Date(filters.date.to).getTime() - IST_OFFSET + (24 * 60 * 60 * 1000) - 1
+        );
 
         where.date = {
             gte: fromUTC,
