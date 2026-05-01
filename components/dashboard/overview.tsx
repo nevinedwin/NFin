@@ -35,6 +35,8 @@ const Overview = ({ overviewData, now }: OverViewProps) => {
     const handleClick = (overview: OverviewType) => {
         if (overview.id === "iowe" || overview.id === "owe") return;
         startLoading();
+
+        console.log(now);
         
         // Use current date on client when server doesn't provide it
         const nowDate = now ? new Date(now) : new Date();
