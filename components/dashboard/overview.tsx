@@ -35,9 +35,11 @@ const Overview = ({ overviewData, now }: OverViewProps) => {
     const handleClick = (overview: OverviewType) => {
         if (overview.id === "iowe" || overview.id === "owe") return;
         startLoading();
-        const parsedNow = new Date(now);
-        const start = formatDate(new Date(parsedNow.getFullYear(), parsedNow.getMonth(), 1));
-        const end = formatDate(parsedNow);
+        
+        // Use current date on client when server doesn't provide it
+        const nowDate = now ? new Date(now) : new Date();
+        const start = formatDate(new Date(nowDate.getFullYear(), nowDate.getMonth(), 1));
+        const end = formatDate(nowDate);
         const dateQuery = `dateFrom=${start}&dateTo=${end}`;
         let query = `${dateQuery}`;
 

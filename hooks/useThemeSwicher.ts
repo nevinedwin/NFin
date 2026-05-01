@@ -6,45 +6,34 @@ type ThemeMode = 'light' | 'dark';
 const useThemeSwitcher = (): [ThemeMode, React.Dispatch<React.SetStateAction<ThemeMode>>] => {
 
     const preferDarkMediaQuery = "(prefer-color-scheme: dark)";
-    const [mode, setMode] = React.useState<ThemeMode>((typeof window !== 'undefined' && (localStorage.getItem('theme') as ThemeMode)) || 'light');
+    
+    // Start with a neutral default - hydration will match
+    const [mode, setMode] = React.useState<ThemeMode>('light');
+    const [hydrated, setHydrated] = React.useState(false);
 
     React.useEffect(() => {
-        const mediaQuery = window.matchMedia(preferDarkMediaQuery);
-        const userPref = window.localStorage.getItem("theme");
-
-        const handleChange = () => {
-            let check: ThemeMode;
-            if (userPref) {
-                check = userPref === 'dark' ? 'dark' : 'light';
-            } else {
-                check = mediaQuery.matches ? 'dark' : 'light';
-            }
-
-            setMode(check);
-
-            if (check == 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        };
-
-        handleChange();
-
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
-    }, []);
+        // Only access localStorage after hydration
+        const stored = localStorage.getItem('theme') as ThemeMode;
+        if (stored) {
+            setMode(stored);
+        } else {
+            const prefersDark = window.matchMedia(preferDarkMediaQuery).matches;
+            setMode(prefersDark ? 'dark' : 'light');
+        }
+        setHydrated(true);
+    }, [preferDarkMediaQuery]);
 
     React.useEffect(() => {
+        if (!hydrated) return;
+        
         if (mode === 'dark') {
             window.localStorage.setItem('theme', 'dark');
             document.documentElement.classList.add('dark');
-        }
-        if (mode === 'light') {
+        } else {
             window.localStorage.setItem('theme', 'light');
             document.documentElement.classList.remove('dark');
         }
-    }, [mode]);
+    }, [mode, hydrated]);
 
     return [mode, setMode];
 }
