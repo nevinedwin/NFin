@@ -7,6 +7,7 @@ import Overview, { OverviewType } from './overview';
 const OverviewServer = async () => {
 
     const { data }: any = await getOverView();
+    
     const now = new Date().toISOString();
 
     return <Overview overviewData={data} now={now} />
