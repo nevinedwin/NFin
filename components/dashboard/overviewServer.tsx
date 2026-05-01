@@ -6,8 +6,7 @@ import Overview, { OverviewType } from './overview';
 
 const OverviewServer = async () => {
 
-    // const { data }: any = await getOverView();
-    const data: any = [];
+    const { data }: any = await getOverView();
 
     return <Overview overviewData={data} />
 }
