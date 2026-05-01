@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/auth/currentUser";
 import { Prisma } from "@/generated/prisma/client";
 import { MONTH } from "@/lib/constants/constants";
 import { prisma } from "@/lib/prisma";
+import { getMonthRangeUTC } from "@/lib/utils/formats";
 
 export type TopCategory = {
     categoryId: string;
@@ -17,8 +18,17 @@ export async function getOverView() {
     if (!user) return { data: [], nextCursor: null };
 
     const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    // Step 1: get IST parts
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    // Step 2: create IST boundaries
+    const startIST = new Date(year, month, 1, 0, 0, 0, 0);
+    const endIST = new Date(year, month + 1, 1, 0, 0, 0, 0);
+
+    const startUTC = startIST.toISOString();
+    const endUTC = endIST.toISOString();
 
     const [cashFlow, owedToMe, iOwe] = await Promise.all([
         prisma.transaction.groupBy({
@@ -26,7 +36,7 @@ export async function getOverView() {
             where: {
                 userId: user.id,
                 isDeleted: false,
-                date: { gte: start, lt: end },
+                date: { gte: startUTC, lt: endUTC },
                 type: { in: ['INCOME', 'EXPENSE'] }
             },
             _sum: { amount: true }
@@ -55,7 +65,7 @@ export async function getOverView() {
         cashFlow.map(c => [c.type.toLowerCase(), c._sum.amount?.toNumber() || 0])
     );
 
-    const monthLabel = `${MONTH[now.getMonth()]} ${now.getFullYear()}`;
+    const monthLabel = `${MONTH[startIST.getMonth()]} ${startIST.getFullYear()}`;
 
     result.push({
         id: 'expense',

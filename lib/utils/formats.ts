@@ -69,26 +69,32 @@ export const balanceFormating = (value: number): [string, string] => {
   return [int, dec];
 };
 
+export const formatDateIST = (date: Date) => {
+  return date.toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata",
+  }); // YYYY-MM-DD
+};
+
 
 export const formatDate = (date: Date) => {
   return date.toDateString().split("T")[0];
 };
 
 
-export function getISTDateRange(dateStr: string, end = false) {
-  const d = new Date(dateStr);
+export const formateUTCDate = (date: Date) => {
+  return date.toISOString();
+}
 
-  const ist = new Date(
-    d.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
-  );
+const IST_OFFSET = 5.5 * 60 * 60 * 1000;
 
-  if (end) {
-    ist.setHours(23, 59, 59, 999);
-  } else {
-    ist.setHours(0, 0, 0, 0);
-  }
+export function getMonthRangeUTC(date = new Date()) {
+  const startLocal = new Date(date.getFullYear(), date.getMonth(), 1);
+  const endLocal = new Date(date.getFullYear(), date.getMonth() + 1, 1);
 
-  return ist;
+  return {
+    startUTC: new Date(startLocal.getTime() - IST_OFFSET),
+    endUTC: new Date(endLocal.getTime() - IST_OFFSET),
+  };
 }
 
 export const getIndianDateTime = (date: Date) => {

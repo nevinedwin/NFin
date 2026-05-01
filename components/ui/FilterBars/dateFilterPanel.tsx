@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import RadioListStatic from '../radioListStatic';
-import { formatDate } from '@/lib/utils/formats';
+import { formatDate, formatDateIST } from '@/lib/utils/formats';
 
 
 export type DateFilterType = "today" | "week" | "month" | "year" | "custom";
@@ -50,8 +50,8 @@ const DateFilterPanel = ({ value, onChange }: { value: DateFilterValue | null, o
         }
 
         
-        const newFrom = formatDate(f);
-        const newTo = formatDate(now);
+        const newFrom = formatDateIST(f);
+        const newTo = formatDateIST(now);
         setFrom(newFrom);
         setTo(newTo);
         onChange({ preset, from: newFrom, to: newTo });

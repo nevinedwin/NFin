@@ -406,14 +406,14 @@ export async function getTransactions({
         const from = new Date(filters.date.from);
         const to = new Date(filters.date.to);
 
-        // Convert "IST midnight" → UTC
-        const fromUTC = new Date(from.getTime() - IST_OFFSET);
-        const toUTC = new Date(to.getTime() - IST_OFFSET + (24 * 60 * 60 * 1000) - 1);
+        const fromUTC = from.toISOString();
+        const toUTC = new Date(to.getTime() + (24 * 60 * 60 * 1000) - 1).toISOString();
 
         where.date = {
             gte: fromUTC,
             lte: toUTC,
         };
+
     }
 
     const transactions = await prisma.transaction.findMany({
