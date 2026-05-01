@@ -16,10 +16,11 @@ import DynamicIcon from "@/components/iconPicker/dynamicIcon";
 type Props = {
     parentCategories: any[];
     onClose: () => void;
-    categoryFormState?: CategoryFormType
+    categoryFormState?: CategoryFormType;
+    refetch: () => void;
 };
 
-export default function CategoryForm({ parentCategories, onClose, categoryFormState }: Props) {
+export default function CategoryForm({ parentCategories, onClose, categoryFormState, refetch }: Props) {
 
     const router = useRouter();
 
@@ -57,6 +58,7 @@ export default function CategoryForm({ parentCategories, onClose, categoryFormSt
         reset();
         onClose();
         setLoading(false);
+        refetch();
         router.refresh();
     };
 

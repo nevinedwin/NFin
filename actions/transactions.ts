@@ -400,9 +400,14 @@ export async function getTransactions({
     }
 
     if (filters?.date?.from && filters?.date?.to) {
+
+        const from = new Date(filters.date.from);
+        const to = new Date(filters.date.to);
+
+        to.setHours(23, 59, 59, 999);
         where.date = {
-            gte: new Date(filters.date.from),
-            lte: new Date(filters.date.to + "T23:59:59.999Z"),
+            gte: new Date(from),
+            lte: new Date(to),
         };
     }
 

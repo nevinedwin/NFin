@@ -53,7 +53,8 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
     const {
         loading,
         data: contacts,
-        scrollElementRef
+        scrollElementRef,
+        refetch
     } = useInfiniteScroll<Cursor, Contact>({
         query: debouncedSearch,
         action: getContacts,
@@ -129,8 +130,8 @@ const CreateEntitySheet = ({ open, type, onClose }: Props) => {
                 setGroupName("");
                 setSelected([]);
             }
-
             onClose();
+            refetch();
         });
     };
 

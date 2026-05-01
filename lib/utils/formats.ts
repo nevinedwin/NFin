@@ -71,5 +71,35 @@ export const balanceFormating = (value: number): [string, string] => {
 
 
 export const formatDate = (date: Date) => {
-  return date.toISOString().split("T")[0];
+  return date.toDateString().split("T")[0];
 };
+
+
+export function getISTDateRange(dateStr: string, end = false) {
+  const d = new Date(dateStr);
+
+  const ist = new Date(
+    d.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
+
+  if (end) {
+    ist.setHours(23, 59, 59, 999);
+  } else {
+    ist.setHours(0, 0, 0, 0);
+  }
+
+  return ist;
+}
+
+export const getIndianDateTime = (date: Date) => {
+  return new Date(date).toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata"
+  });
+}
+
+export const getIndianDate = (date: Date) => {
+  return new Date(date).toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata"
+  });
+}
+

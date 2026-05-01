@@ -34,10 +34,9 @@ const DateFilterPanel = ({ value, onChange }: { value: DateFilterValue | null, o
 
         switch (preset) {
             case "today":
-                f = new Date(now); f.setHours(0, 0, 0, 0);
+                f.setHours(0, 0, 0, 0);
                 break;
             case "week":
-                f = new Date(now);
                 const day = f.getDay();
                 f.setDate(f.getDate() - day + (day === 0 ? -6 : 1));
                 f.setHours(0, 0, 0, 0);
@@ -50,6 +49,7 @@ const DateFilterPanel = ({ value, onChange }: { value: DateFilterValue | null, o
                 break;
         }
 
+        
         const newFrom = formatDate(f);
         const newTo = formatDate(now);
         setFrom(newFrom);

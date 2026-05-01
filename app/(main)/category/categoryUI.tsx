@@ -192,6 +192,7 @@ export default function CategoryPageClient({ parentCategories, initialCategories
                                 parentCategories={parentCategories}
                                 categoryFormState={editingCategory}
                                 onClose={() => setOpen(false)}
+                                refetch={refetch}
                             />
                         </div>
                     </div>
