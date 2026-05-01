@@ -26,7 +26,6 @@ const vibrate = () => navigator?.vibrate?.(10);
 
 type FooterProps = {
     accounts: AccountSafeType[];
-    category: TransactionCategoryType[];
     open: boolean;
     toggle: () => void;
 };

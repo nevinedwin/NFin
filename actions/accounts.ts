@@ -119,7 +119,8 @@ export const paginatedAccount = async ({
             id: true,
             name: true,
             type: true,
-            createdAt: true
+            createdAt: true,
+            
         }
     });
 

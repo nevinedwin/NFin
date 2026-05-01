@@ -18,14 +18,13 @@ const SCROLL_THRESHOLD = 10;
 type MainShellProp = {
     children: React.ReactNode;
     accounts: AccountSafeType[],
-    category: TransactionCategoryType[],
     userData: User | null,
     recentTransaction: TransactionDataType[]
 };
 
 const footerVisiblePath = ['/dashboard', '/budget'];
 
-const MainShell = ({ children, accounts, category, userData, recentTransaction }: MainShellProp) => {
+const MainShell = ({ children, accounts, userData, recentTransaction }: MainShellProp) => {
     const pathname = usePathname();
 
     const mainRef = useRef<HTMLElement | null>(null);
@@ -114,7 +113,6 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
         toggleTransactionCard,
         closeTransactionCard,
         accounts,
-        category,
         userData,
         loading,
         startLoading,
@@ -128,7 +126,6 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
         toggleTransactionCard,
         closeTransactionCard,
         accounts,
-        category,
         userData,
         loading,
         startLoading,
@@ -175,7 +172,6 @@ const MainShell = ({ children, accounts, category, userData, recentTransaction }
                         >
                             <Footer
                                 accounts={accounts}
-                                category={category}
                                 toggle={toggleTransactionCard}
                                 open={openTransactionCard}
                             />

@@ -12,7 +12,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
     const user = await getCurrentUser();
     if (!user) return redirect('/sign-up')
 
-    const [rawAccounts, category, userData, recentTransactions] = await Promise.all([
+    const [rawAccounts, userData, recentTransactions] = await Promise.all([
         prisma.account.findMany({
             where: { userId: user.id },
             select: {
@@ -22,13 +22,6 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
                 balance: true,
                 countMeInTotal: true
             }
-        }),
-        prisma.category.findMany({
-            where: { userId: user.id },
-            select: {
-                id: true,
-                name: true
-            },
         }),
         prisma.user.findUnique({
             where: { id: user.id }
@@ -69,7 +62,6 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
         <MainShell
             accounts={accounts}
-            category={category}
             userData={userData}
             recentTransaction={transactions}
         >

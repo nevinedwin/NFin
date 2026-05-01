@@ -4,7 +4,6 @@ import { AccountSafeType, TransactionCategoryType, TransactionDataType } from "@
 
 export type MainShellContextType = {
     accounts: AccountSafeType[],
-    category: TransactionCategoryType[],
     userData: User | null,
     recentTransaction: TransactionDataType[]
 

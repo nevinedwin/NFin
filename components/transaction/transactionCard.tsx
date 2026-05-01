@@ -6,7 +6,7 @@ import { TransactionType } from "@/generated/prisma/client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "@/hooks/form/useForm";
 import { transactionFormInitalState } from "@/app/(main)/features/transaction/transaction.state";
-import SearchSelect, { SearchSelectRef } from "../ui/searchSelect";
+import { SearchSelectRef } from "../ui/searchSelect";
 import { formatUnderScoredString, formatUnderScoredStringCut } from "@/lib/utils/formats";
 import YesNoToggle from "../ui/toggleButton";
 import { useRouter } from "next/navigation";
