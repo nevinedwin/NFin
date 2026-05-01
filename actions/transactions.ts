@@ -404,10 +404,12 @@ export async function getTransactions({
         const from = new Date(filters.date.from);
         const to = new Date(filters.date.to);
 
+        from.setHours(0, 0, 0, 0);
         to.setHours(23, 59, 59, 999);
+
         where.date = {
-            gte: new Date(from),
-            lte: new Date(to),
+            gte: new Date(from.toISOString()),
+            lte: new Date(to.toISOString()),
         };
     }
 
