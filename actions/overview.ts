@@ -30,6 +30,8 @@ export async function getOverView() {
     const startUTC = startIST.toISOString();
     const endUTC = endIST.toISOString();
 
+    console.log(startUTC, endUTC);
+
     const [cashFlow, owedToMe, iOwe] = await Promise.all([
         prisma.transaction.groupBy({
             by: ['type'],
