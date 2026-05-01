@@ -30,7 +30,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 w-full p-4 gap-4">
                 {/* {overview}
                 {categoryOverView} */}
-                <RecentTransaction recentTransaction={recentTransaction} />
+                {/* <RecentTransaction recentTransaction={recentTransaction} /> */}
                 <WalletCard />
                 <CardSkeleton className="w-full" />
                 <CardSkeleton className="w-full" />
