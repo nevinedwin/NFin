@@ -18,7 +18,7 @@ export type OverviewType = {
 
 type OverViewProps = {
     overviewData: OverviewType[],
-    now: string;
+    now: string | undefined;
 };
 
 const Overview = ({ overviewData, now }: OverViewProps) => {
