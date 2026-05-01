@@ -11,7 +11,7 @@
     "migrate": "npx prisma migrate dev --name",
     "prisma": "prisma generate",
     "prisma-reset": "prisma migrate reset",
-    "deploy": "git add . && git commit -m 'deploydev'"
+    "deploy": "git add . && git commit -m 'deploy_dev' && git push origin contact && git checkout dev && git pull origin dev && git pull origin contact && git push origin dev && git checkout contact"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.38.0",
