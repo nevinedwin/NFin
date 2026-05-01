@@ -10,7 +10,8 @@
     "lint": "eslint",
     "migrate": "npx prisma migrate dev --name",
     "prisma": "prisma generate",
-    "prisma-reset": "prisma migrate reset"
+    "prisma-reset": "prisma migrate reset",
+    "deploy": "git add . && git commit -m 'deploydev'"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.38.0",
