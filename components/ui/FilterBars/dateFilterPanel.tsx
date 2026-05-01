@@ -30,7 +30,7 @@ const DateFilterPanel = ({ value, onChange, now }: { value: DateFilterValue | nu
     useEffect(() => {
         if (!preset || preset === "custom") return;
         const parsedNow = new Date(now);
-        let f = new Date();
+        let f = new Date(now);
 
         switch (preset) {
             case "today":
