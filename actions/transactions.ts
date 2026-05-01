@@ -401,15 +401,18 @@ export async function getTransactions({
 
     if (filters?.date?.from && filters?.date?.to) {
 
+        const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+
         const from = new Date(filters.date.from);
         const to = new Date(filters.date.to);
 
-        from.setHours(0, 0, 0, 0);
-        to.setHours(23, 59, 59, 999);
+        // Convert "IST midnight" → UTC
+        const fromUTC = new Date(from.getTime() - IST_OFFSET);
+        const toUTC = new Date(to.getTime() - IST_OFFSET + (24 * 60 * 60 * 1000) - 1);
 
         where.date = {
-            gte: new Date(from.toISOString()),
-            lte: new Date(to.toISOString()),
+            gte: fromUTC,
+            lte: toUTC,
         };
     }
 
