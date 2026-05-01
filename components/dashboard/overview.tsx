@@ -17,10 +17,11 @@ export type OverviewType = {
 };
 
 type OverViewProps = {
-    overviewData: OverviewType[]
+    overviewData: OverviewType[],
+    now: string;
 };
 
-const Overview = ({ overviewData }: OverViewProps) => {
+const Overview = ({ overviewData, now }: OverViewProps) => {
 
     const router = useRouter();
 
@@ -34,9 +35,9 @@ const Overview = ({ overviewData }: OverViewProps) => {
     const handleClick = (overview: OverviewType) => {
         if (overview.id === "iowe" || overview.id === "owe") return;
         startLoading();
-        const now = new Date();
-        const start = formatDate(new Date(now.getFullYear(), now.getMonth(), 1));
-        const end = formatDate(now);
+        const parsedNow = new Date(now);
+        const start = formatDate(new Date(parsedNow.getFullYear(), parsedNow.getMonth(), 1));
+        const end = formatDate(parsedNow);
         const dateQuery = `dateFrom=${start}&dateTo=${end}`;
         let query = `${dateQuery}`;
 
