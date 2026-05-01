@@ -8,7 +8,6 @@ import React, { useMemo } from "react";
 import RecentTransaction from "@/components/transaction/recentTransactions.tsx/recentTransaction";
 import WalletCard from "@/components/dashboard/walletCard";
 
-// { overview, categoryOverView }: { overview: React.ReactNode, categoryOverView: React.ReactNode }
 const Dashboard = ({ overview, categoryOverView }: { overview: React.ReactNode, categoryOverView: React.ReactNode }) => {
 
     const { accounts, recentTransaction } = useMainShellContext();

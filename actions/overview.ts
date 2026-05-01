@@ -17,20 +17,18 @@ export async function getOverView() {
     const user = await getCurrentUser();
     if (!user) return { data: [], nextCursor: null };
 
-    const now = new Date();
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000; // +5:30 in ms
+    const nowUTC = new Date();
+    const nowIST = new Date(nowUTC.getTime() + IST_OFFSET_MS);
 
-    // Step 1: get IST parts
-    const year = now.getFullYear();
-    const month = now.getMonth();
+    const year = nowIST.getUTCFullYear();
+    const month = nowIST.getUTCMonth();
 
-    // Step 2: create IST boundaries
-    const startIST = new Date(year, month, 1, 0, 0, 0, 0);
-    const endIST = new Date(year, month + 1, 1, 0, 0, 0, 0);
+    // Build IST midnight boundaries, then convert back to UTC for the DB query
+    const startIST_asUTC = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0) - IST_OFFSET_MS);
+    const endIST_asUTC = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0, 0) - IST_OFFSET_MS);
 
-    const startUTC = startIST.toISOString();
-    const endUTC = endIST.toISOString();
-
-    console.log(startUTC, endUTC);
+    console.log('IST range start (UTC):', startIST_asUTC.toISOString());
 
     const [cashFlow, owedToMe, iOwe] = await Promise.all([
         prisma.transaction.groupBy({
@@ -38,7 +36,7 @@ export async function getOverView() {
             where: {
                 userId: user.id,
                 isDeleted: false,
-                date: { gte: startUTC, lt: endUTC },
+                date: { gte: startIST_asUTC, lt: endIST_asUTC },
                 type: { in: ['INCOME', 'EXPENSE'] }
             },
             _sum: { amount: true }
@@ -67,7 +65,7 @@ export async function getOverView() {
         cashFlow.map(c => [c.type.toLowerCase(), c._sum.amount?.toNumber() || 0])
     );
 
-    const monthLabel = `${MONTH[startIST.getMonth()]} ${startIST.getFullYear()}`;
+    const monthLabel = `${MONTH[month]} ${year}`;
 
     result.push({
         id: 'expense',
