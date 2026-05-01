@@ -28,7 +28,7 @@ const Dashboard = ({ overview, categoryOverView }: { overview: React.ReactNode, 
                 <HeaderCard balance={balance} expense={100} income={800} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 w-full p-4 gap-4">
-                {/* {overview} */}
+                {overview}
                 {categoryOverView}
                 <RecentTransaction recentTransaction={recentTransaction} />
                 <WalletCard />
