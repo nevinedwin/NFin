@@ -404,7 +404,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                                 <div className="flex-1 min-h-0 w-full">
                                     <TransactionOptions
                                         key={`category-${type}`}
-                                        method={() => getCategories({groupedBy: true})}
+                                        method={getCategories}
                                         mapOption={categoryOption}
                                         grouped={true}
                                         type={type}

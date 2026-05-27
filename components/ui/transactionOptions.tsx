@@ -86,7 +86,7 @@ const TransactionOptions = ({
                 ...incoming.filter((item: any) => !ids.has(item.id))
             ];
         },
-        extraParams: { filters: { type } }
+        extraParams: { filters: { type }, groupedBy: grouped }
     });
 
     const isGrouped = grouped && Array.isArray(data);
