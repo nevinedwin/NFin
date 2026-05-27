@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import DashboardCard from './dashboardCard';
 import { RUPEE_SYMBOL } from '@/lib/constants/constants';
 import { TransactionType } from '@/generated/prisma/client';
 import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/lib/utils/formats';
+import ShowBalanceComp from '../ui/showBalance';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 
 
 export type OverviewType = {
@@ -24,6 +26,7 @@ const Overview = ({ overviewData }: OverViewProps) => {
 
     const router = useRouter();
 
+    const [showBalance, setShowBalance] = useState(false);
     const [isPending, startTransition] = useTransition();
     const { startLoading } = useMainShellContext();
 
@@ -50,6 +53,11 @@ const Overview = ({ overviewData }: OverViewProps) => {
         });
     };
 
+    const handleEyeClick = (e: React.MouseEvent<SVGSVGElement>) => {
+        e.stopPropagation();
+        setShowBalance(!showBalance);
+    }
+
     return (
         <div className='w-full h-fit grid grid-cols-2 grid-rows-2 gap-4'>
             {overviewData.map((k: OverviewType, i: number) => (
@@ -60,14 +68,21 @@ const Overview = ({ overviewData }: OverViewProps) => {
                             `text-2xl font-semibold tracking-wide 
                             ${k.id === 'owe' ? 'text-green-500' : ''}`
                         }>
-                        <span className='!text-[15px]'>
-                            {RUPEE_SYMBOL}
-                        </span>
-                        {Math.abs(k?.amount)?.toFixed(2)}
+                        {
+                            k.id === 'income' ? (
+                                showBalance ? <ShowBalanceComp balance={Math.abs(k?.amount)} /> : <span className='text-2xl'>{RUPEE_SYMBOL} ----</span>
+
+                            ) : <ShowBalanceComp balance={Math.abs(k?.amount)} />
+                        }
                     </p>
-                    <div className='flex flex-col'>
+                    <div className='w-full flex flex-col'>
                         {isHighExpense && k.id === 'expense' && <p className='text-[12px] font-normal tracking-wider text-red-500'>{RUPEE_SYMBOL}{Math.abs(income - expense)} overspent</p>}
-                        <p className='text-[12px] text-text-dull tracking-wide' >{k.subHeading}</p>
+                        <div className='w-full flex items-between justify-between gap-2'>
+                            <p className='text-[12px] text-text-dull tracking-wide' >{k.subHeading}</p>
+                            {
+                                k.id === 'income' && (showBalance ? <EyeIcon onClick={(e) => handleEyeClick(e)} /> : <EyeOffIcon onClick={(e) => handleEyeClick(e)} />)
+                            }
+                        </div>
                     </div>
                 </div>
             ))}

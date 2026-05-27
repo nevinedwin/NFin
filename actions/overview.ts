@@ -28,8 +28,6 @@ export async function getOverView() {
     const startIST_asUTC = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0) - IST_OFFSET_MS);
     const endIST_asUTC = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0, 0) - IST_OFFSET_MS);
 
-    console.log('IST range start (UTC):', startIST_asUTC.toISOString());
-
     const [cashFlow, owedToMe, iOwe] = await Promise.all([
         prisma.transaction.groupBy({
             by: ['type'],

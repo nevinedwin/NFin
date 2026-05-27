@@ -1,3 +1,4 @@
+import AccountLogo from "../wallet/accountLogo";
 
 export type ButtonColors = "red" | "green" | "blue" | "purple" | "yellow" | "orange";
 
@@ -9,16 +10,37 @@ type TypeButtonProp = {
 }
 
 export const colorPallet = {
-        red: "bg-red-800 text-white",
-        green: "bg-green-800 text-white",
-        blue: "bg-blue-800 text-white",
-        yellow: "bg-yellow-800 text-white",
-        orange: "bg-orange-800 text-white",
-        purple: "bg-purple-800 text-white"
-    };
+    red: "bg-red-800 text-white",
+    green: "bg-green-800 text-white",
+    blue: "bg-blue-800 text-white",
+    yellow: "bg-yellow-800 text-white",
+    orange: "bg-orange-800 text-white",
+    purple: "bg-purple-800 text-white"
+};
+
+const logoColors = {
+    red: "bg-red-800",
+    green: "bg-green-800",
+    blue: "bg-blue-800",
+    yellow: "bg-yellow-800",
+    orange: "bg-orange-800",
+    purple: "bg-purple-800",
+};
+
+
+const captions = {
+    red: "Money going out",
+    green: "Money Comming In",
+    blue: "Between Accounts",
+    yellow: "Giving to someone else ",
+    orange: "Borrowing from someone else",
+    purple: "Group expense splits",
+};
+
 
 
 const TypeButton = ({ active, onClick, label, color }: TypeButtonProp) => {
+
     const colors = {
         red: active && colorPallet.red,
         green: active && colorPallet.green,
@@ -33,10 +55,11 @@ const TypeButton = ({ active, onClick, label, color }: TypeButtonProp) => {
             onClick={onClick}
             type="button"
             className={`
-                h-20 w-32
+                w-full min-h-[150px]
                 rounded-lg text-sm font-medium
                 transition-all duration-200 ease-out
-                bg-border
+                bg-gray-200 text-black
+                flex items-center justify-center flex-col gap-1
                 ${colors[color]}
                 
                 /* depth */
@@ -51,7 +74,9 @@ const TypeButton = ({ active, onClick, label, color }: TypeButtonProp) => {
                 active:translate-y-[2px]
             `}
         >
+            <p><AccountLogo name={label} className={`w-10 h-10 ${logoColors[color]}`} /></p>
             {label}
+            <p className="text-text-dull text-xs px-2">{captions[color]}</p>
         </button>
     );
 }

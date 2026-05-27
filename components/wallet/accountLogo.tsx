@@ -9,7 +9,7 @@ type AccountLogoProp = {
 
 const AccountLogo = ({ name, className }: AccountLogoProp) => {
     return (
-        <span className={`rounded-full bg-white text-black flex justify-center items-center font-bold ${className}`}>{name?.slice(0, 2).toUpperCase()}</span>
+        <span className={`rounded-full flex justify-center items-center font-bold ${className}`}>{name?.slice(0, 2).toUpperCase()}</span>
     )
 }
 

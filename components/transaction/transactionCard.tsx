@@ -11,7 +11,7 @@ import { formatUnderScoredString, formatUnderScoredStringCut } from "@/lib/utils
 import YesNoToggle from "../ui/toggleButton";
 import { useRouter } from "next/navigation";
 import { paginatedAccount } from "@/actions/accounts";
-import { accountOption } from "@/app/(main)/features/account/account.map";
+import { accountOption, categoryOption } from "@/app/(main)/features/account/account.map";
 import { getCategories } from "@/actions/category";
 import { getContacts } from "@/actions/contacts";
 import { Tabs } from "../ui/tabComponent";
@@ -368,9 +368,9 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
             render: () => (
                 <div className="px-4 flex flex-col justify-center items-center gap-8">
                     <p className="text-[17px] text-slate-500">Transaction type</p>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-4 w-full">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-4 w-full max-h-[40vh] py-8 overflow-y-auto pr-2">
                         {(Object.keys(TransactionType) as TransactionType[]).map((t) => (
-                            <div className="w-full flex" key={t}>
+                            <div className="w-full flex h-full" key={t}>
                                 <TypeButton
                                     active={type === t}
                                     onClick={() => handleFieldChange("type", t)}
@@ -404,8 +404,9 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                                 <div className="flex-1 min-h-0 w-full">
                                     <TransactionOptions
                                         key={`category-${type}`}
-                                        method={getCategories}
-                                        mapOption={accountOption}
+                                        method={() => getCategories({groupedBy: true})}
+                                        mapOption={categoryOption}
+                                        grouped={true}
                                         type={type}
                                         name="categoryId"
                                         onSelect={() => categoryRef.current?.focus?.()}

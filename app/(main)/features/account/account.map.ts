@@ -7,3 +7,9 @@ export function accountOption(acc: any) {
         value: acc.id
     };
 };
+
+export const categoryOption = (item: any) => ({
+    label: item.name,
+    value: item.id,
+    icon: item.icon
+});
