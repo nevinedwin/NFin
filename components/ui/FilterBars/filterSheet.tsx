@@ -10,7 +10,7 @@ export type FilterPanelConfig<
     TKey extends keyof TFilter & SheetFilterKey = keyof TFilter & SheetFilterKey
 > = {
     key: TKey;
-    title: String;
+    title: string;
     render: (
         value: TFilter[TKey],
         onChange: (value: TFilter[TKey]) => void,

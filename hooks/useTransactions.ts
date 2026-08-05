@@ -3,6 +3,7 @@
 import { ObligationStatus } from "@/generated/prisma/client";
 import { useMemo } from "react";
 import useDebounceValue from "./useDebounceValue";
+import { formatDateShort, formatDate } from '@/lib/utils/dates';
 import useInfiniteScroll from "./useInfiniteScroll";
 import { Cursor } from "@/actions/contacts";
 import { TransactionContactTypes } from "@/components/contact/transactionRow";
@@ -31,7 +32,10 @@ export type TransactionGroup = {
 };
 
 type useTransactionsParams = {
-    action: any;
+    // action can accept a params object; use rest any to remain compatible
+    // with differing action signatures across callers.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    action: (...args: any[]) => Promise<any>;
     id: string;
     query?: string;
     size?: number;
@@ -40,19 +44,18 @@ type useTransactionsParams = {
 };
 
 function getDateLabel(dateStr: string): string {
-    const d = new Date(dateStr);
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(today.getDate() - 1);
+    const todayKey = formatDate(new Date(), 'yyyy-MM-dd');
+    const yesterdayKey = formatDate(new Date(Date.now() - 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
+    const key = formatDate(dateStr, 'yyyy-MM-dd');
 
-    if (d.toDateString() === today.toDateString()) return 'Today';
-    if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
-    return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    if (key === todayKey) return 'Today';
+    if (key === yesterdayKey) return 'Yesterday';
+    return formatDateShort(dateStr);
 };
 
 export function groupTransactionsByDate(transactions: Transaction[]): TransactionGroup[] {
     return transactions.reduce<TransactionGroup[]>((acc, tx) => {
-        const key = new Date(tx.transactionDate).toDateString();
+        const key = formatDate(tx.transactionDate, 'yyyy-MM-dd');
         const existingGroup = acc.find(g => g.dateKey === key);
         if (existingGroup) {
             existingGroup.items.push(tx);
@@ -80,7 +83,11 @@ export function useTransactions({
 
     const { loading, data, scrollElementRef, refetch } = useInfiniteScroll<Cursor, Transaction>({
         query: debouncedQuery,
-        action,
+        // action implementations across the codebase have differing signatures
+        // so cast to any here to avoid strict type mismatch while keeping
+        // the downstream typing for `Transaction` for callers.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        action: action as any,
         initialCursor: initialCursor,
         initialData: initialData,
         extraParams: { id },
@@ -89,6 +96,8 @@ export function useTransactions({
             const ids = new Set(prev.map(c => c.id));
             return [...prev, ...incoming.filter(c => !ids.has(c.id))]
         }
+        ,
+        cacheTTL: 60_000 // cache pages for 60 seconds in-memory
     });
 
     const groups = useMemo(() => groupTransactionsByDate(data ?? []), [data]);

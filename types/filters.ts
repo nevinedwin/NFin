@@ -22,7 +22,7 @@ export const EMPTY_FILTERS: ActiveFilters = {
 
 export type CategoryActiveFilters = {
     type: TransactionType | null;
-    parent: String | null;
+    parent: string | null;
 };
 
 export const EMPTY_CATEGORY_FILTERS: CategoryActiveFilters = {

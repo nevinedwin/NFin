@@ -4,6 +4,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { MONTH } from "@/lib/constants/constants";
 import { prisma } from "@/lib/prisma";
 import { getMonthRangeUTC } from "@/lib/utils/formats";
+import { toISOStringUTC } from '@/lib/utils/dates';
 
 export type TopCategory = {
     categoryId: string;
@@ -28,7 +29,7 @@ export async function getOverView() {
     const startIST_asUTC = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0) - IST_OFFSET_MS);
     const endIST_asUTC = new Date(Date.UTC(year, month + 1, 1, 0, 0, 0, 0) - IST_OFFSET_MS);
 
-    console.log('IST range start (UTC):', startIST_asUTC.toISOString());
+    console.log('IST range start (UTC):', toISOStringUTC(startIST_asUTC));
 
     const [cashFlow, owedToMe, iOwe] = await Promise.all([
         prisma.transaction.groupBy({

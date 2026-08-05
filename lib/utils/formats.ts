@@ -1,5 +1,6 @@
 import { AccountType } from "@/generated/prisma/client";
 import { format, parseISO, parse } from "date-fns";
+import { formatDate as dfFormatDate, formatTime as dfFormatTime, toDate, toISOStringUTC } from '@/lib/utils/dates';
 
 export const formatUnderScoredString = (str: string) => {
   const formatted = str.replace(/_/g, " ");
@@ -20,24 +21,16 @@ export const formDataConverter = (formData: FormData) => {
 
 export const formatDateTime = (date: Date | string | null | undefined) => {
   if (!date) return "";
-
-  let d: Date;
-
-  if (typeof date === "string") {
-    d = date.includes("/")
-      ? parse(date, "d/M/yyyy, h:mm:s a", new Date())
-      : parseISO(date);
-  } else {
-    d = date;
-  }
-
-  if (isNaN(d.getTime())) return "";
-
-  return format(d, "h:mm a, do MMM yyyy");
+  const d = toDate(date);
+  if (!d) return "";
+  return `${dfFormatTime(d)}, ${dfFormatDate(d, 'do MMM yyyy')}`;
 };
 
-export const formatTimeDate = (date: Date) =>
-  format(date, "h:mm a, do MMM");
+export const formatTimeDate = (date: Date | string | null | undefined) => {
+  const d = toDate(date as any);
+  if (!d) return "";
+  return `${dfFormatTime(d)}, ${dfFormatDate(d, 'do MMM')}`;
+};
 
 export function serializeDecimal<T>(data: T): T {
   return JSON.parse(JSON.stringify(data));
@@ -70,13 +63,15 @@ export const balanceFormating = (value: number): [string, string] => {
 };
 
 
-export const formatDate = (date: Date) => {
-  return date.toDateString().split("T")[0];
+export const formatDate = (date: Date | string | null | undefined) => {
+  const d = toDate(date as any);
+  if (!d) return "";
+  return dfFormatDate(d, 'yyyy-MM-dd');
 };
 
 
-export const formateUTCDate = (date: Date) => {
-  return date.toISOString();
+export const formateUTCDate = (date: Date | string | null | undefined) => {
+  return toISOStringUTC(date as any);
 }
 
 const IST_OFFSET = 5.5 * 60 * 60 * 1000;
@@ -91,16 +86,20 @@ export function getMonthRangeUTC(date = new Date()) {
   };
 }
 
-export const getIndianDateTime = (date: Date) => {
-  return new Date(date).toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata"
-  });
+export const getIndianDateTime = (date: Date | string | null | undefined) => {
+  const d = toDate(date as any);
+  if (!d) return "";
+  return new Intl.DateTimeFormat('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', second: 'numeric'
+  }).format(d);
 }
 
-export const getIndianDate = (date: Date) => {
-  return new Date(date).toLocaleDateString("en-CA", {
-    timeZone: "Asia/Kolkata"
-  });
+export const getIndianDate = (date: Date | string | null | undefined) => {
+  const d = toDate(date as any);
+  if (!d) return "";
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(d);
 }
 
 const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;

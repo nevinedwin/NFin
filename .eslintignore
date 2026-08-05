@@ -1,0 +1,17 @@
+# Ignore generated and vendored files
+public/*.js
+public/workbox-*.js
+public/sw.js
+public/**/*.min.js
+generated/**
+**/generated/**
+
+# Next build outputs
+.next/
+
+# Node modules
+node_modules/
+
+# Optional: ignore build artifacts
+dist/
+build/

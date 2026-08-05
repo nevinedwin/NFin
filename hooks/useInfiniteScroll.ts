@@ -20,8 +20,9 @@ type InfiniteScrollProps<T, D> = {
     size?: number;
     format?: (prev: D[], incoming: D[]) => D[];
     extraParams?: Record<string, unknown>;
-    initialData?: any,
+    initialData?: D[];
     initialCursor?: T | null
+    cacheTTL?: number; // milliseconds; optional per-hook cache
 };
 
 /**
@@ -41,7 +42,8 @@ const useInfiniteScroll = <T, D>({
     format,
     extraParams,
     initialData,
-    initialCursor
+    initialCursor,
+    cacheTTL
 }: InfiniteScrollProps<T, D>) => {
 
     const hasSSRData = Boolean(initialData?.length);
@@ -67,6 +69,9 @@ const useInfiniteScroll = <T, D>({
     const requestIdRef = useRef(0);
     const skipNextFetchRef = useRef(hasSSRData);
 
+    // Simple in-memory cache per hook instance. Keyed by JSON of query+cursor+extraParams
+    const cacheRef = useRef<Map<string, { ts: number; data: D[]; nextCursor: T | null }>>(new Map());
+
 
     /** Stable refs for action / format so we never need them in dep arrays. */
     const actionRef = useLatest(action);
@@ -74,6 +79,7 @@ const useInfiniteScroll = <T, D>({
     const sizeRef = useLatest(size);
     const extraParamsRef = useLatest(extraParams);
     const queryRef = useLatest(query);
+    const cacheTTLRef = useLatest(cacheTTL);
 
     // ─── Core fetch ───────────────────────────────────────────────────────────
 
@@ -82,6 +88,8 @@ const useInfiniteScroll = <T, D>({
      * All values it needs are read from refs so it is never recreated and
      * never triggers downstream effect re-runs.
      */
+    // fetchData intentionally reads refs and is stable across renders.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchData = useCallback(async () => {
         // Guard: skip if a fetch is already running or there's nothing more
         if (loadingRef.current || !hasMoreRef.current) return;
@@ -93,6 +101,28 @@ const useInfiniteScroll = <T, D>({
         const requestId = ++requestIdRef.current;
 
         try {
+
+            const cacheKey = JSON.stringify({ q: queryRef.current, cursor: cursorRef.current, extra: extraParamsRef.current });
+            const ttl = cacheTTLRef.current ?? 0;
+
+            if (ttl > 0) {
+                const cached = cacheRef.current.get(cacheKey);
+                if (cached && Date.now() - cached.ts < ttl) {
+                    // apply cached result
+                    const nextCursor = cached.nextCursor;
+                    const nextHasMore = nextCursor !== null;
+
+                    cursorRef.current = nextCursor;
+                    hasMoreRef.current = nextHasMore;
+
+                    setData(prev => {
+                        const fmt = formatRef.current;
+                        return fmt ? fmt(prev, cached.data) : [...prev, ...cached.data];
+                    });
+                    setHasMore(nextHasMore);
+                    return;
+                }
+            }
 
             const resp = await actionRef.current({
                 search: queryRef.current,
@@ -115,6 +145,11 @@ const useInfiniteScroll = <T, D>({
                 return fmt ? fmt(prev, resp.data) : [...prev, ...resp.data];
             });
             setHasMore(nextHasMore);
+
+            // store in cache
+            if (cacheTTLRef.current && cacheTTLRef.current > 0) {
+                cacheRef.current.set(cacheKey, { ts: Date.now(), data: resp.data, nextCursor });
+            }
         } catch {
             if (requestId === requestIdRef.current) {
                 setError(true);
@@ -128,6 +163,7 @@ const useInfiniteScroll = <T, D>({
         }
     }, []);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const refetch = useCallback(() => {
         cursorRef.current = null;
         hasMoreRef.current = true;

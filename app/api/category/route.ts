@@ -33,12 +33,14 @@ export async function GET(req: Request) {
         take: 20,
     });
 
-    return Response.json(
-        category.map((a) => ({
-            value: a.id,
-            label: a.name
-        }))
-    );
+    const body = category.map((a) => ({ value: a.id, label: a.name }));
+
+    return NextResponse.json(body, {
+        status: 200,
+        headers: {
+            'Cache-Control': 'public, max-age=60, stale-while-revalidate=300'
+        }
+    });
 }
 
 export async function POST(req: NextRequest) {

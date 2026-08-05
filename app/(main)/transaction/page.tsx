@@ -29,8 +29,7 @@ const Transaction = async ({ searchParams }: { searchParams: Record<string, stri
     getTransactions({ cursor: null, filters: initialFilters, take: 10, search: '' })
   ]);
 
-  const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
-  const nowIST = new Date(Date.now() + IST_OFFSET_MS).toISOString();
+  const now = new Date().toISOString();
 
   return (
     <TransactionList
@@ -43,7 +42,7 @@ const Transaction = async ({ searchParams }: { searchParams: Record<string, stri
       initialFilters={initialFilters}
       initialTransaction={transactions.data}
       initialCursor={transactions.nextCursor}
-      now={nowIST}
+      now={now}
     />
   )
 }

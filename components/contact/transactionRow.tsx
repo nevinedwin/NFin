@@ -7,6 +7,7 @@ import { CENETER_DOT } from '@/lib/constants/constants';
 import { ChevronRight, CircleCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMainShellContext } from '@/app/(main)/context/mainShellContext';
+import { formatTime } from '@/lib/utils/dates';
 
 export type TransactionContactTypes = Exclude<TransactionType, 'EXPENSE' | 'INCOME' | 'TRANSFER'>;
 
@@ -45,7 +46,7 @@ const TransactionRow = ({ transaction, ref }: { transaction: Transaction, ref: R
     const [isPending, startTransition] = useTransition();
 
     const amount = transaction.obligationAmount - transaction.paidAmount;
-    const time = new Date(transaction.transactionDate).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const time = formatTime(transaction.transactionDate);
     const isBorrow = transaction.transaction.type === TransactionType.BORROW;
 
 

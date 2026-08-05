@@ -3,20 +3,19 @@ import crypto from 'crypto';
 import { CookiesType, sessionPayload } from "@/types/auth";
 import { prisma } from '@/lib/prisma';
 
-export const SESSION_EXPIRY = 60 * 60 * 24 * 7 * 1000;
+export const SESSION_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 export const COOKIE_SESSION_KEY = 'session-key';
 
-const getUserSessionById = async (sessionId: string) => {
+const getUserSessionById = async (sessionId?: string | null) => {
+    if (!sessionId) return null;
+
     try {
-        if (!sessionId) return null;
-
         const rawUser = await prisma.refreshToken.findFirst({
-
             where: {
                 sessionId,
                 expiresAt: {
-                    gt: new Date()
-                }
+                    gt: new Date(),
+                },
             },
             include: {
                 user: {
@@ -24,80 +23,95 @@ const getUserSessionById = async (sessionId: string) => {
                         id: true,
                         email: true,
                         role: true,
-                        showBalance: true
-                    }
-                }
-            }
+                        showBalance: true,
+                    },
+                },
+            },
         });
 
-        if (!rawUser) return null;
-
-        return rawUser.user;
-
-    } catch (error) {
+        return rawUser?.user ?? null;
+    } catch (err) {
+        // Don't leak details — caller will treat null as unauthenticated
+        console.error('getUserSessionById failed');
         return null;
     }
-}
+};
 
 export const getUserFromSession = async (cookies: Pick<CookiesType, 'get'>) => {
-    const sessionId: string = cookies.get(COOKIE_SESSION_KEY)?.value!;
-    if (sessionId === null) return null;
+    const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value ?? null;
+    if (!sessionId) return null;
 
-    // delete expired sessions
-    await prisma.refreshToken.deleteMany({
-        where: {
-            expiresAt: {
-                lt: new Date()
-            }
-        }
-    });
+    // tidy up expired sessions occasionally
+    try {
+        await prisma.refreshToken.deleteMany({
+            where: { expiresAt: { lt: new Date() } },
+        });
+    } catch {
+        // ignore cleanup errors
+    }
 
     return getUserSessionById(sessionId);
 };
 
 export const createUserSession = async (user: sessionPayload, cookie: Pick<CookiesType, 'set'>) => {
-    const sessionId = crypto.randomBytes(512).toString('hex').normalize();
+    // 32 bytes (256 bits) is sufficient for session id entropy
+    const sessionId = crypto.randomBytes(32).toString('hex');
 
-    await prisma.refreshToken.create({
-        data: { sessionId, userId: user.id, expiresAt: new Date(Date.now() + SESSION_EXPIRY) }
-    })
+    // store/replace the refresh token entry atomically
+    try {
+        await prisma.refreshToken.upsert({
+            where: { sessionId },
+            update: { userId: user.id, expiresAt: new Date(Date.now() + SESSION_EXPIRY) },
+            create: { sessionId, userId: user.id, expiresAt: new Date(Date.now() + SESSION_EXPIRY) },
+        });
+    } catch (err) {
+        console.error('createUserSession db error');
+        throw err;
+    }
 
     setCookie(sessionId, cookie);
-}
+};
 
 export const setCookie = (sessionId: string, cookie: Pick<CookiesType, 'set'>) => {
-
-    const cookieSecure = process.env.COOKIE_SECURE ?? 'yes';
-    const isSecure = cookieSecure !== 'no';
-
+    const isSecure = process.env.NODE_ENV === 'production' || (process.env.COOKIE_SECURE ?? 'yes') !== 'no';
 
     cookie.set(COOKIE_SESSION_KEY, sessionId, {
         secure: isSecure,
         httpOnly: true,
         sameSite: isSecure ? 'strict' : 'lax',
-        expires: Date.now() + SESSION_EXPIRY
-    })
-}
+        expires: Date.now() + SESSION_EXPIRY,
+    });
+};
 
 export const removeUserFromSession = async (cookies: Pick<CookiesType, 'get' | 'delete'>) => {
-    const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value;
-    if (sessionId == null) return null;
+    const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value ?? null;
+    if (!sessionId) return null;
 
-    await prisma.refreshToken.delete({ where: { sessionId } });
+    try {
+        await prisma.refreshToken.deleteMany({ where: { sessionId } });
+    } catch (err) {
+        console.error('removeUserFromSession db error');
+    }
+
     cookies.delete(COOKIE_SESSION_KEY);
-}
+};
 
 export const updateSessionExpiration = async (cookies: Pick<CookiesType, 'get' | 'set'>) => {
-    const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value;
-    if (sessionId == null) return null;
+    const sessionId = cookies.get(COOKIE_SESSION_KEY)?.value ?? null;
+    if (!sessionId) return null;
 
     const user = await getUserSessionById(sessionId);
-    if (user == null) return;
+    if (!user) return null;
 
-    await prisma.refreshToken.create({
-        data: { sessionId, userId: user.id, expiresAt: new Date(Date.now() + SESSION_EXPIRY) }
-    })
+    try {
+        await prisma.refreshToken.upsert({
+            where: { sessionId },
+            update: { expiresAt: new Date(Date.now() + SESSION_EXPIRY) },
+            create: { sessionId, userId: user.id, expiresAt: new Date(Date.now() + SESSION_EXPIRY) },
+        });
+    } catch (err) {
+        console.error('updateSessionExpiration db error');
+    }
 
     setCookie(sessionId, cookies);
-
-}
+};

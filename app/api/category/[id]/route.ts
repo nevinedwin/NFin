@@ -89,12 +89,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         return NextResponse.json(updateCategory);
 
     } catch (error) {
-        console.log("CATEGORY PATH ERROR", error);
-
-        return NextResponse.json(
-            { message: "Failed to update category" },
-            { status: 500 }
-        );
+        console.error("CATEGORY PATH ERROR");
+        return outputResp({ message: "Failed to update category", status: 500 });
     }
 };
 
@@ -161,11 +157,7 @@ export async function DELETE(
         );
 
     } catch (error) {
-        console.error("CATEGORY_DELETE_ERROR", error);
-
-        return NextResponse.json(
-            { message: "Failed to delete category" },
-            { status: 500 }
-        );
+        console.error("CATEGORY_DELETE_ERROR");
+        return outputResp({ message: "Failed to delete category", status: 500 });
     }
 }

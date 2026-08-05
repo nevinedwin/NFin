@@ -57,7 +57,7 @@ const formReducer = <T>(state: T, action: FormAction<T>, initialState: T): T => 
 };
 
 
-export const useForm = <T extends Record<string, any>>(initialState: T) => {
+export const useForm = <T extends Record<string, unknown>>(initialState: T) => {
 
     const reducer = (state: T, action: FormAction<T>): T => {
         if (action.type === FORM_ACTIONS.RESET) {

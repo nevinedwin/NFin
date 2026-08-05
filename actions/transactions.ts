@@ -4,6 +4,7 @@ import { FormBody } from "@/app/(main)/features/transaction/transaction.types";
 import { getCurrentUser } from "@/auth/currentUser";
 import { ObligationStatus, Prisma, TransactionType, TransferType } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { formatDate } from '@/lib/utils/dates';
 import { createTransactionSchema } from "@/schemas/transaction.schema";
 import { ActiveFilters } from "@/types/filters";
 import { Cursor } from "@/types/general";
@@ -508,9 +509,8 @@ export async function getMonthlyTotals(
     const map = new Map<string, MonthSummary>();
 
     for (const tx of transactions) {
-        const date = new Date(tx.date);
-        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-        const label = date.toLocaleString("default", { month: "long", year: "numeric" });
+        const key = formatDate(tx.date, 'yyyy-MM');
+        const label = formatDate(tx.date, 'LLLL yyyy');
         const amount = tx.amount.toNumber();
 
         if (!map.has(key)) {

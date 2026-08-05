@@ -6,13 +6,14 @@ export type MonthGroup = {
     totalExpense: number;
 };
 
+import { formatDate } from '@/lib/utils/dates';
+
 export function groupByMonth(transactions: any[]): MonthGroup[] {
     const map = new Map<string, MonthGroup>();
 
     for (const tx of transactions) {
-        const date = new Date(tx.date);
-        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-        const label = date.toLocaleString("default", { month: "long", year: "numeric" });
+        const key = formatDate(tx.date, 'yyyy-MM');
+        const label = formatDate(tx.date, 'LLLL yyyy');
 
         if (!map.has(key)) {
             map.set(key, { key, label, transactions: [], totalIncome: 0, totalExpense: 0 });
