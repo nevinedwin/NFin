@@ -14,9 +14,10 @@ const Addbutton = ({ onClick, label }: AddButtonProps) => {
             onClick={onClick}
             className="
                         flex items-center gap-2
-                        bg-white text-black font-semibold
+                        bg-surface-soft text-text-primary font-semibold
                         px-3 py-2 rounded-md
-                        shadow-md transition-all duration-200
+                        shadow-md shadow-black/20 transition-all duration-200
+                        hover:bg-surface
                         active:scale-95
                     "
         >

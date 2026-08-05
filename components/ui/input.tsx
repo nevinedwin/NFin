@@ -22,8 +22,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
         <div className={`flex flex-col ${containerClassName}`}>
             {
                 label && (
-                    <label htmlFor={inputId} className='text-slate-500 text-sm mb-1 font-medium'>
-                        {label} {requiredLabel && <span className='text-red-500'>*</span>}
+                    <label htmlFor={inputId} className='text-text-muted text-sm mb-1 font-medium'>
+                        {label} {requiredLabel && <span className='text-accent'>*</span>}
                     </label>
                 )
             }
@@ -38,10 +38,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
                     p-3
                     outline-none
                     !text-[16px]
-                    bg-white
-                    text-black
-                    placeholder:text-gray-600
-                    border border-gray-900
+                    bg-surface
+                    text-text-primary
+                    placeholder:text-text-muted
+                    border border-border
 
                     shadow-inner
                     shadow-black/60
@@ -60,7 +60,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
                 {isPassword && (
                     <button
                         type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted"
                     >
                         {showPassword ? <EyeOff size={17} onClick={() => setShowPassword(!showPassword)} /> : <Eye size={17} onClick={() => setShowPassword(!showPassword)} />}
                     </button>
@@ -69,7 +69,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({ isPassword, label, req
             {showIcon && <div className={`absolute left-3 pt-3 ${iconClass}`}>
                 <Search />
             </div>}
-            {error && <p className='text-red-500 text-xs mt-1'>{error}</p>}
+            {error && <p className='text-accent text-xs mt-1'>{error}</p>}
         </div>
     )
 });

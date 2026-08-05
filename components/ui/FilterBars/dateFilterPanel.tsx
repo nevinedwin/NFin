@@ -93,22 +93,22 @@ const DateFilterPanel = ({ value, onChange, now }: { value: DateFilterValue | nu
             {preset === "custom" && (
                 <>
                     <label className="flex flex-col gap-1.5">
-                        <span className="text-xs text-slate-400">From</span>
+                        <span className="text-xs text-text-muted">From</span>
                         <input
                             type="date"
                             value={from}
                             onChange={(e) => setFrom(e.target.value)}
-                            className="bg-border border border-border rounded-lg px-3 py-2 text-md text-slate-200 focus:outline-none focus:ring-1 focus:ring-green-500"
+                            className="bg-surface border border-border rounded-xl px-3 py-2 text-md text-text-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                         />
                     </label>
 
                     <label className="flex flex-col gap-1.5">
-                        <span className="text-xs text-slate-400">To</span>
+                        <span className="text-xs text-text-muted">To</span>
                         <input
                             type="date"
                             value={to}
                             onChange={(e) => setTo(e.target.value)}
-                            className="bg-border border border-border rounded-lg px-3 py-2 text-md text-slate-200 focus:outline-none focus:ring-1 focus:ring-green-500"
+                            className="bg-surface border border-border rounded-xl px-3 py-2 text-md text-text-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                         />
                     </label>
                 </>

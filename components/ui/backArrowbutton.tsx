@@ -41,7 +41,7 @@ export const BackArrowButton = ({ className, href, fallBackHref = '/dashboard', 
             onClick={handleBack}
             className={`flex items-center gap-2 ${className}`}
         >
-            <ChevronLeft size={size} className="active:text-black" />
+            <ChevronLeft size={size} className="active:text-text-primary" />
             {label && <span>{label}</span>}
         </button>
     );

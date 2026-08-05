@@ -67,9 +67,9 @@ const FilterBars = <
                 <button
                     onClick={onClearAll}
                     className='flex flex-shrink-0 items-center gap-1.5 px-2 py-1.5
-                        bg-surface border border-red-500 text-red-500
+                        bg-surface border border-accent text-accent
                         rounded-lg transition-all duration-300 ease-in-out overflow-hidden
-                        hover:bg-red-400/20 active:scale-95'
+                        hover:bg-accent/20 active:scale-95'
 
                 >
                     <X size={13} className='flex-shrink-0' />
@@ -100,8 +100,8 @@ const FilterBars = <
                                 rounded-lg border text-xs font-medium
                                 transition-all duration-200 active:scale-95
                                 ${active
-                                    ? "bg-blue-500 border-none text-white"
-                                    : "bg-surface border-border text-slate-400 hover:border-slate-700 hover:text-slate-300"
+                                    ? "bg-primary border-none text-text-primary"
+                                    : "bg-surface border-border text-text-muted hover:border-primary/40 hover:text-text-primary"
                                 }
                             `}
                         >

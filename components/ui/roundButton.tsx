@@ -9,7 +9,7 @@ type RoundButtonProp = {
 
 const RoundButton = ({ children, className }: RoundButtonProp) => {
     return (
-        <button className={`bg-black w-10 h-10 rounded-full flex justify-center items-center ${className}`}>
+        <button className={`bg-surface-soft w-10 h-10 rounded-full flex justify-center items-center text-text-primary transition hover:bg-surface ${className}`}>
             {children}
         </button>
     )

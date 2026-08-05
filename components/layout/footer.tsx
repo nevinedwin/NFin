@@ -97,9 +97,11 @@ const Footer = memo(({ toggle, open }: FooterProps) => {
             <button
                 onClick={toggle}
                 disabled={open}
+                aria-label="Create transaction"
                 className={`fab transition-all duration-300 ${open ? "scale-0 opacity-0" : "scale-100 opacity-100"}`}
             >
-                +
+                <span className="sr-only">New transaction</span>
+                <span className="text-[24px] font-black">+</span>
             </button>
         </footer>
     );

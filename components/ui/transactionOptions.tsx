@@ -101,7 +101,7 @@ const TransactionOptions = ({
                             }}
                             className={`
                                 h-20 w-full max-w-[140px]
-                                rounded-xl flex justify-center items-center text-white cursor-pointer
+                                rounded-xl flex justify-center items-center text-text-primary cursor-pointer
                                 ${id === opt.value ? colorPallet[COLOR_BUTTON[type as TransactionType]] : 'bg-border'}
                                 ${isLastOddItem ? 'col-span-2 justify-self-center' : 'justify-self-center'}
                             `}
@@ -111,7 +111,7 @@ const TransactionOptions = ({
                     );
                 })}
                 {!loading && options.length === 0 && (
-                    <div className="p-2 text-sm text-slate-500 col-span-2 flex justify-center items-center">
+                    <div className="p-2 text-sm text-text-muted col-span-2 flex justify-center items-center">
                         No results
                     </div>
                 )}

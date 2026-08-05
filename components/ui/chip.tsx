@@ -30,7 +30,7 @@ const Chip = memo(
                     text-sm font-medium
                     transition-colors duration-200
                     border
-                    ${selected ? 'bg-white text-black border-gray-100' : 'bg-border text-white border-border'}
+                    ${selected ? 'bg-primary text-text-primary border-primary/40' : 'bg-surface text-text-secondary border-border'}
                     ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                     ${className}
                     `}

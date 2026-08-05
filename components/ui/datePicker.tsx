@@ -39,8 +39,8 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     return (
         <div className={`flex flex-col ${className}`}>
             {label && (
-                <label className="text-slate-400 text-sm mb-1 font-medium">
-                    {label} {required && <span className="text-red-500">*</span>}
+                <label className="text-text-muted text-sm mb-1 font-medium">
+                    {label} {required && <span className="text-accent">*</span>}
                 </label>
             )}
             <ReactDatePicker
@@ -48,8 +48,8 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
                 onChange={onChange}
                 name={name}
                 placeholderText={placeholder}
-                className="w-full rounded-xl p-3 border border-gray-900 text-gray-50 bg-border outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 placeholder:text-slate-700"
-                calendarClassName="rounded-xl border border-gray-300 bg-gray-50 shadow-lg p-2 text-gray-900"
+                className="w-full rounded-2xl p-3 border border-border text-text-primary bg-surface outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary placeholder:text-text-muted"
+                calendarClassName="rounded-2xl border border-border bg-surface-soft shadow-lg p-2 text-text-primary"
                 disabled={disabled}
                 showPopperArrow={false}
                 {...datePickerProps}

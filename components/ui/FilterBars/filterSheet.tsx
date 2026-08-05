@@ -115,7 +115,7 @@ const FilterSheet = <TFilters extends Record<string, unknown>,>({
     return (
         <div
             className={`fixed inset-0 z-50 flex items-end transition-colors duration-300
-                ${open ? "bg-black/50 backdrop-blur-sm" : "bg-transparent pointer-events-none"}`}
+                ${open ? "bg-background/70 backdrop-blur-sm" : "bg-transparent pointer-events-none"}`}
             onClick={(e) => e.target === e.currentTarget && onClose()}
         >
             <div
@@ -125,16 +125,16 @@ const FilterSheet = <TFilters extends Record<string, unknown>,>({
                 style={{ height: "80vh" }}
             >
                 {/* Drag handle */}
-                <div className="w-10 h-1 bg-slate-700 rounded-full mx-auto mt-3 mb-1 flex-shrink-0" />
+                <div className="w-10 h-1 bg-border rounded-full mx-auto mt-3 mb-1 flex-shrink-0" />
 
                 {/* Header */}
                 <div className="flex-shrink-0 flex items-center justify-between px-5 py-3 border-b border-border">
-                    <h2 className="text-lg font-semibold text-slate-200">
+                    <h2 className="text-lg font-semibold text-text-primary">
                         {activePanel.title}
                     </h2>
                     <button
                         onClick={onClose}
-                        className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-800 text-slate-400 hover:text-slate-200"
+                        className="w-7 h-7 flex items-center justify-center rounded-full bg-surface text-text-muted hover:text-text-primary"
                     >
                         <X size={14} />
                     </button>
@@ -149,16 +149,16 @@ const FilterSheet = <TFilters extends Record<string, unknown>,>({
                 </div>
 
                 {/* Footer */}
-                <div className="flex-shrink-0 flex gap-3 px-4 py-3 border-t border-slate-800">
+                <div className="flex-shrink-0 flex gap-3 px-4 py-3 border-t border-border">
                     <button
                         onClick={handleCancel}
-                        className="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-400 text-sm font-medium hover:bg-slate-800"
+                        className="flex-1 py-2.5 rounded-2xl border border-border text-text-muted text-sm font-medium hover:bg-surface-soft"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleApply}
-                        className="flex-1 py-2.5 rounded-xl bg-green-500 text-black text-sm font-semibold hover:bg-green-400 active:scale-95 transition-all"
+                        className="flex-1 py-2.5 rounded-2xl bg-primary text-text-primary text-sm font-semibold hover:bg-primary/90 active:scale-95 transition-all"
                     >
                         Apply
                     </button>

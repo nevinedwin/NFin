@@ -1,13 +1,15 @@
 
-import UnderProgress from '@/components/layout/underProgress'
-import React from 'react'
+import { getBudgets } from '@/actions/budget';
+import BudgetPage from '@/components/budget/budgetPage';
 
-const Budget = () => {
+const Budget = async () => {
+  const budgets = await getBudgets();
+
   return (
     <div>
-      <UnderProgress title='Budget'/>
+      <BudgetPage budgets={budgets} />
     </div>
-  )
-}
+  );
+};
 
-export default Budget
+export default Budget;

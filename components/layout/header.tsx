@@ -37,28 +37,29 @@ const Header = ({ loading: pageLoading }: { loading: boolean }) => {
   return (
     <>
       <TopLoader loading={pageLoading} />
-      <header className="h-full px-4 flex items-center justify-between bg-bar">
+      <header className="h-full px-4 py-3 flex items-center justify-between gap-3 bg-bar border-b border-border text-text-primary">
 
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold cursor-pointer hover:scale-105 transition" onClick={() => router.replace('/dashboard')}>
+          <button
+            type="button"
+            onClick={() => router.replace('/dashboard')}
+            className="w-10 h-10 rounded-2xl bg-primary/15 text-primary flex items-center justify-center text-sm font-semibold transition hover:bg-primary/25"
+          >
             {userData?.name?.slice(0, 2).toUpperCase()}
-          </div>
-          {/* <h1 className="text-lg font-semibold">NFin</h1> */}
+          </button>
         </div>
-        <div className="flex items-center justify-center gap-3">
-          {/* <button className="p-2 rounded-lg transition" onClick={openScanner} aria-label="Scan Qr">
-            <ScanQrCode size={20} />
-          </button> */}
+        <div className="flex items-center justify-center gap-2">
           <Tooltip label="Settings">
-            <button className="p-2 rounded-lg transition" aria-label="Settings">
+            <button className="p-2 rounded-2xl border border-border bg-surface-soft text-text-primary transition hover:border-primary/40" aria-label="Settings">
               <Settings size={20} />
             </button>
           </Tooltip>
-          {/* <Tooltip label="Logout"> */}
-          <button onClick={async () => await handleLogOutClick()} >
-            {loading ? <LoaderButton className="w-4 f-4" /> : <LogOutIcon className="cursor-pointer" size={20} />}
+          <button
+            onClick={async () => await handleLogOutClick()}
+            className="p-2 rounded-2xl border border-border bg-surface-soft text-text-primary transition hover:border-primary/40"
+          >
+            {loading ? <LoaderButton className="w-4 h-4" /> : <LogOutIcon size={20} />}
           </button>
-          {/* </Tooltip> */}
         </div>
       </header>
     </>

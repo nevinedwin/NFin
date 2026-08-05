@@ -13,12 +13,12 @@ export default function SectionToggle({
 }) {
     return (
         <div className="flex items-center justify-between pt-4">
-            <p className="text-slate-300">{title} (optional)</p>
+            <p className="text-text-secondary">{title} (optional)</p>
 
             <button
                 type="button"
                 onClick={onToggle}
-                className="text-slate-400 hover:text-white"
+                className="text-text-muted hover:text-text-primary"
             >
                 {open ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
             </button>

@@ -343,8 +343,8 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
             id: "amount",
             requiredFields: ["amount"],
             render: () => (
-                <div className="w-ful h-full flex flex-col justify-center items-center gap-4 px-4 pt-6">
-                    <label className="text-[17px] self-center text-slate-500">Enter Transaction amount</label>
+                <div className="w-full h-full flex flex-col justify-center items-center gap-4 px-4 pt-6">
+                    <label className="text-[17px] self-center text-slate-500">Enter transaction amount</label>
                     <div className="flex items-center gap-1">
                         <span className="text-2xl font-semibold text-slate-400">{RUPEE_SYMBOL}</span>
                         <AutoSizeAmountInput
@@ -882,8 +882,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
     // ── JSX ──────────────────────────────────────────────────────────────────
 
     return (
-        <div className="flex flex-col h-full w-full max-w-md mx-auto bg-black rounded-3xl shadow-xl">
-            {/* Hidden form fields */}
+        <div className="flex flex-col h-full w-full max-w-xl mx-auto bg-slate-950 rounded-[32px] shadow-[0_30px_80px_rgba(15,23,42,0.55)] overflow-hidden border border-white/10">
             <input type="hidden" name="type" value={type!} />
             <input type="hidden" name="repeat" value={String(repeat)} />
             {type === TransactionType.GROUP_SPLIT && (
@@ -894,42 +893,38 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                 />
             )}
 
-            {/* Step dots */}
-            {visibleSteps.length > 1 && (
-                <div className="pt-4 pb-1">
-                    <StepDots total={visibleSteps.length} current={stepIndex} />
-                </div>
-            )}
+            <div className="px-5 py-4 border-b border-white/10 bg-slate-950">
+                {visibleSteps.length > 1 && (
+                    <div className="pt-1 pb-1">
+                        <StepDots total={visibleSteps.length} current={stepIndex} />
+                    </div>
+                )}
+                {stepIndex >= 2 && amount && type && (
+                    <TransactionSummaryBar
+                        amount={amount}
+                        type={type}
+                        colorMap={COLOR_BUTTON}
+                    />
+                )}
+            </div>
 
-            {/* Amount + type summary — visible once both are confirmed (step 2+) */}
-            {stepIndex >= 2 && amount && type && (
-                <TransactionSummaryBar
-                    amount={amount}
-                    type={type}
-                    colorMap={COLOR_BUTTON}
-                />
-            )}
-
-            {/* Scrollable body */}
-            <div className="flex-1 min-h-0 w-full flex flex-col">
+            <div className="flex-1 min-h-0 overflow-y-auto pb-24">
                 {currentStep?.render()}
             </div>
 
-            {/* Sticky footer */}
-            <div className="border-t border-border p-4 flex flex-col gap-3 bg-black sticky bottom-0">
+            <div className="border-t border-white/10 p-4 pb-6 bg-slate-950/95 backdrop-blur-sm">
                 {error && (
                     <div className="flex justify-center">
                         <p className="text-red-500 text-sm text-center">{error}</p>
                     </div>
                 )}
 
-                <div className="flex justify-between items-center">
-                    {/* Back / Cancel */}
+                <div className="flex justify-between items-center gap-4">
                     {stepIndex > 0 ? (
                         <button
                             type="button"
                             onClick={goBack}
-                            className="text-zinc-400 hover:text-zinc-200 transition-colors"
+                            className="text-slate-400 hover:text-white transition-colors"
                         >
                             Back
                         </button>
@@ -937,7 +932,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                         <button
                             type="button"
                             onClick={closeFn}
-                            className="text-zinc-400 hover:text-zinc-200 transition-colors"
+                            className="text-slate-400 hover:text-white transition-colors"
                         >
                             Cancel
                         </button>
@@ -949,23 +944,20 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                             type="button"
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="font-semibold px-4 py-2 rounded-xl bg-slate-300 text-black transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center min-w-[140px] disabled:opacity-60 disabled:pointer-events-none"
+                            className="font-semibold px-4 py-3 rounded-2xl bg-white text-slate-950 transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center min-w-[150px] disabled:opacity-60 disabled:pointer-events-none"
                         >
-                            {loading ? <LoaderButton className="w-6 h-6" /> : "Save Transaction"}
+                            {loading ? <LoaderButton className="w-6 h-6" /> : "Save"}
                         </button>
                     ) : currentStep?.autoAdvance ? (
-                        // Auto-advance steps: no Next button, just a subtle hint
-                        <span className="text-xs text-slate-600 italic">
-                            Select to continue
-                        </span>
+                        <span className="text-sm text-slate-400 italic">Select to continue</span>
                     ) : (
                         <button
                             type="button"
                             onClick={goNext}
                             disabled={!isCurrentStepValid}
-                            className="font-semibold px-6 py-2 rounded-xl bg-slate-300 text-black transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-30 disabled:pointer-events-none disabled:scale-100"
+                            className="font-semibold px-5 py-3 rounded-2xl bg-slate-800 text-white transition-all duration-300 hover:bg-slate-700 active:scale-95 disabled:opacity-40 disabled:pointer-events-none"
                         >
-                            Next
+                            Continue
                         </button>
                     )}
                 </div>

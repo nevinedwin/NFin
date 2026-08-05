@@ -7,6 +7,14 @@ export default {
   ],
   darkMode: 'class', // Enables dark mode via class e.g. 'dark:bg-color-background-dark'
   theme: {
+    container: {
+      center: true,
+      padding: "1rem",
+    },
+    fontFamily: {
+      sans: ["var(--font-geist-sans)", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+      mono: ["var(--font-geist-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
+    },
     extend: {
       colors: {
         primary: "rgb(var(--color-primary) / <alpha-value>)",
@@ -15,14 +23,21 @@ export default {
 
         background: "rgb(var(--color-bg) / <alpha-value>)",
         surface: "rgb(var(--color-surface) / <alpha-value>)",
+        "surface-soft": "rgb(var(--color-surface-soft) / <alpha-value>)",
         border: "rgb(var(--color-border) / <alpha-value>)",
         bar: "rgb(var(--color-bar) / <alpha-value>)",
 
         text: {
           primary: "rgb(var(--color-text-primary) / <alpha-value>)",
           secondary: "rgb(var(--color-text-secondary) / <alpha-value>)",
-          dull: "var(--color-text-dull)"
+          muted: "rgb(var(--color-text-muted) / <alpha-value>)",
         },
+      },
+      boxShadow: {
+        card: "0 28px 80px rgba(0, 0, 0, 0.22)",
+      },
+      borderRadius: {
+        xl: "1.75rem",
       },
       keyframes: {
         'text-explode': {

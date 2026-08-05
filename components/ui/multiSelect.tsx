@@ -90,23 +90,23 @@ export default function MultiSelect<T>({
                                     onClick={() => toggle(item)}
                                     className={`
                                         w-full flex items-center justify-between px-4 py-3 rounded-xl
-                                            ${selected ? "bg-green-500/10" : "hover:bg-slate-800/60"}`}
+                                            ${selected ? "bg-primary/10" : "hover:bg-surface-soft"}`}
                                 >
                                     <div className="w-full flex justify-start items-center gap-4">
                                         {/* Checkbox */}
                                         <div
                                             className={`w-5 h-5 border-2 rounded flex items-center justify-center
-                                            ${selected ? "bg-green-500 border-green-500" : "border-slate-600"}`}
+                                            ${selected ? "bg-primary/10 border-primary" : "border-border"}`}
                                         >
                                             {selected && (
-                                                <Check size={11} strokeWidth={3} className="text-black" />
+                                                <Check size={11} strokeWidth={3} className="text-text-primary" />
                                             )}
                                         </div>
                                         {/* Custom render OR default */}
                                         {renderItem ? (
                                             renderItem(item, selected)
                                         ) : (
-                                            <div className={selected ? "text-green-400" : "text-white"}>
+                                            <div className={selected ? "text-primary" : "text-text-primary"}>
                                                 {(item as any).name}
                                             </div>
                                         )}
@@ -125,7 +125,7 @@ export default function MultiSelect<T>({
                     )}
 
                     {!loading && options.length === 0 && (
-                        <div className="text-center text-slate-500 py-10">
+                        <div className="text-center text-text-muted py-10">
                             No data found
                         </div>
                     )}

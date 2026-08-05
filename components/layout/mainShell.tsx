@@ -189,14 +189,17 @@ const MainShell = ({ children, accounts, userData, recentTransaction }: MainShel
                     {/* Expanding Panel */}
                     {
                         openTransactionCard && (
-                            <div className={`fixed bottom-0 z-50 transition-all duration-300 ease-out`}>
-                                <div className="flex justify-end items-center pr-6 bg-transparent">
-                                    <CloseButton size={20} onClick={toggleTransactionCard} className="bg-black p-2 flex justify-center items-center rounded-full mb-1" />
+                            <div className="fixed inset-x-0 bottom-0 z-50 transition-all duration-300 ease-out">
+                                <div className="flex justify-center items-center pt-3">
+                                    <div className="h-1.5 w-16 rounded-full bg-slate-700/70" />
                                 </div>
-                                <div className="w-[100vw]  h-[80vh] max-h-[650px] rounded-t-3xl bg-black shadow-2xl p-5 text-slate-500">
-                                    <div className="flex justify-between items-center mb-4 bg-transparent">
-                                        <h3 className="text-md font-semibold">New Transaction</h3>
-                                        {/* <CloseButton size={20} onClick={toggle} /> */}
+                                <div className="w-full max-w-[640px] mx-auto max-h-[calc(100vh-10vh)] rounded-t-[32px] bg-slate-950/95 border border-white/10 shadow-[0_28px_70px_rgba(15,23,42,0.72)] backdrop-blur-xl p-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] text-slate-200">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <div>
+                                            <p className="text-sm uppercase tracking-[0.24em] text-slate-500">New transaction</p>
+                                            <h3 className="text-lg font-semibold text-white">Quick entry</h3>
+                                        </div>
+                                        <CloseButton size={20} onClick={toggleTransactionCard} className="text-slate-300 bg-slate-900/80 p-2 rounded-full hover:bg-slate-800" />
                                     </div>
 
                                     <TransactionCard

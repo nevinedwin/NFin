@@ -20,8 +20,8 @@ const FormSubmitBtn = ({ className, label, type = 'button', onClick }: FormSubmi
             onClick={onClick}
             disabled={pending}
             className={clsx(
-                "rounded-xl bg-slate-300 text-black",
-                "transition-all duration-300 hover:scale-[1.02] active:scale-95",
+                "rounded-xl bg-primary text-text-primary",
+                "transition-all duration-300 hover:bg-primary/90 hover:scale-[1.02] active:scale-95",
                 "flex justify-center items-center",
                 className
             )}>

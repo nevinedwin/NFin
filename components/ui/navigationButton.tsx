@@ -9,7 +9,7 @@ const NavigationButton = (props: NavigationButtonPropsType) => {
     const { label = "", handler } = props;
 
     return (
-        <div className="bg-white text-black p-1 w-full rounded-lg font-semibold hover:bg-black/5 hover:text-white cursor-pointer" onClick={handler}>
+        <div className="bg-surface text-text-primary p-2 w-full rounded-2xl font-semibold hover:bg-surface-soft hover:text-text-primary cursor-pointer" onClick={handler}>
             {label}
         </div>
     )

@@ -21,7 +21,7 @@ const SignupLogo: React.FC<SignupLogoType> = ({ title, subtitle }) => {
             {/* <h1 className='text-[rgb(255 255 255/var(--tw-text-opacity,1))] font-bold text-xl md:text-8xl tracking-widest'>
                 {title}
             </h1> */}
-            <div className='flex justify-center items-center gap-2 pt-3 text-gray-300'>
+            <div className='flex justify-center items-center gap-2 pt-3 text-text-muted'>
                 {
                     subtitle.map((word, i) => (
                         <div key={i} className='flex items-center gap-2'>

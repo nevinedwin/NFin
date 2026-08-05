@@ -62,38 +62,38 @@ export default function RadioList({
                                     <button
                                         onClick={() => onSelect(isSelected ? null : opt.id)}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors duration-150
-                                        ${isSelected ? "bg-green-500/10" : "hover:bg-slate-800/60"}`}
+                                        ${isSelected ? "bg-primary/10" : "hover:bg-surface-soft"}`}
                                     >
                                         {type === "bank"
                                             ? <div className="flex items-start gap-2">
                                                 <div>
-                                                    <div className="text-zinc-400 flex gap-1 justify-center items-center">
-                                                        <AccountLogo className="w-6 h-6 text-[12px] font-bold bg-slate-200" name={opt.label} />
+                                                    <div className="text-text-muted flex gap-1 justify-center items-center">
+                                                        <AccountLogo className="w-6 h-6 text-[12px] font-bold bg-surface-soft" name={opt.label} />
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col items-start">
-                                                    <span className={`text-sm font-medium ${isSelected ? "text-green-400" : "text-slate-200"}`}>
+                                                    <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-text-secondary"}`}>
                                                         {opt.label}
                                                     </span>
                                                     {opt.sub && (
-                                                        <span className="text-sm text-slate-200 mt-0.5 font-semibold">{opt.sub && `·· ${opt.sub?.slice(-4)}`}</span>
+                                                        <span className="text-sm text-text-secondary mt-0.5 font-semibold">{opt.sub && `·· ${opt.sub?.slice(-4)}`}</span>
                                                     )}
                                                 </div>
                                             </div>
                                             :
                                             <div className="flex flex-col items-start">
-                                                <span className={`text-sm font-medium ${isSelected ? "text-green-400" : "text-slate-200"}`}>
+                                                <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-text-secondary"}`}>
                                                     {opt.name}
                                                 </span>
                                                 {opt.sub && (
-                                                    <span className="text-xs text-slate-500 mt-0.5">{opt.sub}</span>
+                                                    <span className="text-xs text-text-muted mt-0.5">{opt.sub}</span>
                                                 )}
                                             </div>}
 
                                         <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all
-                                ${isSelected ? "border-green-500 bg-green-500" : "border-slate-600"}`}
+                                ${isSelected ? "border-primary bg-primary/10" : "border-border"}`}
                                         >
-                                            {isSelected && <Check size={11} strokeWidth={3} className="text-black" />}
+                                            {isSelected && <Check size={11} strokeWidth={3} className="text-text-primary" />}
                                         </span>
                                     </button>
                                 </li>
@@ -101,38 +101,38 @@ export default function RadioList({
                                     <button
                                         onClick={() => onSelect(isSelected ? null : opt.id)}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-colors duration-150
-                                        ${isSelected ? "bg-green-500/10" : "hover:bg-slate-800/60"}`}
+                                        ${isSelected ? "bg-primary/10" : "hover:bg-surface-soft"}`}
                                     >
                                         {type === "bank"
                                             ? <div className="flex items-start gap-2">
                                                 <div>
-                                                    <div className="text-zinc-400 flex gap-1 justify-center items-center">
-                                                        <AccountLogo className="w-6 h-6 text-[12px] font-bold bg-slate-200" name={opt.label} />
+                                                    <div className="text-text-muted flex gap-1 justify-center items-center">
+                                                        <AccountLogo className="w-6 h-6 text-[12px] font-bold bg-surface-soft" name={opt.label} />
                                                     </div>
                                                 </div>
                                                 <div className="flex flex-col items-start">
-                                                    <span className={`text-sm font-medium ${isSelected ? "text-green-400" : "text-slate-200"}`}>
+                                                    <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-text-secondary"}`}>
                                                         {opt.label}
                                                     </span>
                                                     {opt.sub && (
-                                                        <span className="text-sm text-slate-200 mt-0.5 font-semibold">{opt.sub && `·· ${opt.sub?.slice(-4)}`}</span>
+                                                        <span className="text-sm text-text-secondary mt-0.5 font-semibold">{opt.sub && `·· ${opt.sub?.slice(-4)}`}</span>
                                                     )}
                                                 </div>
                                             </div>
                                             :
                                             <div className="flex flex-col items-start">
-                                                <span className={`text-sm font-medium ${isSelected ? "text-green-400" : "text-slate-200"}`}>
+                                                <span className={`text-sm font-medium ${isSelected ? "text-primary" : "text-text-secondary"}`}>
                                                     {opt.name}
                                                 </span>
                                                 {opt.sub && (
-                                                    <span className="text-xs text-slate-500 mt-0.5">{opt.sub}</span>
+                                                    <span className="text-xs text-text-muted mt-0.5">{opt.sub}</span>
                                                 )}
                                             </div>}
 
                                         <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all
-                                ${isSelected ? "border-green-500 bg-green-500" : "border-slate-600"}`}
+                                ${isSelected ? "border-primary bg-primary/10" : "border-border"}`}
                                         >
-                                            {isSelected && <Check size={11} strokeWidth={3} className="text-black" />}
+                                            {isSelected && <Check size={11} strokeWidth={3} className="text-text-primary" />}
                                         </span>
                                     </button>
                                 </li>
@@ -144,7 +144,7 @@ export default function RadioList({
                         </div>
                     )}
                     {!loading && options.length === 0 && (
-                        <div className="text-center text-slate-500 py-10">
+                        <div className="text-center text-text-muted py-10">
                             No data found
                         </div>
                     )}

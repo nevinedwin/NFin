@@ -114,7 +114,7 @@ const SearchSelect = forwardRef<SearchSelectRef, Props<any, any>>(({
     <div ref={wrapperRef} className="relative w-full">
 
       {label && (
-        <label className="block text-sm mb-1 text-slate-400">
+        <label className="block text-sm mb-1 text-text-muted">
           {label}
         </label>
       )}
@@ -130,20 +130,20 @@ const SearchSelect = forwardRef<SearchSelectRef, Props<any, any>>(({
             if (!open) setOpen(true);
           }}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-3 py-2 pr-10 bg-black border border-slate-700 rounded-lg text-slate-300 focus:outline-none focus:ring-2 focus:ring-green-500 placeholder:text-xs"
+          className="w-full px-3 py-2 pr-10 bg-surface border border-border rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-xs"
         />
 
         {/* loader */}
         {/* {loading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <div className="h-4 w-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="h-4 w-4 border-2 border-border border-t-transparent rounded-full animate-spin"></div>
           </div>
         )} */}
 
       </div>
 
       {open && (
-        <div className="absolute h-[110px] z-50 w-full mt-1 bg-black border border-slate-700 rounded-lg max-h-60 overflow-y-auto">
+        <div className="absolute h-[110px] z-50 w-full mt-1 bg-surface border border-border rounded-xl max-h-60 overflow-y-auto">
 
           {options.map((opt, index) => {
 
@@ -152,7 +152,7 @@ const SearchSelect = forwardRef<SearchSelectRef, Props<any, any>>(({
                 <div
                   ref={scrollElementRef}
                   key={opt.value}
-                  className="px-3 py-2 hover:bg-slate-800 cursor-pointer"
+                  className="px-3 py-2 hover:bg-surface-soft cursor-pointer"
                   onClick={() => {
                     setQuery(opt.label);
                     setId(opt.value);
@@ -168,7 +168,7 @@ const SearchSelect = forwardRef<SearchSelectRef, Props<any, any>>(({
               return (
                 <div
                   key={opt.value}
-                  className="px-3 py-2 hover:bg-slate-800 cursor-pointer"
+                  className="px-3 py-2 hover:bg-surface-soft cursor-pointer"
                   onClick={() => {
                     setQuery(opt.label);
                     setId(opt.value);
@@ -183,7 +183,7 @@ const SearchSelect = forwardRef<SearchSelectRef, Props<any, any>>(({
             }
           })}
           {!loading && options.length === 0 && (
-            <div className="p-2 text-sm text-slate-500">
+            <div className="p-2 text-sm text-text-muted">
               No results
             </div>
           )}
