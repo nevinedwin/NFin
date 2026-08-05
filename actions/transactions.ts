@@ -150,6 +150,23 @@ export async function createTransaction(prevState: any, formData: FormData) {
                     where: { id: accountId },
                     data: { balance: newBalance }
                 });
+
+                if (categoryId) {
+                    const budgetStart = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+
+                    await tx.budgetCategory.updateMany({
+                        where: {
+                            budget: {
+                                userId: user.id,
+                                startDate: budgetStart,
+                            },
+                            categoryId,
+                        },
+                        data: {
+                            spendAmount: { increment: amount },
+                        },
+                    });
+                }
             }
 
             // ─────────────────────────────

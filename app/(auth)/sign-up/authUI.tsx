@@ -16,7 +16,7 @@ const SignupUI = () => {
     }
 
     return (
-        <div className="min-h-dvh bg-background flex flex-col">
+        <div className="min-h-[100dvh] bg-background flex flex-col">
 
             {/* Top Branding (40%) */}
             <div className="h-[30vh] flex items-center justify-center px-6 text-center">

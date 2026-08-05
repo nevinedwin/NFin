@@ -6,12 +6,14 @@ import { Plus } from 'lucide-react';
 type AddButtonProps = {
     onClick: () => void;
     label: string;
+    disabled?:boolean;
 }
 
-const Addbutton = ({ onClick, label }: AddButtonProps) => {
+const Addbutton = ({ onClick, label, disabled = false }: AddButtonProps) => {
     return (
         <button
             onClick={onClick}
+            disabled={disabled} 
             className="
                         flex items-center gap-2
                         bg-surface-soft text-text-primary font-semibold

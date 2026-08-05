@@ -172,3 +172,95 @@ export async function createBudget({
 
     return formatBudget(budget);
 }
+
+export async function updateBudget({
+    budgetId,
+    name,
+    categories,
+}: {
+    budgetId: string;
+    name?: string;
+    categories?: BudgetCategoryPayload[];
+}) {
+    const user = await getCurrentUser();
+    if (!user) {
+        throw new Error("Unauthorized");
+    }
+
+    const budget = await prisma.budget.findUnique({
+        where: { id: budgetId },
+        include: {
+            categories: { include: { category: { select: { id: true, name: true } } } },
+        },
+    });
+
+    if (!budget || budget.userId !== user.id) {
+        throw new Error("Budget not found.");
+    }
+
+    const validatedCategories = categories?.filter((category) => category.categoryId && category.allocatedAmount && !isNaN(Number(category.allocatedAmount))) ?? [];
+    if (validatedCategories.length === 0) {
+        throw new Error("Provide valid categories and amounts.");
+    }
+
+    const existingCategories = budget.categories;
+    const existingByCategoryId = new Map(existingCategories.map((category) => [category.categoryId, category]));
+    const incomingByCategoryId = new Map(validatedCategories.map((category) => [category.categoryId, category]));
+
+    const deleteOperations = existingCategories
+        .filter((category) => !incomingByCategoryId.has(category.categoryId))
+        .map((category) =>
+            prisma.budgetCategory.delete({
+                where: { id: category.id },
+            })
+        );
+
+    const updateOperations = validatedCategories
+        .filter((category) => existingByCategoryId.has(category.categoryId))
+        .map((category) =>
+            prisma.budgetCategory.update({
+                where: { id: existingByCategoryId.get(category.categoryId)!.id },
+                data: {
+                    allocatedAmount: new Prisma.Decimal(category.allocatedAmount),
+                },
+            })
+        );
+
+    const createOperations = validatedCategories
+        .filter((category) => !existingByCategoryId.has(category.categoryId))
+        .map((category) =>
+            prisma.budgetCategory.create({
+                data: {
+                    budget: { connect: { id: budgetId } },
+                    category: { connect: { id: category.categoryId } },
+                    allocatedAmount: new Prisma.Decimal(category.allocatedAmount),
+                    spendAmount: new Prisma.Decimal(0),
+                },
+            })
+        );
+
+    await prisma.$transaction([
+        prisma.budget.update({
+            where: { id: budgetId },
+            data: {
+                name: name?.trim() || budget.name,
+            },
+        }),
+        ...deleteOperations,
+        ...updateOperations,
+        ...createOperations,
+    ]);
+
+    const updatedBudget = await prisma.budget.findUnique({
+        where: { id: budgetId },
+        include: {
+            categories: { include: { category: { select: { id: true, name: true } } } },
+        },
+    });
+
+    if (!updatedBudget) {
+        throw new Error("Failed to update budget.");
+    }
+
+    return formatBudget(updatedBudget);
+}

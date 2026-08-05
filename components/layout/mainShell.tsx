@@ -138,7 +138,7 @@ const MainShell = ({ children, accounts, userData, recentTransaction }: MainShel
     return (
         <MainShellProvider value={contextValue}>
 
-            <div className="h-dvh flex flex-col overflow-hidden relative">
+            <div className="h-[100dvh] flex flex-col overflow-hidden relative">
 
                 {/* Header */}
                 <header className="h-[50px] shrink-0 z-10" >
@@ -148,7 +148,7 @@ const MainShell = ({ children, accounts, userData, recentTransaction }: MainShel
                 {/* Main */}
                 <main
                     ref={mainRef}
-                    className="flex-1 overflow-y-auto overscroll-none"
+                    className="flex-1 min-h-0 overflow-y-auto overscroll-none"
                     style={{ paddingBottom: footerVisiblePath.includes(pathname) ? FOOTER_HEIGHT : '' }}
                     onClick={() => openTransactionCard && closeTransactionCard()}
                 >
@@ -193,7 +193,7 @@ const MainShell = ({ children, accounts, userData, recentTransaction }: MainShel
                                 <div className="flex justify-center items-center pt-3">
                                     <div className="h-1.5 w-16 rounded-full bg-slate-700/70" />
                                 </div>
-                                <div className="w-full max-w-[640px] mx-auto max-h-[calc(100vh-10vh)] rounded-t-[32px] bg-slate-950/95 border border-white/10 shadow-[0_28px_70px_rgba(15,23,42,0.72)] backdrop-blur-xl p-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] text-slate-200">
+                                <div className="flex flex-col align-center justify-between w-full max-w-[640px] mx-auto h-[calc(100vh-10vh)] max-h-[calc(100vh-10vh)] rounded-t-[32px] bg-slate-950/95 border border-white/10 shadow-[0_28px_70px_rgba(15,23,42,0.72)] backdrop-blur-xl p-5 pb-[calc(env(safe-area-inset-bottom)+1rem)] text-slate-200">
                                     <div className="flex justify-between items-center mb-4">
                                         <div>
                                             <p className="text-sm uppercase tracking-[0.24em] text-slate-500">New transaction</p>

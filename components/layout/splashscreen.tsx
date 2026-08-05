@@ -20,7 +20,7 @@ export default function Splashscreen({ target }: SplashscreenProps) {
   }, [router, target]);
 
   return (
-    <div className="relative flex h-dvh items-center justify-center bg-background overflow-hidden">
+    <div className="relative flex h-[100dvh] items-center justify-center bg-background overflow-hidden">
 
       <div className="absolute h-[200vmax] w-[200vmax] rounded-full bg-surface animate-splash-expand" />
 

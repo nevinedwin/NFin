@@ -368,9 +368,9 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
             render: () => (
                 <div className="px-4 flex flex-col justify-center items-center gap-8">
                     <p className="text-[17px] text-slate-500">Transaction type</p>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-4 w-full">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-4 w-full justify-items-center">
                         {(Object.keys(TransactionType) as TransactionType[]).map((t) => (
-                            <div className="w-full flex" key={t}>
+                            <div className="w-full justify-center flex" key={t}>
                                 <TypeButton
                                     active={type === t}
                                     onClick={() => handleFieldChange("type", t)}
@@ -882,7 +882,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
     // ── JSX ──────────────────────────────────────────────────────────────────
 
     return (
-        <div className="flex flex-col h-full w-full max-w-xl mx-auto bg-slate-950 rounded-[32px] shadow-[0_30px_80px_rgba(15,23,42,0.55)] overflow-hidden border border-white/10">
+        <div className="flex flex-col max-h-full w-full max-w-xl mx-auto bg-slate-950 rounded-[32px] shadow-[0_30px_80px_rgba(15,23,42,0.55)] overflow-hidden border border-white/10">
             <input type="hidden" name="type" value={type!} />
             <input type="hidden" name="repeat" value={String(repeat)} />
             {type === TransactionType.GROUP_SPLIT && (
@@ -908,7 +908,7 @@ export default function TransactionCard({ closeFn }: TransactionCardProp) {
                 )}
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto pb-24">
+            <div className="flex-1 min-h-[400px] overflow-y-auto">
                 {currentStep?.render()}
             </div>
 
